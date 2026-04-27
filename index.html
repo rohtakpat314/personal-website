@@ -4,1086 +4,971 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Rohtak Patwardhan</title>
-  <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet" />
-
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet" />
   <style>
-    :root {
-      --bg:        #111;
-      --surface:   #191919;
-      --surface-2: #222;
-      --border:    #2a2a2a;
-      --border-2:  #333;
-      --red:       #3a68d0;
-      --red-b:     #5580e0;
-      --red-glow:  rgba(58,104,208,0.18);
-      --red-dim:   rgba(58,104,208,0.1);
-      --blue:      #1655c4;
-      --blue-b:    #1e6be0;
-      --blue-glow: rgba(22,85,196,0.1);
-      --blue-dim:  rgba(22,85,196,0.08);
-      --silver:    #888;
-      --text:      #e0e0e0;
-      --text-2:    #777;
-      --text-3:    #444;
-    }
+  :root {
+    --bg:          #0a0a0c;
+    --sb-bg:       #0d0d0f;
+    --surface:     #131315;
+    --surface-2:   #1a1a1d;
+    --border:      #1e1e22;
+    --border-2:    #2c2c30;
+    --accent:      #3a68d0;
+    --accent-b:    #5580e0;
+    --accent-dim:  rgba(58,104,208,0.09);
+    --accent-glow: rgba(58,104,208,0.18);
+    --text:        #e2e2e2;
+    --text-2:      #888;
+    --text-3:      #444;
+    --green:       #4ec994;
+    --sb-w:        260px;
+  }
 
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg); color: var(--text);
+    font-family: 'Inter', sans-serif; font-size: 15px;
+    line-height: 1.7; -webkit-font-smoothing: antialiased; overflow-x: hidden;
+  }
+  ::-webkit-scrollbar { width: 3px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border-2); border-radius: 2px; }
 
-    body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: 'Inter', sans-serif;
-      font-size: 15px;
-      line-height: 1.7;
-      -webkit-font-smoothing: antialiased;
-      overflow-x: hidden;
-    }
+  /* ── Sidebar ─────────────────────────────── */
+  .sidebar {
+    position: fixed; top: 0; left: 0; bottom: 0;
+    width: var(--sb-w); background: var(--sb-bg);
+    border-right: 1px solid var(--border);
+    display: flex; flex-direction: column;
+    padding: 2.2rem 1.5rem; z-index: 100;
+    animation: slideInLeft 0.7s cubic-bezier(0.16,1,0.3,1) both;
+  }
 
+  .sb-logo {
+    margin-bottom: 2.4rem;
+    opacity: 0; animation: fadeUp 0.5s 0.4s ease both;
+  }
+  .sb-name { font-size: 0.9rem; font-weight: 700; color: var(--text); letter-spacing: -0.02em; }
+  .sb-sub  { font-size: 0.67rem; color: var(--text-3); margin-top: 0.1rem; }
 
-    h1,h2,h3,h4,h5 {
-      font-family: 'Inter', sans-serif;
-      font-weight: 600;
-      line-height: 1.15;
-      letter-spacing: -0.01em;
-    }
+  .nav-track { position: relative; display: flex; flex-direction: column; gap: 0.02rem; flex: 1; }
 
-    ::-webkit-scrollbar { width: 4px; }
-    ::-webkit-scrollbar-track { background: var(--bg); }
-    ::-webkit-scrollbar-thumb { background: var(--border-2); border-radius: 2px; }
+  .nav-indicator {
+    position: absolute; left: 0; top: 0;
+    width: 2px; height: 32px;
+    background: var(--accent); border-radius: 1px;
+    transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1), height 0.25s ease;
+    will-change: transform;
+  }
 
-    /* ═══════════════════════════════
-       NAV
-    ═══════════════════════════════ */
-    nav {
-      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 0 2.5rem; height: 52px;
-      background: var(--bg);
-      border-bottom: 1px solid var(--border);
-    }
+  .s-link {
+    display: flex; align-items: center; gap: 0.6rem;
+    padding: 0.52rem 0.7rem 0.52rem 0.9rem;
+    font-size: 0.81rem; font-weight: 400;
+    color: var(--text-3); text-decoration: none;
+    border-radius: 0 5px 5px 0; cursor: pointer;
+    border: none; background: none; font-family: inherit;
+    transition: color 0.18s ease, background 0.18s ease;
+    position: relative; z-index: 1;
+    opacity: 0; animation: fadeUp 0.4s ease both;
+  }
+  .s-link:nth-child(2) { animation-delay: 0.45s; }
+  .s-link:nth-child(3) { animation-delay: 0.50s; }
+  .s-link:nth-child(4) { animation-delay: 0.55s; }
+  .s-link:nth-child(5) { animation-delay: 0.60s; }
+  .s-link:nth-child(6) { animation-delay: 0.65s; }
+  .s-link:nth-child(7) { animation-delay: 0.70s; }
+  .s-link:nth-child(8) { animation-delay: 0.75s; }
 
-    .nav-links { display: flex; align-items: center; gap: 0.1rem; }
+  .s-icon { width: 14px; height: 14px; flex-shrink: 0; opacity: 0.35; transition: opacity 0.18s ease; }
+  .s-link:hover { color: var(--text-2); background: rgba(255,255,255,0.025); }
+  .s-link:hover .s-icon { opacity: 0.55; }
+  .s-link.active { color: var(--accent-b); font-weight: 500; }
+  .s-link.active .s-icon { opacity: 1; }
 
-    .nav-link {
-      font-size: 0.8rem; font-weight: 400;
-      color: var(--text-2); text-decoration: none;
-      padding: 0.35rem 0.7rem; border: none; background: none; cursor: pointer;
-      transition: color 0.15s ease;
-      letter-spacing: 0;
-    }
+  .sb-bottom {
+    margin-top: auto; padding-top: 1.4rem;
+    border-top: 1px solid var(--border);
+    display: flex; flex-direction: column; gap: 0.9rem;
+    opacity: 0; animation: fadeIn 0.5s 0.85s ease both;
+  }
+  .sb-status { display: flex; align-items: center; gap: 0.4rem; font-size: 0.69rem; color: var(--green); }
+  .sb-dot {
+    width: 5px; height: 5px; border-radius: 50%; background: var(--green); flex-shrink: 0;
+    animation: pulseDot 2.5s infinite;
+  }
+  .sb-socials { display: flex; gap: 0.4rem; }
+  .sb-social {
+    width: 28px; height: 28px; border-radius: 4px;
+    border: 1px solid var(--border-2);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--text-3); text-decoration: none;
+    transition: border-color 0.18s ease, color 0.18s ease, background 0.18s ease;
+  }
+  .sb-social:hover { border-color: var(--accent); color: var(--accent-b); background: var(--accent-dim); }
 
-    .nav-link:hover { color: var(--text); }
-    .nav-link.active { color: var(--text); }
-    .nav-link:focus-visible { outline: 1px solid var(--red); outline-offset: 2px; }
+  /* ── Main ────────────────────────────────── */
+  .main {
+    margin-left: var(--sb-w);
+    min-height: 100vh;
+    position: relative;
+    animation: fadeIn 0.7s 0.25s ease both;
+  }
 
-    /* ═══════════════════════════════
-       PAGE SYSTEM
-    ═══════════════════════════════ */
-    .page {
-      position: relative; z-index: 1;
-      display: none; min-height: 100vh;
-      padding-top: 52px;
-      opacity: 0;
-      transition: opacity 0.2s ease;
-    }
-    .page.active  { display: block; }
-    .page.visible { opacity: 1; }
+  .container { max-width: 880px; margin: 0 auto; padding: 0 3rem; position: relative; z-index: 1; }
 
-    .container { max-width: 1040px; margin: 0 auto; padding: 0 2rem; }
+  /* ── Sections ────────────────────────────── */
+  section { padding: 6rem 0; border-bottom: 1px solid var(--border); }
+  section:last-of-type { border-bottom: none; }
 
-    /* ─ Shared elements ─ */
-    .sec-label {
-      font-size: 0.7rem; font-weight: 500;
-      letter-spacing: 0.1em; text-transform: uppercase;
-      color: var(--text-3); margin-bottom: 0.5rem;
-    }
+  .sec-label {
+    font-size: 0.67rem; font-weight: 500; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--accent);
+    margin-bottom: 0.75rem;
+    display: flex; align-items: center; gap: 0.65rem;
+  }
+  .sec-label::before {
+    content: ''; display: block; width: 0; height: 1px;
+    background: var(--accent); flex-shrink: 0;
+    transition: width 0.55s cubic-bezier(0.16,1,0.3,1) 0.15s;
+  }
+  .sec-label.shown::before { width: 1.5rem; }
 
-    .sec-heading {
-      font-size: clamp(1.6rem, 3vw, 2.2rem);
-      font-weight: 600; letter-spacing: -0.02em;
-      color: var(--text); margin-bottom: 0.6rem;
-    }
+  .sec-heading {
+    font-size: clamp(1.8rem, 3vw, 2.5rem);
+    font-weight: 700; letter-spacing: -0.03em; line-height: 1.1;
+    color: var(--text); margin-bottom: 0.7rem;
+  }
+  .sec-sub { font-size: 0.9rem; color: var(--text-2); line-height: 1.8; max-width: 500px; margin-bottom: 2.5rem; }
 
-    .sec-sub {
-      font-size: 0.9rem; color: var(--text-2);
-      max-width: 480px; line-height: 1.75; margin-bottom: 2.5rem;
-    }
+  /* ── Reveal ──────────────────────────────── */
+  .reveal {
+    opacity: 0; transform: translateY(22px);
+    transition: opacity 0.6s cubic-bezier(0.16,1,0.3,1), transform 0.6s cubic-bezier(0.16,1,0.3,1);
+  }
+  .reveal.shown { opacity: 1; transform: none; }
 
-    .divider { height: 1px; background: var(--border); }
+  /* ── ABOUT ───────────────────────────────── */
+  #about { min-height: 100vh; display: flex; align-items: center; }
 
-    /* ─ Cards ─ */
-    .card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 3px;
-      transition: border-color 0.15s ease;
-    }
-    .card:hover { border-color: var(--border-2); }
+  .hero-kicker {
+    font-size: 0.72rem; color: var(--text-3); letter-spacing: 0.06em; margin-bottom: 1.4rem;
+    opacity: 0; animation: fadeUp 0.6s 0.5s ease both;
+  }
+  .hero-name {
+    font-size: clamp(3.8rem, 8vw, 6.5rem);
+    font-weight: 800; letter-spacing: -0.04em; line-height: 0.94;
+    color: var(--text); margin-bottom: 2rem;
+    opacity: 0; animation: fadeUp 0.65s 0.6s cubic-bezier(0.16,1,0.3,1) both;
+  }
+  .hero-bio {
+    font-size: 0.95rem; color: var(--text-2); line-height: 1.85; max-width: 500px; margin-bottom: 2.5rem;
+    opacity: 0; animation: fadeUp 0.6s 0.72s ease both;
+  }
+  .hero-actions {
+    display: flex; gap: 0.7rem; flex-wrap: wrap; margin-bottom: 3.5rem;
+    opacity: 0; animation: fadeUp 0.6s 0.82s ease both;
+  }
 
-    /* ─ Chips ─ */
-    .chip {
-      display: inline-block;
-      font-size: 0.68rem; font-weight: 400;
-      color: var(--text-3);
-      border: 1px solid var(--border);
-      padding: 0.15rem 0.5rem; border-radius: 3px;
-    }
+  /* Buttons */
+  .btn-primary {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    padding: 0.65rem 1.4rem; background: var(--accent); color: #fff;
+    font-size: 0.84rem; font-weight: 500; font-family: inherit;
+    border: none; border-radius: 5px; cursor: pointer; text-decoration: none;
+    position: relative; overflow: hidden;
+    transition: background 0.18s ease, transform 0.18s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.18s ease;
+  }
+  .btn-primary::after {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(105deg, transparent 35%, rgba(255,255,255,0.14) 50%, transparent 65%);
+    transform: translateX(-100%);
+    transition: transform 0.55s ease;
+  }
+  .btn-primary:hover::after { transform: translateX(100%); }
+  .btn-primary:hover { background: var(--accent-b); transform: translateY(-1px); box-shadow: 0 6px 22px rgba(58,104,208,0.35); }
+  .btn-primary:active { transform: translateY(0); }
 
-    .chip-red {
-      font-size: 0.68rem; font-weight: 400;
-      color: var(--red);
-      border: 1px solid rgba(200,48,42,0.2);
-      padding: 0.15rem 0.5rem; border-radius: 3px;
-    }
+  .btn-ghost {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    padding: 0.65rem 1.4rem; background: transparent; color: var(--text-2);
+    font-size: 0.84rem; font-weight: 400; font-family: inherit;
+    border: 1px solid var(--border-2); border-radius: 5px; cursor: pointer; text-decoration: none;
+    transition: color 0.18s ease, border-color 0.18s ease, background 0.18s ease, transform 0.18s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  .btn-ghost:hover { color: var(--text); border-color: rgba(58,104,208,0.4); background: rgba(58,104,208,0.04); transform: translateY(-1px); }
+  .btn-ghost:active { transform: translateY(0); }
 
-    /* ─ Buttons ─ */
-    .btn-primary {
-      display: inline-flex; align-items: center; gap: 0.5rem;
-      padding: 0.6rem 1.2rem;
-      background: var(--red); color: #fff;
-      font-size: 0.85rem; font-weight: 500;
-      text-decoration: none; border: none; border-radius: 3px; cursor: pointer;
-      transition: opacity 0.15s ease;
-    }
-    .btn-primary:hover { opacity: 0.85; }
-    .btn-primary:focus-visible { outline: 2px solid var(--red); outline-offset: 3px; }
+  /* ── Chips ───────────────────────────────── */
+  .chip {
+    display: inline-block; font-size: 0.67rem; font-weight: 400;
+    color: var(--text-3); border: 1px solid var(--border);
+    padding: 0.18rem 0.55rem; border-radius: 4px;
+  }
 
-    .btn-ghost {
-      display: inline-flex; align-items: center; gap: 0.5rem;
-      padding: 0.6rem 1.2rem;
-      background: transparent; color: var(--text-2);
-      font-size: 0.85rem; font-weight: 400;
-      text-decoration: none; border: 1px solid var(--border); border-radius: 3px; cursor: pointer;
-      transition: color 0.15s ease, border-color 0.15s ease;
-    }
-    .btn-ghost:hover { color: var(--text); border-color: var(--border-2); }
-    .btn-ghost:focus-visible { outline: 2px solid var(--red); outline-offset: 3px; }
+  /* ── PROJECTS ────────────────────────────── */
+  .proj-grid {
+    display: grid; grid-template-columns: repeat(2,1fr);
+    gap: 1px; background: var(--border);
+    border: 1px solid var(--border); border-radius: 5px; overflow: hidden;
+  }
+  @media (max-width: 620px) { .proj-grid { grid-template-columns: 1fr; } }
 
-    /* ─ Scroll reveal ─ */
-    .reveal { opacity: 0; transform: translateY(10px); transition: opacity 0.4s ease, transform 0.4s ease; }
-    .reveal.shown { opacity: 1; transform: none; }
+  .proj-card {
+    overflow: hidden; background: var(--surface);
+    transition: background 0.18s ease, transform 0.25s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.25s ease;
+  }
+  .proj-card:hover { background: var(--surface-2); transform: translateY(-3px); box-shadow: 0 14px 36px rgba(0,0,0,0.5), 0 3px 10px rgba(58,104,208,0.08); }
 
-    /* ═══════════════════════════════
-       HOME
-    ═══════════════════════════════ */
-    .home-hero {
-      padding: 5rem 0 4rem;
-      display: grid;
-      grid-template-columns: 1fr 340px;
-      gap: 4rem; align-items: center;
-    }
-    @media (max-width: 860px) {
-      .home-hero { grid-template-columns: 1fr; gap: 3rem; }
-      .home-photo-col { order: -1; }
-    }
+  .proj-gallery {
+    position: relative; overflow: hidden;
+    aspect-ratio: 16/9; background: var(--surface-2); cursor: pointer;
+  }
+  .proj-gallery img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.4s ease; }
+  .proj-gallery:hover img { transform: scale(1.04); }
+  .proj-gallery-overlay {
+    position: absolute; inset: 0;
+    display: flex; align-items: flex-end; justify-content: space-between;
+    padding: 0.75rem; opacity: 0; transition: opacity 0.2s ease;
+  }
+  .proj-gallery:hover .proj-gallery-overlay { opacity: 1; background: rgba(0,0,0,0.4); }
+  .gallery-btn {
+    display: inline-flex; align-items: center; gap: 0.4rem;
+    font-size: 0.69rem; font-weight: 500; color: #fff;
+    background: rgba(0,0,0,0.65); padding: 0.3rem 0.65rem;
+    border-radius: 3px; border: 1px solid rgba(255,255,255,0.12); cursor: pointer;
+    transition: background 0.15s ease;
+  }
+  .gallery-btn:hover { background: rgba(0,0,0,0.85); }
+  .gallery-count { font-size: 0.67rem; color: rgba(255,255,255,0.5); }
 
-    .status-pill {
-      display: inline-flex; align-items: center; gap: 0.45rem;
-      font-size: 0.72rem; font-weight: 400;
-      color: #5a9e6f;
-      margin-bottom: 0;
-      opacity: 0; animation: fadeIn 0.5s 0.1s ease forwards;
-    }
-    .status-dot {
-      width: 5px; height: 5px; border-radius: 50%;
-      background: #5a9e6f; flex-shrink: 0;
-      animation: pulseDot 2.5s infinite;
-    }
-    @keyframes pulseDot {
-      0%   { box-shadow: 0 0 0 0 rgba(77,186,111,0.5); }
-      70%  { box-shadow: 0 0 0 5px rgba(77,186,111,0); }
-      100% { box-shadow: 0 0 0 0 rgba(77,186,111,0); }
-    }
+  .proj-body { padding: 1.25rem; }
+  .proj-num  { font-size: 0.64rem; color: var(--text-3); margin-bottom: 0.3rem; }
+  .proj-name { font-size: 0.9rem; font-weight: 600; color: var(--text); margin-bottom: 0.45rem; line-height: 1.3; }
+  .proj-desc { font-size: 0.79rem; color: var(--text-2); line-height: 1.65; margin-bottom: 1rem; }
+  .proj-footer { border-top: 1px solid var(--border); padding-top: 0.85rem; }
+  .proj-tools { display: flex; flex-wrap: wrap; gap: 0.35rem; }
 
-    .hero-eyebrow {
-      font-size: 0.78rem; font-weight: 400;
-      color: var(--text-3); letter-spacing: 0.02em;
-      margin-bottom: 1rem;
-      opacity: 0; animation: fadeUp 0.5s 0.1s ease forwards;
-    }
+  /* chip wave */
+  .proj-tools .chip { color: var(--text-2); border-color: var(--border-2); transition: color 0.18s ease, border-color 0.18s ease, background 0.18s ease; }
+  .proj-card:hover .proj-tools .chip { color: var(--accent-b); border-color: rgba(58,104,208,0.4); background: rgba(58,104,208,0.06); }
+  .proj-card:hover .proj-tools .chip:nth-child(1) { transition-delay: 0.00s; }
+  .proj-card:hover .proj-tools .chip:nth-child(2) { transition-delay: 0.05s; }
+  .proj-card:hover .proj-tools .chip:nth-child(3) { transition-delay: 0.10s; }
+  .proj-card:hover .proj-tools .chip:nth-child(4) { transition-delay: 0.15s; }
+  .proj-card:hover .proj-tools .chip:nth-child(5) { transition-delay: 0.20s; }
+  .proj-card:hover .proj-tools .chip:nth-child(6) { transition-delay: 0.25s; }
+  .proj-card:hover .proj-tools .chip:nth-child(7) { transition-delay: 0.30s; }
+  .proj-card:hover .proj-tools .chip:nth-child(8) { transition-delay: 0.35s; }
 
-    .hero-name {
-      font-size: clamp(2.8rem, 7vw, 5.5rem);
-      font-weight: 700; letter-spacing: -0.03em; line-height: 1.0;
-      color: var(--text);
-      margin-bottom: 1.25rem;
-      opacity: 0; animation: fadeUp 0.5s 0.15s ease forwards;
-    }
+  /* ── EXPERIENCE ──────────────────────────── */
+  .timeline { display: flex; flex-direction: column; gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: 5px; overflow: hidden; }
+  .tl-card { padding: 1.5rem; background: var(--surface); transition: background 0.15s ease; }
+  .tl-card:hover { background: var(--surface-2); }
+  .tl-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; flex-wrap: wrap; margin-bottom: 0.25rem; }
+  .tl-org  { font-size: 0.71rem; font-weight: 500; color: var(--accent); margin-bottom: 0.3rem; letter-spacing: 0.02em; }
+  .tl-role { font-size: 0.93rem; font-weight: 600; color: var(--text); margin-bottom: 0.5rem; }
+  .tl-date { font-size: 0.71rem; color: var(--text-3); white-space: nowrap; flex-shrink: 0; }
+  .tl-tags { display: flex; flex-wrap: wrap; gap: 0.3rem; }
+  .tl-bullets { list-style: none; margin-top: 0.85rem; display: flex; flex-direction: column; gap: 0.55rem; }
+  .tl-bullets li { font-size: 0.79rem; color: var(--text-2); line-height: 1.65; padding-left: 1.1rem; position: relative; }
+  .tl-bullets li::before {
+    content: ''; position: absolute; left: 0; top: 0.6em;
+    width: 5px; height: 5px; border-radius: 50%;
+    background: var(--accent-b);
+    box-shadow: 0 0 6px rgba(85,128,224,0.55);
+  }
 
-    .hero-bio {
-      font-size: 0.9rem; color: var(--text-2); line-height: 1.75;
-      max-width: 480px; margin-bottom: 2rem;
-      opacity: 0; animation: fadeUp 0.5s 0.2s ease forwards;
-    }
+  /* ── COURSEWORK ──────────────────────────── */
+  .cw-list {
+    border: 1px solid var(--border);
+    border-top: 1px solid rgba(58,104,208,0.3);
+    border-radius: 5px; overflow: hidden;
+  }
+  .cw-row {
+    display: flex; flex-direction: column;
+    padding: 0.72rem 1.2rem; border-bottom: 1px solid var(--border);
+    background: var(--surface); transition: background 0.15s ease;
+  }
+  .cw-row:last-child { border-bottom: none; }
+  .cw-row:hover { background: var(--surface-2); }
+  .cw-row-top { display: flex; align-items: center; gap: 1rem; }
+  .cw-code { font-size: 0.66rem; font-weight: 500; color: var(--accent); flex-shrink: 0; width: 64px; }
+  .cw-name { font-size: 0.84rem; color: var(--text); }
+  .cw-note {
+    font-size: 0.69rem; color: var(--text-3); padding-left: calc(64px + 1rem);
+    max-height: 0; overflow: hidden; opacity: 0; margin-top: 0;
+    transition: max-height 0.22s ease, opacity 0.18s ease, margin-top 0.22s ease;
+  }
+  .cw-row:hover .cw-note { max-height: 30px; opacity: 1; margin-top: 0.28rem; }
 
-    .hero-actions {
-      display: flex; gap: 0.75rem; flex-wrap: wrap;
-      opacity: 0; animation: fadeUp 0.5s 0.25s ease forwards;
-    }
+  /* ── SKILLS ──────────────────────────────── */
+  .skills-grid { display: flex; flex-direction: column; gap: 2rem; }
+  .skills-cat-label {
+    font-size: 0.67rem; font-weight: 500; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--text-3); margin-bottom: 0.7rem;
+  }
+  .skills-chips { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+  .skills-chips .chip {
+    color: var(--text-2); border-color: var(--border-2); cursor: default;
+    transition: color 0.18s ease, border-color 0.18s ease, background 0.18s ease, transform 0.18s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  .skills-chips .chip:hover { color: var(--accent-b); border-color: rgba(58,104,208,0.4); background: var(--accent-dim); transform: translateY(-1px); }
 
-    /* Photo frame */
-    .photo-frame {
-      max-width: 300px; margin: 0 auto;
-      border-radius: 4px; overflow: hidden;
-      border: 1px solid var(--border);
-      opacity: 0; animation: fadeIn 0.6s 0.2s ease forwards;
-    }
-    .photo-inner {
-      width: 100%; aspect-ratio: 3/4;
-      background: var(--surface-2);
-      overflow: hidden;
-    }
+  /* ── CONTACT ─────────────────────────────── */
+  .contact-links { display: flex; flex-direction: column; gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: 5px; overflow: hidden; }
+  .contact-card {
+    display: flex; align-items: center; gap: 1.25rem;
+    background: var(--surface); padding: 1.1rem 1.25rem;
+    text-decoration: none; color: var(--text); transition: background 0.15s ease;
+  }
+  .contact-card:hover { background: var(--surface-2); }
+  .contact-icon {
+    width: 36px; height: 36px; flex-shrink: 0; border-radius: 4px;
+    background: var(--accent-dim); border: 1px solid rgba(58,104,208,0.15);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .contact-platform { font-size: 0.64rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-3); margin-bottom: 0.1rem; }
+  .contact-value { font-size: 0.88rem; font-weight: 500; color: var(--text); }
+  .contact-arrow { margin-left: auto; color: var(--text-3); transition: transform 0.15s ease, color 0.15s ease; }
+  .contact-card:hover .contact-arrow { transform: translateX(3px); color: var(--accent); }
 
-    /* Highlights strip */
-    .highlight-strip {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 1px;
-      border: 1px solid var(--border);
-      background: var(--border);
-      border-radius: 2px;
-      overflow: hidden;
-      margin-bottom: 3.5rem;
-    }
-    .highlight-item {
-      display: flex; align-items: center; gap: 0.85rem;
-      padding: 1.1rem 1.25rem;
-      background: var(--surface);
-      transition: background 0.2s ease;
-    }
-    .highlight-item:hover { background: var(--surface-2); }
-    .highlight-icon { font-size: 1.2rem; flex-shrink: 0; }
-    .highlight-name { font-size: 0.88rem; font-weight: 500; color: var(--text); margin-bottom: 0.1rem; }
-    .highlight-sub { font-size: 0.73rem; color: var(--text-3); }
+  /* ── RESUME ──────────────────────────────── */
+  .resume-actions { display: flex; gap: 0.7rem; flex-wrap: wrap; margin-bottom: 2rem; }
+  .resume-frame-wrap {
+    border: 1px solid var(--border); border-radius: 5px; overflow: hidden;
+    background: var(--surface);
+  }
+  .resume-frame-wrap iframe {
+    width: 100%; height: 82vh; display: block; border: none;
+  }
+  .resume-fallback {
+    display: none; padding: 3rem; text-align: center;
+    font-size: 0.84rem; color: var(--text-2);
+  }
 
-    /* ═══════════════════════════════
-       EXPERIENCE
-    ═══════════════════════════════ */
-    .exp-section { padding: 3.5rem 0 4rem; }
+  /* ── FOOTER ──────────────────────────────── */
+  .site-footer { padding: 1.5rem 3rem; text-align: center; font-size: 0.7rem; color: var(--text-3); border-top: 1px solid var(--border); }
 
-    .timeline { display: flex; flex-direction: column; gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: 3px; overflow: hidden; }
-    .tl-item { display: flex; }
-    .tl-dot-col { display: none; }
-    .tl-card { flex: 1; padding: 1.4rem; background: var(--surface); transition: background 0.15s ease; }
-    .tl-card:hover { background: var(--surface-2); }
-    .tl-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; flex-wrap: wrap; margin-bottom: 0.2rem; }
-    .tl-org { font-size: 0.72rem; font-weight: 500; color: var(--red); margin-bottom: 0.25rem; letter-spacing: 0.02em; }
-    .tl-role { font-size: 0.95rem; font-weight: 600; color: var(--text); margin-bottom: 0.5rem; }
-    .tl-date { font-size: 0.72rem; font-weight: 400; color: var(--text-3); white-space: nowrap; flex-shrink: 0; }
-    .tl-tags { display: flex; flex-wrap: wrap; gap: 0.3rem; }
+  /* ── VERILOG MODAL ───────────────────────── */
+  #verilog-modal {
+    position: fixed; inset: 0; z-index: 500;
+    background: rgba(4,6,10,0.92);
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.2s ease; backdrop-filter: blur(6px);
+  }
+  #verilog-modal.open { opacity: 1; pointer-events: all; }
+  .verilog-modal-box {
+    background: var(--surface); border: 1px solid var(--border-2);
+    border-top: 2px solid var(--accent-b);
+    border-radius: 6px; width: 90%; max-width: 560px;
+    max-height: 80vh; overflow-y: auto; padding: 2rem; position: relative;
+    transform: translateY(18px) scale(0.98);
+    transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  #verilog-modal.open .verilog-modal-box { transform: translateY(0) scale(1); }
+  .verilog-modal-close {
+    position: absolute; top: 1rem; right: 1rem;
+    background: none; border: 1px solid var(--border-2); color: var(--text-2); cursor: pointer;
+    width: 28px; height: 28px; border-radius: 3px;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+  .verilog-modal-close:hover { background: var(--accent-dim); color: var(--accent); border-color: rgba(58,104,208,0.3); }
+  .verilog-modal-title { font-size: 0.64rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--accent-b); margin-bottom: 1.5rem; }
+  .verilog-proj-list { display: flex; flex-direction: column; gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: 3px; overflow: hidden; }
+  .verilog-proj-item { background: var(--surface); padding: 1rem 1.25rem; display: flex; flex-direction: column; gap: 0.25rem; transition: background 0.15s ease; }
+  .verilog-proj-item:hover { background: var(--surface-2); }
+  .verilog-proj-name { font-size: 0.88rem; font-weight: 600; color: var(--text); }
+  .verilog-proj-desc { font-size: 0.79rem; color: var(--text-2); line-height: 1.55; }
 
-    /* ═══════════════════════════════
-       PROJECTS
-    ═══════════════════════════════ */
-    .proj-section { padding: 3.5rem 0 4rem; }
+  /* ── LIGHTBOX ────────────────────────────── */
+  #lightbox {
+    position: fixed; inset: 0; z-index: 500;
+    background: rgba(0,0,0,0.95);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    opacity: 0; pointer-events: none; transition: opacity 0.2s ease;
+  }
+  #lightbox.open { opacity: 1; pointer-events: all; }
+  .lb-header {
+    position: absolute; top: 0; left: 0; right: 0;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1rem 1.5rem; border-bottom: 1px solid var(--border); background: var(--bg);
+  }
+  .lb-title { font-size: 0.88rem; font-weight: 500; }
+  .lb-meta  { font-size: 0.71rem; color: var(--text-3); }
+  .lb-close { width: 32px; height: 32px; border-radius: 4px; background: none; border: 1px solid var(--border); color: var(--text-2); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.15s ease; }
+  .lb-close:hover { background: var(--surface-2); }
+  .lb-img-wrap { max-width: min(90vw,960px); width: 100%; }
+  .lb-img-wrap img { width: 100%; max-height: 70vh; object-fit: contain; border: 1px solid var(--border); transition: opacity 0.18s ease; }
+  .lb-nav { position: absolute; top: 50%; transform: translateY(-50%); width: 100%; padding: 0 0.75rem; display: flex; align-items: center; justify-content: space-between; pointer-events: none; }
+  .lb-nav-btn { width: 38px; height: 38px; border-radius: 4px; background: var(--surface); border: 1px solid var(--border); color: var(--text-2); cursor: pointer; pointer-events: all; display: flex; align-items: center; justify-content: center; transition: background 0.15s ease; }
+  .lb-nav-btn:hover { background: var(--surface-2); color: var(--text); }
+  .lb-dots { display: flex; gap: 0.4rem; margin-top: 1rem; }
+  .lb-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--border-2); border: none; cursor: pointer; padding: 0; transition: background 0.15s ease; }
+  .lb-dot.active { background: var(--text-2); }
 
-    .proj-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 1px; background: var(--border);
-      border: 1px solid var(--border); border-radius: 3px; overflow: hidden;
-    }
-    @media (max-width: 640px) { .proj-grid { grid-template-columns: 1fr; } }
+  /* ── Keyframes ───────────────────────────── */
+  @keyframes slideInLeft { from { transform: translateX(-100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+  @keyframes fadeIn  { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes pulseDot {
+    0%   { box-shadow: 0 0 0 0 rgba(78,201,148,0.5); }
+    70%  { box-shadow: 0 0 0 5px rgba(78,201,148,0); }
+    100% { box-shadow: 0 0 0 0 rgba(78,201,148,0); }
+  }
 
-    .proj-card { overflow: hidden; background: var(--surface); transition: background 0.15s ease; }
-    .proj-card:hover { background: var(--surface-2); }
-
-    .proj-gallery {
-      position: relative; overflow: hidden;
-      aspect-ratio: 16/9; background: var(--surface-2); cursor: pointer;
-    }
-    .proj-gallery img {
-      width: 100%; height: 100%; object-fit: cover; display: block;
-      transition: transform 0.35s ease;
-    }
-    .proj-gallery:hover img { transform: scale(1.03); }
-
-    .proj-gallery-overlay {
-      position: absolute; inset: 0;
-      display: flex; align-items: flex-end; justify-content: space-between;
-      padding: 0.75rem; opacity: 0; transition: opacity 0.2s ease;
-    }
-    .proj-gallery:hover .proj-gallery-overlay { opacity: 1; background: rgba(0,0,0,0.4); }
-
-    .gallery-btn {
-      display: inline-flex; align-items: center; gap: 0.4rem;
-      font-size: 0.7rem; font-weight: 500;
-      color: #fff; background: rgba(0,0,0,0.65);
-      padding: 0.3rem 0.65rem; border-radius: 3px; border: 1px solid rgba(255,255,255,0.12); cursor: pointer;
-      transition: background 0.15s ease;
-    }
-    .gallery-btn:hover { background: rgba(0,0,0,0.85); }
-
-    .gallery-count { font-size: 0.68rem; color: rgba(255,255,255,0.55); }
-
-    .proj-body { padding: 1.2rem; }
-    .proj-num { font-size: 0.65rem; font-weight: 400; color: var(--text-3); margin-bottom: 0.3rem; }
-    .proj-name { font-size: 0.92rem; font-weight: 600; color: var(--text); margin-bottom: 0.45rem; line-height: 1.3; }
-    .proj-desc { font-size: 0.8rem; color: var(--text-2); line-height: 1.65; margin-bottom: 1rem; }
-    .proj-footer { }
-    .proj-tools { display: flex; flex-wrap: wrap; gap: 0.3rem; }
-
-    /* ═══════════════════════════════
-       COURSEWORK
-    ═══════════════════════════════ */
-    .cw-section { padding: 3.5rem 0 4rem; }
-
-    .cw-row {
-      display: flex; align-items: center; gap: 1.5rem;
-      padding: 0.75rem 1.25rem;
-      border-bottom: 1px solid var(--border);
-      background: var(--surface);
-      transition: background 0.15s ease;
-    }
-    .cw-row:hover { background: var(--surface-2); }
-    .cw-row .cw-code {
-      font-size: 0.72rem; font-weight: 500;
-      color: var(--red); flex-shrink: 0; width: 90px;
-    }
-    .cw-row .cw-name { font-size: 0.88rem; font-weight: 400; color: var(--text); }
-
-    /* Skills */
-    .skills-section { padding: 2.5rem 0 3.5rem; }
-    .skills-body { display: flex; flex-direction: column; align-items: center; gap: 2rem; }
-    .skills-cat { text-align: center; }
-    .skills-cat-label {
-      font-size: 0.68rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase;
-      color: var(--text-3); margin-bottom: 0.75rem;
-    }
-    .skills-cat-chips { display: flex; flex-wrap: wrap; gap: 0.4rem; justify-content: center; }
-
-    /* ═══════════════════════════════
-       CONTACT
-    ═══════════════════════════════ */
-    .contact-section { padding: 4rem 0 5rem; }
-    .contact-links { display: flex; flex-direction: column; gap: 1px; margin-top: 2.5rem; background: var(--border); border: 1px solid var(--border); border-radius: 3px; overflow: hidden; }
-
-    .contact-card {
-      display: flex; align-items: center; gap: 1.25rem;
-      background: var(--surface); padding: 1rem 1.25rem;
-      text-decoration: none; color: var(--text);
-      transition: background 0.15s ease;
-    }
-    .contact-card:hover { background: var(--surface-2); }
-    .contact-card:focus-visible { outline: 1px solid var(--red); outline-offset: -1px; }
-
-    .contact-icon {
-      width: 36px; height: 36px; flex-shrink: 0; border-radius: 3px;
-      background: var(--red-dim); border: 1px solid rgba(200,48,42,0.15);
-      display: flex; align-items: center; justify-content: center;
-    }
-    .contact-platform {
-      font-size: 0.65rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase;
-      color: var(--text-3); margin-bottom: 0.1rem;
-    }
-    .contact-value { font-size: 0.9rem; font-weight: 500; color: var(--text); }
-    .contact-arrow { margin-left: auto; color: var(--text-3); transition: transform 0.15s ease, color 0.15s ease; }
-    .contact-card:hover .contact-arrow { transform: translateX(3px); color: var(--red); }
-
-    /* ═══════════════════════════════
-       VERILOG MODAL
-    ═══════════════════════════════ */
-    #verilog-modal {
-      position: fixed; inset: 0; z-index: 500;
-      background: rgba(4,6,10,0.92);
-      display: flex; align-items: center; justify-content: center;
-      opacity: 0; pointer-events: none;
-      transition: opacity 0.2s ease;
-      backdrop-filter: blur(6px);
-    }
-    #verilog-modal.open { opacity: 1; pointer-events: all; }
-    .verilog-modal-box {
-      background: var(--surface);
-      border: 1px solid var(--border-2);
-      border-top: 2px solid var(--blue-b);
-      border-radius: 4px;
-      width: 90%; max-width: 560px;
-      max-height: 80vh; overflow-y: auto;
-      padding: 2rem;
-      position: relative;
-      transform: translateY(16px);
-      transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1);
-    }
-    #verilog-modal.open .verilog-modal-box { transform: translateY(0); }
-    .verilog-modal-close {
-      position: absolute; top: 1rem; right: 1rem;
-      background: none; border: 1px solid var(--border-2);
-      color: var(--text-2); cursor: pointer;
-      width: 28px; height: 28px; border-radius: 2px;
-      display: flex; align-items: center; justify-content: center;
-      transition: background 0.15s ease, color 0.15s ease;
-    }
-    .verilog-modal-close:hover { background: var(--red-dim); color: var(--red); border-color: rgba(201,26,26,0.3); }
-    .verilog-modal-title {
-      font-family: 'Exo 2', sans-serif; font-size: 0.65rem; font-weight: 700;
-      letter-spacing: 0.18em; text-transform: uppercase;
-      color: var(--blue-b); margin-bottom: 1.5rem;
-    }
-    .verilog-proj-list { display: flex; flex-direction: column; gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: 2px; overflow: hidden; }
-    .verilog-proj-item {
-      background: var(--surface); padding: 1rem 1.25rem;
-      display: flex; flex-direction: column; gap: 0.25rem;
-      transition: background 0.15s ease;
-    }
-    .verilog-proj-item:hover { background: var(--surface-2); }
-    .verilog-proj-name {
-      font-family: 'Exo 2', sans-serif; font-size: 0.88rem; font-weight: 600;
-      color: var(--text); letter-spacing: 0.02em;
-    }
-    .verilog-proj-desc {
-      font-family: 'Inter', sans-serif; font-size: 0.8rem;
-      color: var(--text-2); line-height: 1.55;
-    }
-
-    /* COMING SOON card */
-    .proj-card.coming-soon { opacity: 0.45; pointer-events: none; }
-    .coming-badge {
-      display: inline-flex; align-items: center; gap: 0.4rem;
-      font-family: 'Exo 2', sans-serif; font-size: 0.65rem; font-weight: 700;
-      letter-spacing: 0.15em; text-transform: uppercase;
-      color: var(--text-3); background: var(--surface-2);
-      border: 1px solid var(--border-2); border-radius: 2px;
-      padding: 0.2rem 0.6rem; margin-bottom: 0.5rem;
-    }
-
-    /* ═══════════════════════════════
-       LIGHTBOX
-    ═══════════════════════════════ */
-    #lightbox {
-      position: fixed; inset: 0; z-index: 500;
-      background: rgba(0,0,0,0.95);
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      opacity: 0; pointer-events: none;
-      transition: opacity 0.2s ease;
-    }
-    #lightbox.open { opacity: 1; pointer-events: all; }
-
-    .lb-header {
-      position: absolute; top: 0; left: 0; right: 0;
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 1rem 1.5rem;
-      border-bottom: 1px solid var(--border);
-      background: var(--bg);
-    }
-    .lb-title { font-size: 0.88rem; font-weight: 500; color: var(--text); }
-    .lb-meta { font-size: 0.72rem; color: var(--text-3); }
-    .lb-close {
-      width: 32px; height: 32px; border-radius: 3px;
-      background: none; border: 1px solid var(--border);
-      color: var(--text-2); cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
-      transition: background 0.15s ease;
-    }
-    .lb-close:hover { background: var(--surface-2); }
-
-    .lb-img-wrap { max-width: min(90vw, 960px); width: 100%; }
-    .lb-img-wrap img {
-      width: 100%; max-height: 70vh; object-fit: contain;
-      border: 1px solid var(--border);
-      transition: opacity 0.18s ease;
-    }
-
-    .lb-nav {
-      position: absolute; top: 50%; transform: translateY(-50%);
-      width: 100%; padding: 0 0.75rem;
-      display: flex; align-items: center; justify-content: space-between;
-      pointer-events: none;
-    }
-    .lb-nav-btn {
-      width: 38px; height: 38px; border-radius: 3px;
-      background: var(--surface); border: 1px solid var(--border);
-      color: var(--text-2); cursor: pointer; pointer-events: all;
-      display: flex; align-items: center; justify-content: center;
-      transition: background 0.15s ease, color 0.15s ease;
-    }
-    .lb-nav-btn:hover { background: var(--surface-2); color: var(--text); }
-
-    .lb-dots { display: flex; gap: 0.4rem; margin-top: 1rem; }
-    .lb-dot {
-      width: 6px; height: 6px; border-radius: 50%;
-      background: var(--border-2); border: none; cursor: pointer; padding: 0;
-      transition: background 0.15s ease;
-    }
-    .lb-dot.active { background: var(--text-2); }
-
-    /* ─ Footer ─ */
-    .site-footer {
-      text-align: center; padding: 1.25rem 2rem;
-      border-top: 1px solid var(--border);
-      font-size: 0.72rem; font-weight: 400;
-      color: var(--text-3);
-    }
-
-    @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
-    @keyframes fadeIn  { from { opacity: 0; } to { opacity: 1; } }
-
-    @media (max-width: 640px) {
-      nav { padding: 0 1.25rem; }
-      .nav-link { padding: 0.3rem 0.45rem; font-size: 0.72rem; }
-      .container { padding: 0 1.25rem; }
-    }
+  @media (max-width: 800px) {
+    :root { --sb-w: 0px; }
+    .sidebar { display: none; }
+  }
   </style>
 </head>
 <body>
 
-  <!-- ═══════════════════ NAV ═══════════════════ -->
-  <nav>
-    <div class="nav-links">
-      <button class="nav-link active" data-page="home"       onclick="showPage('home')">About</button>
-      <button class="nav-link"        data-page="skills"     onclick="showPage('skills')">Skills</button>
-      <button class="nav-link"        data-page="experience" onclick="showPage('experience')">Experience</button>
-      <button class="nav-link"        data-page="projects"   onclick="showPage('projects')">Projects</button>
-      <button class="nav-link"        data-page="coursework" onclick="showPage('coursework')">Coursework</button>
-      <button class="nav-link"        data-page="contact"    onclick="showPage('contact')">Contact</button>
-    </div>
-  </nav>
-
-  <!-- ═══════════════════ HOME ═══════════════════ -->
-  <div id="page-home" class="page active">
-
-    <div class="container">
-        <div class="home-hero">
-          <div>
-            <div class="hero-eyebrow">EE &amp; CS · UW–Madison · Class of 2028</div>
-            <h1 class="hero-name" id="hero-name-el">Rohtak<br>Patwardhan</h1>
-            <p class="hero-bio">Freshman in Electrical Engineering and Computer Science interested in computer architecture and chip design.<br><br>I like learning and discussing heterogeneous computing, non-volatile memory, and energy-efficient systems.</p>
-            <div class="hero-actions">
-              <button class="btn-primary" onclick="showPage('contact')">
-                Get in touch
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-              </button>
-              <button class="btn-ghost" onclick="showPage('projects')">View projects</button>
-            </div>
-          </div>
-
-          <div class="home-photo-col">
-            <div class="photo-frame">
-              <div class="photo-inner">
-                <img src="brand_assets/219572347.jpg" alt="Rohtak Patwardhan" style="width:100%;height:100%;object-fit:cover;object-position:center top;display:block;" />
-              </div>
-            </div>
-            <div style="display:flex;justify-content:center;margin-top:1rem;">
-              <div class="status-pill" style="margin-bottom:0;"><span class="status-dot"></span>Open to opportunities</div>
-            </div>
-          </div>
-        </div>
-    </div>
-
+<!-- ═══ SIDEBAR ═══ -->
+<aside class="sidebar">
+  <div class="sb-logo">
+    <div class="sb-name">Rohtak Patwardhan</div>
+    <div class="sb-sub">EE &amp; CS · UW–Madison</div>
   </div>
 
-  <!-- ═══════════════════ SKILLS ═══════════════════ -->
-  <div id="page-skills" class="page">
+  <div class="nav-track" id="nav-track">
+    <div class="nav-indicator" id="nav-indicator"></div>
+
+    <button class="s-link active" data-section="about" onclick="scrollToSection('about')">
+      <svg class="s-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M5.2 20a7 7 0 0 1 13.6 0"/></svg>
+      About
+    </button>
+    <button class="s-link" data-section="resume" onclick="scrollToSection('resume')">
+      <svg class="s-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+      Resume
+    </button>
+    <button class="s-link" data-section="projects" onclick="scrollToSection('projects')">
+      <svg class="s-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      Projects
+    </button>
+    <button class="s-link" data-section="experience" onclick="scrollToSection('experience')">
+      <svg class="s-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+      Experience
+    </button>
+    <button class="s-link" data-section="coursework" onclick="scrollToSection('coursework')">
+      <svg class="s-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+      Coursework
+    </button>
+    <button class="s-link" data-section="skills" onclick="scrollToSection('skills')">
+      <svg class="s-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+      Skills
+    </button>
+    <button class="s-link" data-section="contact" onclick="scrollToSection('contact')">
+      <svg class="s-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+      Contact
+    </button>
+  </div>
+
+  <div class="sb-bottom">
+    <div class="sb-status"><div class="sb-dot"></div>Open to opportunities</div>
+    <div class="sb-socials">
+      <a href="https://github.com/rohtakpat314" target="_blank" rel="noopener" class="sb-social" title="GitHub">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.5-1.4-1.3-1.8-1.3-1.8-1-.7.1-.7.1-.7 1.1.1 1.7 1.1 1.7 1.1 1 1.7 2.6 1.2 3.2.9.1-.7.4-1.2.7-1.5-2.6-.3-5.4-1.3-5.4-5.8 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17.3 4.7 18.3 5 18.3 5c.7 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.5-2.8 5.5-5.4 5.8.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3"/></svg>
+      </a>
+      <a href="https://www.linkedin.com/in/rohtak-patwardhan" target="_blank" rel="noopener" class="sb-social" title="LinkedIn">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M20.5 2h-17A1.5 1.5 0 0 0 2 3.5v17A1.5 1.5 0 0 0 3.5 22h17a1.5 1.5 0 0 0 1.5-1.5v-17A1.5 1.5 0 0 0 20.5 2zM8 19H5v-9h3zM6.5 8.25A1.75 1.75 0 1 1 8.3 6.5a1.78 1.78 0 0 1-1.8 1.75zM19 19h-3v-4.74c0-1.42-.6-1.93-1.38-1.93A1.74 1.74 0 0 0 13 14.19a.66.66 0 0 0 0 .14V19h-3v-9h2.9v1.3a3.11 3.11 0 0 1 2.7-1.4c1.55 0 3.36.86 3.36 3.66z"/></svg>
+      </a>
+      <a href="mailto:rspatwardha2@wisc.edu" class="sb-social" title="Email">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+      </a>
+    </div>
+  </div>
+</aside>
+
+<!-- ═══ MAIN ═══ -->
+<main class="main" id="main">
+
+  <!-- ABOUT -->
+  <section id="about" data-section="about">
     <div class="container">
-      <div class="skills-section" style="position:relative;z-index:1;padding:3.5rem 0;">
-        <p class="sec-label reveal" style="text-align:center;">Skills</p>
-        <h2 class="sec-heading reveal" style="text-align:center;margin-bottom:2.5rem;">What I work with</h2>
-        <div class="skills-body reveal">
-
-          <div class="skills-cat">
-            <div class="skills-cat-label">Languages</div>
-            <div class="skills-cat-chips">
-              <span class="chip">C</span><span class="chip">C++</span><span class="chip">Python</span>
-              <span class="chip">Verilog</span><span class="chip">SystemVerilog</span>
-              <span class="chip">MATLAB</span><span class="chip">Java</span>
-              <span class="chip">MIPS / ARM / x86 Assembly</span><span class="chip">CUDA</span>
-            </div>
-          </div>
-
-          <div class="skills-cat">
-            <div class="skills-cat-label">Tools &amp; Software</div>
-            <div class="skills-cat-chips">
-              <span class="chip">Altium</span><span class="chip">KiCad</span>
-              <span class="chip">LTspice</span><span class="chip">ModelSim</span>
-              <span class="chip">Quartus Prime</span><span class="chip">VSCode</span>
-              <span class="chip">Git</span><span class="chip">Vim</span>
-            </div>
-          </div>
-
-          <div class="skills-cat">
-            <div class="skills-cat-label">Hardware</div>
-            <div class="skills-cat-chips">
-              <span class="chip">Oscilloscope</span><span class="chip">DMM</span>
-              <span class="chip">Soldering</span><span class="chip">Breadboarding</span>
-            </div>
-          </div>
-
-          <div class="skills-cat">
-            <div class="skills-cat-label">Protocols</div>
-            <div class="skills-cat-chips">
-              <span class="chip">CAN</span><span class="chip">I²C</span>
-              <span class="chip">SPI</span><span class="chip">Ethernet</span><span class="chip">Serial</span>
-            </div>
-          </div>
-
-        </div>
+      <p class="hero-kicker">EE &amp; CS · UW–Madison · Class of 2028</p>
+      <h1 class="hero-name">Rohtak<br>Patwardhan</h1>
+      <p class="hero-bio">Freshman in Electrical Engineering &amp; Computer Science interested in computer architecture, low-level programming, and chip design.<br><br>Currently working on a multi-stage pipeline for a RISC-V CPU design. Learning about Zephyr, FreeRTOS, and embedded Linux.</p>
+      <div class="hero-actions">
+        <button class="btn-primary" onclick="scrollToSection('contact')">
+          Get in touch
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+        <button class="btn-ghost" onclick="scrollToSection('projects')">View projects</button>
       </div>
     </div>
-  </div>
+  </section>
 
-  <!-- ═══════════════════ EXPERIENCE ═══════════════════ -->
-  <div id="page-experience" class="page">
+  <!-- RESUME -->
+  <section id="resume" data-section="resume">
     <div class="container">
-      <div class="exp-section">
+      <div class="resume-actions reveal">
+        <a href="brand_assets/Rohtak-Patwardhan-Resume.pdf" download="Rohtak-Patwardhan-Resume.pdf" class="btn-primary">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download PDF
+        </a>
+        <a href="brand_assets/Rohtak-Patwardhan-Resume.pdf" target="_blank" rel="noopener" class="btn-ghost">
+          Open in new tab
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        </a>
+      </div>
+      <div class="resume-frame-wrap reveal">
+        <iframe src="brand_assets/Rohtak-Patwardhan-Resume.pdf#toolbar=0&navpanes=0&scrollbar=0" title="Rohtak Patwardhan Resume" loading="lazy"></iframe>
+      </div>
+    </div>
+  </section>
 
-        <p class="sec-label">Experience</p>
-        <h2 class="sec-heading">Technical Experience</h2>
+  <!-- PROJECTS -->
+  <section id="projects" data-section="projects">
+    <div class="container">
+      <p class="sec-label reveal">Projects</p>
+      <h2 class="sec-heading reveal">Things I've built</h2>
+      <p class="sec-sub reveal">Click any image to open the gallery.</p>
 
-        <div class="timeline">
-          <div class="tl-item">
-            <div class="tl-dot-col"><div class="tl-dot"></div></div>
-            <div class="tl-card card">
-              <div class="tl-header">
-                <div><div class="tl-org">Badger Solar Racing</div><div class="tl-role">Low Voltage Team</div></div>
-                <span class="tl-date">Sep 2025 – Present</span>
-              </div>
-              <div class="tl-tags"><span class="chip">Altium</span><span class="chip">CAN</span><span class="chip">Analog MUX</span><span class="chip">SolidWorks</span><span class="chip">PCB</span></div>
+      <div class="proj-grid">
+
+        <!-- 01 N-Body -->
+        <div class="proj-card reveal">
+          <div class="proj-gallery" onclick="openLightbox(0,0)" role="button" tabindex="0" aria-label="Open N-Body gallery" onkeydown="if(event.key==='Enter')openLightbox(0,0)">
+            <img src="brand_assets/Nbodygravitysim.jpg" alt="N-Body Gravity Simulator" loading="lazy"/>
+            <div class="proj-gallery-overlay">
+              <button class="gallery-btn" onclick="event.stopPropagation();openLightbox(0,0)">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+                View Gallery
+              </button>
+              <span class="gallery-count">1 image</span>
             </div>
           </div>
+          <div class="proj-body">
+            <p class="proj-num">01</p>
+            <p class="proj-name">N-Body Gravity Simulator</p>
+            <p class="proj-desc">Simulates gravitational interactions between N particles using numerical integration. Visualizes orbital trajectories and gravitational clustering in real time.</p>
+            <div class="proj-footer"><div class="proj-tools"><span class="chip">Python</span><span class="chip">NumPy</span><span class="chip">Matplotlib</span><span class="chip">ODE Integration</span></div></div>
+          </div>
+        </div>
 
-          <div class="tl-item">
-            <div class="tl-dot-col"><div class="tl-dot"></div></div>
-            <div class="tl-card card">
-              <div class="tl-header">
-                <div><div class="tl-org">Insight Wisconsin</div><div class="tl-role">FES Hardware Co-Lead</div></div>
+        <!-- 02 Audio Spectrum -->
+        <div class="proj-card reveal">
+          <div class="proj-gallery" onclick="openLightbox(1,0)" role="button" tabindex="0" aria-label="Open audio spectrum gallery" onkeydown="if(event.key==='Enter')openLightbox(1,0)">
+            <img src="brand_assets/8x8ledmatrix.jpg" alt="Audio Spectrum Analyzer" loading="lazy"/>
+            <div class="proj-gallery-overlay">
+              <button class="gallery-btn" onclick="event.stopPropagation();openLightbox(1,0)">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+                View Gallery
+              </button>
+              <span class="gallery-count">2 images</span>
+            </div>
+          </div>
+          <div class="proj-body">
+            <p class="proj-num">02</p>
+            <p class="proj-name">Audio Spectrum Analyzer</p>
+            <p class="proj-desc">Custom PCB with ATmega MCU and 8×8 NeoPixel LED matrix. Converts live audio to frequency-domain components in real time using the arduinoFFT library.</p>
+            <div class="proj-footer"><div class="proj-tools"><span class="chip">Embedded C++</span><span class="chip">ATmega (AVR)</span><span class="chip">arduinoFFT</span><span class="chip">NeoPixel</span><span class="chip">KiCad</span><span class="chip">PCB Design</span></div></div>
+          </div>
+        </div>
+
+        <!-- 04 Verilog -->
+        <div class="proj-card reveal" style="cursor:pointer;" onclick="openVerilogModal()" role="button" tabindex="0" aria-label="Browse Verilog projects" onkeydown="if(event.key==='Enter')openVerilogModal()">
+          <div class="proj-gallery" style="pointer-events:none;">
+            <img src="https://placehold.co/900x506/080b14/3a68d0?text=Verilog+Projects" alt="Verilog Projects" loading="lazy"/>
+            <div class="proj-gallery-overlay" style="opacity:1;">
+              <button class="gallery-btn" style="pointer-events:none;">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                Browse Projects
+              </button>
+              <span class="gallery-count">Click to explore</span>
+            </div>
+          </div>
+          <div class="proj-body">
+            <p class="proj-num">04</p>
+            <p class="proj-name">Verilog Projects</p>
+            <p class="proj-desc">A collection of digital logic designs implemented in Verilog: adders, ALUs, state machines, and pipelined modules.</p>
+            <div class="proj-footer"><div class="proj-tools"><span class="chip">Verilog / SystemVerilog</span><span class="chip">ModelSim</span><span class="chip">Quartus</span><span class="chip">FPGA Design</span><span class="chip">Digital Logic</span></div></div>
+          </div>
+        </div>
+
+        <!-- 05 AI Agent -->
+        <div class="proj-card reveal">
+          <div class="proj-gallery" style="cursor:pointer;" onclick="window.open('https://github.com/rohtakpat314/autonomous-agent-kernel','_blank')" role="button" tabindex="0" onkeydown="if(event.key==='Enter')window.open('https://github.com/rohtakpat314/autonomous-agent-kernel','_blank')">
+            <svg viewBox="0 0 800 450" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;display:block;background:#111318;">
+              <defs>
+                <marker id="arr" markerWidth="7" markerHeight="5" refX="6" refY="2.5" orient="auto"><polygon points="0 0,7 2.5,0 5" fill="#3a68d0"/></marker>
+                <marker id="arr-dim" markerWidth="7" markerHeight="5" refX="6" refY="2.5" orient="auto"><polygon points="0 0,7 2.5,0 5" fill="#3a68d0" opacity="0.5"/></marker>
+              </defs>
+              <line x1="178" y1="280" x2="350" y2="280" stroke="#3a68d0" stroke-width="1.5" marker-end="url(#arr)"/>
+              <text x="264" y="268" text-anchor="middle" fill="#4a4a4a" font-family="Inter,sans-serif" font-size="11">1.0</text>
+              <line x1="448" y1="272" x2="622" y2="272" stroke="#3a68d0" stroke-width="1.5" marker-end="url(#arr)"/>
+              <text x="535" y="260" text-anchor="middle" fill="#4a4a4a" font-family="Inter,sans-serif" font-size="11">0.7</text>
+              <line x1="414" y1="234" x2="414" y2="168" stroke="#3a68d0" stroke-width="1.3" marker-end="url(#arr)"/>
+              <text x="435" y="206" text-anchor="start" fill="#4a4a4a" font-family="Inter,sans-serif" font-size="11">0.3</text>
+              <line x1="386" y1="168" x2="386" y2="234" stroke="#3a68d0" stroke-width="1.3" stroke-opacity="0.7" marker-end="url(#arr-dim)"/>
+              <text x="365" y="206" text-anchor="end" fill="#4a4a4a" font-family="Inter,sans-serif" font-size="11">0.9</text>
+              <path d="M 444 106 Q 630 60 626 236" fill="none" stroke="#3a68d0" stroke-width="1" stroke-opacity="0.45" stroke-dasharray="5 4" marker-end="url(#arr-dim)"/>
+              <path d="M 668 326 Q 400 418 132 326" fill="none" stroke="#3a68d0" stroke-width="1" stroke-opacity="0.3" stroke-dasharray="5 4" marker-end="url(#arr-dim)"/>
+              <circle cx="130" cy="280" r="47" fill="#161620" stroke="#3a68d0" stroke-width="1.5"/>
+              <text x="130" y="284" text-anchor="middle" fill="#d0d0d0" font-family="Inter,sans-serif" font-size="12" font-weight="600">IDLE</text>
+              <circle cx="400" cy="280" r="47" fill="#14182a" stroke="#3a68d0" stroke-width="2"/>
+              <text x="400" y="284" text-anchor="middle" fill="#d0d0d0" font-family="Inter,sans-serif" font-size="11" font-weight="600">RUNNING</text>
+              <circle cx="400" cy="120" r="47" fill="#161620" stroke="#3a68d0" stroke-width="1.5" stroke-dasharray="5 3" opacity="0.75"/>
+              <text x="400" y="124" text-anchor="middle" fill="#888" font-family="Inter,sans-serif" font-size="11" font-weight="500">BLOCKED</text>
+              <circle cx="670" cy="280" r="47" fill="#161620" stroke="#3a68d0" stroke-width="1.5"/>
+              <text x="670" y="284" text-anchor="middle" fill="#d0d0d0" font-family="Inter,sans-serif" font-size="12" font-weight="600">DONE</text>
+            </svg>
+            <div class="proj-gallery-overlay">
+              <button class="gallery-btn" onclick="event.stopPropagation();window.open('https://github.com/rohtakpat314/autonomous-agent-kernel','_blank')">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.5-1.4-1.3-1.8-1.3-1.8-1-.7.1-.7.1-.7 1.1.1 1.7 1.1 1.7 1.1 1 1.7 2.6 1.2 3.2.9.1-.7.4-1.2.7-1.5-2.6-.3-5.4-1.3-5.4-5.8 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17.3 4.7 18.3 5 18.3 5c.7 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.5-2.8 5.5-5.4 5.8.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3"/></svg>
+                View on GitHub
+              </button>
+              <span class="gallery-count">github.com</span>
+            </div>
+          </div>
+          <div class="proj-body">
+            <p class="proj-num">05</p>
+            <p class="proj-name">AI Agent Scheduler &amp; Parallel Runtime</p>
+            <p class="proj-desc">Schedules and dispatches AI agents across parallel execution contexts, managing task dependencies, resource contention, and runtime orchestration.</p>
+            <div class="proj-footer"><div class="proj-tools"><span class="chip">Python</span><span class="chip">Concurrent Systems</span><span class="chip">LLM APIs</span><span class="chip">Task Scheduling</span></div></div>
+          </div>
+        </div>
+
+        <!-- 06 FES/OCPD -->
+        <div class="proj-card reveal">
+          <div class="proj-gallery" style="pointer-events:none;cursor:default;">
+            <svg viewBox="0 0 800 450" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;display:block;background:#111318;">
+              <defs>
+                <marker id="fes-arr" markerWidth="7" markerHeight="5" refX="6" refY="2.5" orient="auto"><polygon points="0 0,7 2.5,0 5" fill="#3a68d0"/></marker>
+                <marker id="fes-arr-dim" markerWidth="7" markerHeight="5" refX="6" refY="2.5" orient="auto"><polygon points="0 0,7 2.5,0 5" fill="#3a68d0" opacity="0.45"/></marker>
+              </defs>
+              <text x="18" y="232" fill="#666" font-family="Inter,sans-serif" font-size="11" font-style="italic">I_sense</text>
+              <line x1="78" y1="228" x2="108" y2="228" stroke="#3a68d0" stroke-width="1.5" marker-end="url(#fes-arr)"/>
+              <rect x="110" y="188" width="148" height="80" rx="2" fill="#14182a" stroke="#3a68d0" stroke-width="1.5"/>
+              <text x="184" y="216" text-anchor="middle" fill="#888" font-family="Inter,sans-serif" font-size="9.5" font-weight="500" letter-spacing="0.08em">OP-AMP</text>
+              <text x="184" y="234" text-anchor="middle" fill="#d4d4d4" font-family="Inter,sans-serif" font-size="13" font-weight="600">Integrator</text>
+              <text x="184" y="252" text-anchor="middle" fill="#3a3a3a" font-family="Inter,sans-serif" font-size="9">V = −1/RC ∫ I · dt</text>
+              <line x1="258" y1="228" x2="296" y2="228" stroke="#3a68d0" stroke-width="1.5" marker-end="url(#fes-arr)"/>
+              <rect x="298" y="188" width="162" height="80" rx="2" fill="#14182a" stroke="#3a68d0" stroke-width="1.5"/>
+              <text x="379" y="216" text-anchor="middle" fill="#888" font-family="Inter,sans-serif" font-size="9.5" font-weight="500" letter-spacing="0.08em">WINDOW</text>
+              <text x="379" y="234" text-anchor="middle" fill="#d4d4d4" font-family="Inter,sans-serif" font-size="13" font-weight="600">Comparator</text>
+              <text x="379" y="252" text-anchor="middle" fill="#3a3a3a" font-family="Inter,sans-serif" font-size="9">V_L &lt; V_out &lt; V_H</text>
+              <line x1="379" y1="145" x2="379" y2="188" stroke="#3a68d0" stroke-width="1" stroke-opacity="0.4" stroke-dasharray="4 3" marker-end="url(#fes-arr-dim)"/>
+              <text x="379" y="140" text-anchor="middle" fill="#3a3a3a" font-family="Inter,sans-serif" font-size="9">V_H / V_L ref</text>
+              <line x1="460" y1="228" x2="498" y2="228" stroke="#3a68d0" stroke-width="1.5" marker-end="url(#fes-arr)"/>
+              <rect x="500" y="188" width="130" height="80" rx="2" fill="#14182a" stroke="#3a68d0" stroke-width="1.5"/>
+              <text x="565" y="216" text-anchor="middle" fill="#888" font-family="Inter,sans-serif" font-size="9.5" font-weight="500" letter-spacing="0.08em">LATCHING</text>
+              <text x="565" y="234" text-anchor="middle" fill="#d4d4d4" font-family="Inter,sans-serif" font-size="13" font-weight="600">D-Latch</text>
+              <text x="565" y="252" text-anchor="middle" fill="#3a3a3a" font-family="Inter,sans-serif" font-size="9">holds fault state</text>
+              <line x1="630" y1="228" x2="672" y2="228" stroke="#3a68d0" stroke-width="1.5" marker-end="url(#fes-arr)"/>
+              <rect x="674" y="205" width="90" height="46" rx="2" fill="#161620" stroke="#3a68d0" stroke-width="1" stroke-opacity="0.55"/>
+              <text x="719" y="225" text-anchor="middle" fill="#aaa" font-family="Inter,sans-serif" font-size="11" font-weight="600">MCU</text>
+              <text x="719" y="240" text-anchor="middle" fill="#444" font-family="Inter,sans-serif" font-size="9">IRQ signal</text>
+              <text x="400" y="360" text-anchor="middle" fill="#252525" font-family="Inter,sans-serif" font-size="10" letter-spacing="0.05em">FES OVERCURRENT PROTECTION · ANALOG SIGNAL CHAIN</text>
+            </svg>
+          </div>
+          <div class="proj-body">
+            <p class="proj-num">06</p>
+            <p class="proj-name">Overcurrent Protection Device, FES Hardware</p>
+            <p class="proj-desc">Analog signal chain (op-amp integrator, window comparator, D-latch) that detects overcurrent events and sends an interrupt to the MCU. Integrated into a functional electrical stimulation device for patients.</p>
+            <div class="proj-footer"><div class="proj-tools"><span class="chip">Analog Circuit Design</span><span class="chip">Op-Amps</span><span class="chip">CMOS Logic</span><span class="chip">KiCad</span><span class="chip">PCB Design</span></div></div>
+          </div>
+        </div>
+
+        <!-- 06 CPU Design -->
+        <div class="proj-card reveal">
+          <div class="proj-gallery" style="pointer-events:none;cursor:default;display:flex;align-items:center;justify-content:center;background:var(--surface-2);">
+            <p style="font-size:0.6rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--text-3);">Coming Fall 2026</p>
+          </div>
+          <div class="proj-body">
+            <p class="proj-num">09</p>
+            <p class="proj-name">CPU Design</p>
+            <p class="proj-desc">A full custom CPU design with architecture, datapath, and control logic built from the ground up.</p>
+            <div class="proj-footer"><div class="proj-tools"><span class="chip">Verilog</span><span class="chip">FPGA</span><span class="chip">Computer Architecture</span><span class="chip">Datapath Design</span><span class="chip">Control Logic</span></div></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- EXPERIENCE -->
+  <section id="experience" data-section="experience">
+    <div class="container">
+      <p class="sec-label reveal">Experience</p>
+      <h2 class="sec-heading reveal">Technical Experience</h2>
+
+      <div class="timeline reveal">
+        <div class="tl-card">
+          <div class="tl-header">
+            <div><div class="tl-org">Badger Solar Racing</div><div class="tl-role">Low Voltage Team</div></div>
+            <span class="tl-date">Sep 2025 – Present</span>
+          </div>
+          <div class="tl-tags"><span class="chip">Altium</span><span class="chip">CAN</span><span class="chip">Analog MUX</span><span class="chip">SolidWorks</span><span class="chip">PCB</span></div>
+          <ul class="tl-bullets">
+            <li>Standardized CAN bus communication across all low-voltage components to improve data reliability throughout the car</li>
+            <li>Diagnosed PDC faults using DMM measurements and circuit analysis</li>
+            <li>Soldered a new op-amp and performed STM rework on the PDC Revision B during hardware iteration</li>
+            <li>Updated Altium schematics for the voltage protection circuit on the new PCB</li>
+            <li>Contributed to telemetry sensor placement strategy (temperature, current, and voltage) for competition readiness</li>
+          </ul>
+        </div>
+
+        <div class="tl-card">
+          <div class="tl-org" style="margin-bottom:0.85rem;">Insight Wisconsin</div>
+          <div style="display:flex;flex-direction:column;gap:0;">
+            <div>
+              <div class="tl-header" style="margin-bottom:0.35rem;">
+                <div class="tl-role">FES Hardware Co-Lead</div>
                 <span class="tl-date">Present</span>
               </div>
               <div class="tl-tags"><span class="chip">Leadership</span><span class="chip">FES</span><span class="chip">Hardware</span></div>
+              <ul class="tl-bullets">
+                <li>Ran weekly meetings, tracked deliverables, and distributed work across hardware subteams</li>
+                <li>Evaluated existing FES devices to identify design gaps and guide improvements to the team's implementation</li>
+              </ul>
             </div>
-          </div>
-
-          <div class="tl-item">
-            <div class="tl-dot-col"><div class="tl-dot"></div></div>
-            <div class="tl-card card">
-              <div class="tl-header">
-                <div><div class="tl-org">Insight Wisconsin</div><div class="tl-role">FES Hardware Member, Overcurrent Protection Device Lead</div></div>
+            <div style="border-top:1px solid var(--border);margin-top:0.85rem;padding-top:0.85rem;">
+              <div class="tl-header" style="margin-bottom:0.35rem;">
+                <div class="tl-role" style="font-size:0.88rem;">FES Hardware Member · Overcurrent Protection Device Lead</div>
                 <span class="tl-date">Sep 2025</span>
               </div>
               <div class="tl-tags"><span class="chip">LTspice</span><span class="chip">Op-Amps</span><span class="chip">Analog Design</span><span class="chip">Medical Devices</span></div>
-            </div>
-          </div>
-
-          <div class="tl-item">
-            <div class="tl-dot-col"><div class="tl-dot"></div></div>
-            <div class="tl-card card">
-              <div class="tl-header">
-                <div><div class="tl-org">Advanced Network Security &amp; Communications Lab</div><div class="tl-role">Undergraduate Research Assistant, TI mmWave</div></div>
-                <span class="tl-date">Feb 2025 – Present</span>
-              </div>
-              <div class="tl-tags"><span class="chip">MATLAB</span><span class="chip">mmWave Radar</span><span class="chip">Signal Processing</span><span class="chip">Whisper API</span></div>
+              <ul class="tl-bullets">
+                <li>Designed a full overcurrent protection signal chain (op-amp integrator, window comparator, SR latch) and laid out the schematic in KiCad</li>
+                <li>Characterized threshold windows in LTspice, tuning V_H and V_L to ensure correct triggering across expected current profiles</li>
+                <li>Presented the design at Insight Design Reviews in F25 and SP26 before professors, club leads, and members</li>
+                <li>On overcurrent detection, the circuit interrupts the MCU to halt stimulation and enforce safe biphasic current delivery to the patient</li>
+              </ul>
             </div>
           </div>
         </div>
+
+        <div class="tl-card">
+          <div class="tl-header">
+            <div><div class="tl-org">Advanced Network Security &amp; Communications Lab</div><div class="tl-role">Undergraduate Research Assistant, TI mmWave</div></div>
+            <span class="tl-date">Feb 2025 – Present</span>
+          </div>
+          <div class="tl-tags"><span class="chip">MATLAB</span><span class="chip">mmWave Radar</span><span class="chip">Signal Processing</span><span class="chip">Whisper API</span></div>
+          <ul class="tl-bullets">
+            <li>Configured the TI IWR1843 mmWave radar via mmWave Studio and MATLAB Runtime 8.5.1, setting up ADC parameters and verifying SPI/UART communication for real-time audio reconstruction</li>
+            <li>Modernized legacy MATLAB data acquisition scripts, resolving deprecated syntax to restore reliable real-time capture</li>
+          </ul>
+        </div>
       </div>
     </div>
-  </div>
+  </section>
 
-  <!-- ═══════════════════ PROJECTS ═══════════════════ -->
-  <div id="page-projects" class="page">
+  <!-- COURSEWORK -->
+  <section id="coursework" data-section="coursework">
     <div class="container">
-      <div class="proj-section">
-        <p class="sec-label reveal">Projects</p>
-        <h2 class="sec-heading reveal">Things I've built</h2>
-        <p class="sec-sub reveal">Click any image to open the gallery and scroll through.</p>
+      <p class="sec-label reveal">Coursework</p>
+      <h2 class="sec-heading reveal">Academic track</h2>
+      <p class="sec-sub reveal">EE &amp; CS curriculum at UW–Madison: circuits, systems, software, and silicon.</p>
 
-        <div class="proj-grid">
-
-          <!-- 01 N-Body -->
-          <div class="proj-card card reveal">
-            <div class="proj-gallery" onclick="openLightbox(0,0)" role="button" tabindex="0" aria-label="Open N-Body gallery" onkeydown="if(event.key==='Enter')openLightbox(0,0)">
-              <img src="brand_assets/Nbodygravitysim.jpg" alt="N-Body Gravity Simulator" loading="lazy"/>
-              <div class="proj-gallery-overlay">
-                <button class="gallery-btn" onclick="event.stopPropagation();openLightbox(0,0)">
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
-                  View Gallery
-                </button>
-                <span class="gallery-count">1 image</span>
-              </div>
-            </div>
-            <div class="proj-body">
-              <p class="proj-num">01</p>
-              <p class="proj-name">N-Body Gravity Simulator</p>
-              <p class="proj-desc">Simulates gravitational interactions between N particles using numerical integration. Visualizes orbital trajectories and gravitational clustering in real time.</p>
-              <div class="proj-footer"><div class="proj-tools"><span class="chip">Python</span><span class="chip">NumPy</span><span class="chip">Matplotlib</span></div></div>
-            </div>
-          </div>
-
-          <!-- 02 Audio Spectrum Analyzer -->
-          <div class="proj-card card reveal">
-            <div class="proj-gallery" onclick="openLightbox(1,0)" role="button" tabindex="0" aria-label="Open audio spectrum gallery" onkeydown="if(event.key==='Enter')openLightbox(1,0)">
-              <img src="brand_assets/8x8ledmatrix.jpg" alt="Audio Spectrum Analyzer" loading="lazy"/>
-              <div class="proj-gallery-overlay">
-                <button class="gallery-btn" onclick="event.stopPropagation();openLightbox(1,0)">
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
-                  View Gallery
-                </button>
-                <span class="gallery-count">2 images</span>
-              </div>
-            </div>
-            <div class="proj-body">
-              <p class="proj-num">02</p>
-              <p class="proj-name">Audio Spectrum Analyzer</p>
-              <p class="proj-desc">Custom PCB with an ATmega MCU and 8×8 NeoPixel LED matrix. Converts live audio to frequency-domain components in real time using the arduinoFFT library.</p>
-              <div class="proj-footer"><div class="proj-tools"><span class="chip">KiCad</span><span class="chip">ATmega</span><span class="chip">arduinoFFT</span><span class="chip">NeoPixel</span><span class="chip">PCB Design</span></div></div>
-            </div>
-          </div>
-
-          <!-- 03 Autonomous Robot -->
-          <div class="proj-card card reveal">
-            <div class="proj-gallery" onclick="openLightbox(2,0)" role="button" tabindex="0" aria-label="Open robot gallery" onkeydown="if(event.key==='Enter')openLightbox(2,0)">
-              <img src="https://placehold.co/900x506/0b0e16/c91a1a?text=Robot+Overview" alt="4WD Robot" loading="lazy"/>
-              <div class="proj-gallery-overlay">
-                <button class="gallery-btn" onclick="event.stopPropagation();openLightbox(2,0)">
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
-                  View Gallery
-                </button>
-                <span class="gallery-count">3 images</span>
-              </div>
-            </div>
-            <div class="proj-body">
-              <p class="proj-num">03</p>
-              <p class="proj-name">Autonomous 4WD Plant-Identifying Robot</p>
-              <p class="proj-desc">Two-tier autonomous robot with simulated 3D LiDAR mapping (1–2° increments across 180°) and real-time plant classification at 81.1% accuracy using a pre-trained OpenCV model.</p>
-              <div class="proj-footer"><div class="proj-tools"><span class="chip">Arduino Nano</span><span class="chip">LiDAR</span><span class="chip">OpenCV</span><span class="chip">Python</span><span class="chip">Matplotlib</span></div></div>
-            </div>
-          </div>
-
-          <!-- 04 Verilog Projects — opens modal -->
-          <div class="proj-card card reveal" style="cursor:pointer;" onclick="openVerilogModal()" role="button" tabindex="0" aria-label="Browse Verilog projects" onkeydown="if(event.key==='Enter')openVerilogModal()">
-            <div class="proj-gallery" style="pointer-events:none;">
-              <img src="https://placehold.co/900x506/080b14/1655c4?text=Verilog+Projects" alt="Verilog Projects" loading="lazy"/>
-              <div class="proj-gallery-overlay" style="opacity:1;">
-                <button class="gallery-btn" style="pointer-events:none;">
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-                  Browse Projects
-                </button>
-                <span class="gallery-count">Click to explore</span>
-              </div>
-            </div>
-            <div class="proj-body">
-              <p class="proj-num">04</p>
-              <p class="proj-name">Verilog Projects</p>
-              <p class="proj-desc">A collection of digital logic designs implemented in Verilog — from adders and ALUs to state machines and pipelined modules.</p>
-              <div class="proj-footer"><div class="proj-tools"><span class="chip">Verilog</span><span class="chip">SystemVerilog</span><span class="chip">ModelSim</span><span class="chip">Quartus</span><span class="chip">FPGA</span></div></div>
-            </div>
-          </div>
-
-          <!-- 05 AI Agent Scheduler -->
-          <div class="proj-card card reveal">
-            <div class="proj-gallery" style="cursor:pointer;" onclick="window.open('https://github.com/rohtakpat314/autonomous-agent-kernel','_blank')" role="button" tabindex="0" aria-label="View AI Agent project on GitHub" onkeydown="if(event.key==='Enter')window.open('https://github.com/rohtakpat314/autonomous-agent-kernel','_blank')">
-              <svg viewBox="0 0 800 450" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;display:block;background:#111318;">
-                <defs>
-                  <marker id="arr" markerWidth="7" markerHeight="5" refX="6" refY="2.5" orient="auto"><polygon points="0 0,7 2.5,0 5" fill="#3a68d0"/></marker>
-                  <marker id="arr-dim" markerWidth="7" markerHeight="5" refX="6" refY="2.5" orient="auto"><polygon points="0 0,7 2.5,0 5" fill="#3a68d0" opacity="0.5"/></marker>
-                </defs>
-                <!-- IDLE → RUNNING -->
-                <line x1="178" y1="280" x2="350" y2="280" stroke="#3a68d0" stroke-width="1.5" marker-end="url(#arr)"/>
-                <text x="264" y="268" text-anchor="middle" fill="#4a4a4a" font-family="Inter,sans-serif" font-size="11">1.0</text>
-                <!-- RUNNING → DONE -->
-                <line x1="448" y1="272" x2="622" y2="272" stroke="#3a68d0" stroke-width="1.5" marker-end="url(#arr)"/>
-                <text x="535" y="260" text-anchor="middle" fill="#4a4a4a" font-family="Inter,sans-serif" font-size="11">0.7</text>
-                <!-- RUNNING → BLOCKED (right side up) -->
-                <line x1="414" y1="234" x2="414" y2="168" stroke="#3a68d0" stroke-width="1.3" marker-end="url(#arr)"/>
-                <text x="435" y="206" text-anchor="start" fill="#4a4a4a" font-family="Inter,sans-serif" font-size="11">0.3</text>
-                <!-- BLOCKED → RUNNING (left side down) -->
-                <line x1="386" y1="168" x2="386" y2="234" stroke="#3a68d0" stroke-width="1.3" stroke-opacity="0.7" marker-end="url(#arr-dim)"/>
-                <text x="365" y="206" text-anchor="end" fill="#4a4a4a" font-family="Inter,sans-serif" font-size="11">0.9</text>
-                <!-- BLOCKED → DONE (diagonal dashed) -->
-                <path d="M 444 106 Q 630 60 626 236" fill="none" stroke="#3a68d0" stroke-width="1" stroke-opacity="0.45" stroke-dasharray="5 4" marker-end="url(#arr-dim)"/>
-                <text x="582" y="106" text-anchor="middle" fill="#3a3a3a" font-family="Inter,sans-serif" font-size="10">0.1</text>
-                <!-- DONE → IDLE (loop back, curved bottom) -->
-                <path d="M 668 326 Q 400 418 132 326" fill="none" stroke="#3a68d0" stroke-width="1" stroke-opacity="0.3" stroke-dasharray="5 4" marker-end="url(#arr-dim)"/>
-                <text x="400" y="418" text-anchor="middle" fill="#333" font-family="Inter,sans-serif" font-size="10">next task</text>
-                <!-- Node: IDLE -->
-                <circle cx="130" cy="280" r="47" fill="#161620" stroke="#3a68d0" stroke-width="1.5"/>
-                <text x="130" y="284" text-anchor="middle" fill="#d0d0d0" font-family="Inter,sans-serif" font-size="12" font-weight="600" letter-spacing="0.06em">IDLE</text>
-                <!-- Node: RUNNING (active glow) -->
-                <circle cx="400" cy="280" r="47" fill="#14182a" stroke="#3a68d0" stroke-width="2"/>
-                <text x="400" y="284" text-anchor="middle" fill="#d0d0d0" font-family="Inter,sans-serif" font-size="11" font-weight="600" letter-spacing="0.05em">RUNNING</text>
-                <!-- Node: BLOCKED (dashed) -->
-                <circle cx="400" cy="120" r="47" fill="#161620" stroke="#3a68d0" stroke-width="1.5" stroke-dasharray="5 3" opacity="0.75"/>
-                <text x="400" y="124" text-anchor="middle" fill="#888" font-family="Inter,sans-serif" font-size="11" font-weight="500">BLOCKED</text>
-                <!-- Node: DONE -->
-                <circle cx="670" cy="280" r="47" fill="#161620" stroke="#3a68d0" stroke-width="1.5" opacity="0.9"/>
-                <text x="670" y="284" text-anchor="middle" fill="#d0d0d0" font-family="Inter,sans-serif" font-size="12" font-weight="600" letter-spacing="0.04em">DONE</text>
-              </svg>
-              <div class="proj-gallery-overlay">
-                <button class="gallery-btn" onclick="event.stopPropagation();window.open('https://github.com/rohtakpat314/autonomous-agent-kernel','_blank')">
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.5-1.4-1.3-1.8-1.3-1.8-1-.7.1-.7.1-.7 1.1.1 1.7 1.1 1.7 1.1 1 1.7 2.6 1.2 3.2.9.1-.7.4-1.2.7-1.5-2.6-.3-5.4-1.3-5.4-5.8 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17.3 4.7 18.3 5 18.3 5c.7 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.5-2.8 5.5-5.4 5.8.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3"/></svg>
-                  View on GitHub
-                </button>
-                <span class="gallery-count">github.com</span>
-              </div>
-            </div>
-            <div class="proj-body">
-              <p class="proj-num">05</p>
-              <p class="proj-name">AI Agent Scheduler &amp; Parallel Runtime</p>
-              <p class="proj-desc">Schedules and dispatches AI agents across parallel execution contexts, managing task dependencies, resource contention, and runtime orchestration.</p>
-              <div class="proj-footer"><div class="proj-tools"><span class="chip">Python</span><span class="chip">Asyncio</span><span class="chip">LLM APIs</span><span class="chip">Concurrency</span></div></div>
-            </div>
-          </div>
-
-          <!-- 06 CPU Design — COMING SOON -->
-          <div class="proj-card card reveal coming-soon">
-            <div class="proj-gallery" style="pointer-events:none;">
-              <img src="https://placehold.co/900x506/080b14/303860?text=CPU+Design" alt="CPU Design" loading="lazy"/>
-            </div>
-            <div class="proj-body">
-              <p class="proj-num">06</p>
-              <span class="coming-badge">
-                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                Coming soon
-              </span>
-              <p class="proj-name">CPU Design</p>
-              <p class="proj-desc">A full custom CPU design — architecture, datapath, and control logic built from the ground up.</p>
-              <div class="proj-footer"><div class="proj-tools"><span class="chip">Verilog</span><span class="chip">FPGA</span><span class="chip">Computer Architecture</span></div></div>
-            </div>
-          </div>
-
-        </div>
-
+      <div class="cw-list reveal">
+        <div class="cw-row"><div class="cw-row-top"><span class="cw-code">ECE 203</span><span class="cw-name">Signals, Information &amp; Computation</span></div><span class="cw-note">Fourier series, probability, information theory</span></div>
+        <div class="cw-row"><div class="cw-row-top"><span class="cw-code">ECE 222</span><span class="cw-name">Electrodynamics I</span></div><span class="cw-note">Maxwell's equations, EM waves, transmission lines</span></div>
+        <div class="cw-row"><div class="cw-row-top"><span class="cw-code">ECE 230</span><span class="cw-name">Circuit Analysis</span></div><span class="cw-note">Kirchhoff's laws, op-amps, AC/DC phasor analysis</span></div>
+        <div class="cw-row"><div class="cw-row-top"><span class="cw-code">ECE 270</span><span class="cw-name">Circuit Lab I</span></div><span class="cw-note">Hands-on circuits, oscilloscopes, PCB fundamentals</span></div>
+        <div class="cw-row"><div class="cw-row-top"><span class="cw-code">ECE 340</span><span class="cw-name">Electronic Circuits II</span></div><span class="cw-note">BJTs, MOSFETs, amplifiers, frequency response</span></div>
+        <div class="cw-row"><div class="cw-row-top"><span class="cw-code">ECE 354</span><span class="cw-name">Machine Organization &amp; Programming</span></div><span class="cw-note">RISC-V assembly, caches, pipelining, memory hierarchy</span></div>
+        <div class="cw-row"><div class="cw-row-top"><span class="cw-code">ECE 552</span><span class="cw-name">Computer Architecture</span></div><span class="cw-note">Processor design, ILP, branch prediction, out-of-order execution</span></div>
+        <div class="cw-row"><div class="cw-row-top"><span class="cw-code">CS 400</span><span class="cw-name">Programming III</span></div><span class="cw-note">Advanced data structures, graphs, hashing, complexity</span></div>
       </div>
     </div>
-  </div>
+  </section>
 
-  <!-- ═══════════════════ COURSEWORK ═══════════════════ -->
-  <div id="page-coursework" class="page">
+  <!-- SKILLS -->
+  <section id="skills" data-section="skills">
     <div class="container">
-      <div class="cw-section">
-        <p class="sec-label reveal">Coursework</p>
-        <h2 class="sec-heading reveal">Academic track</h2>
-        <p class="sec-sub reveal">EE &amp; CS curriculum at UW–Madison: circuits, systems, software, and silicon.</p>
+      <p class="sec-label reveal">Skills</p>
+      <h2 class="sec-heading reveal">What I work with</h2>
 
-        <div class="reveal" style="border:1px solid var(--border);border-top:1px solid rgba(201,26,26,0.2);border-radius:2px;overflow:hidden;">
-          <div style="max-height:520px;overflow-y:auto;">
-            <div class="cw-row"><span class="cw-code">MATH 234</span><span class="cw-name">Calculus 3</span></div>
-            <div class="cw-row"><span class="cw-code">CS 200</span><span class="cw-name">Programming I</span></div>
-            <div class="cw-row"><span class="cw-code">ECE/CS 252</span><span class="cw-name">Intro to Computer Engineering</span></div>
-            <div class="cw-row"><span class="cw-code">ECE 203</span><span class="cw-name">Signals, Information &amp; Computation</span></div>
-            <div class="cw-row"><span class="cw-code">ECE 230</span><span class="cw-name">Circuit Analysis</span></div>
-            <div class="cw-row"><span class="cw-code">ECE 210</span><span class="cw-name">Intro to Electrical Engineering</span></div>
-            <div class="cw-row"><span class="cw-code">ECE 352</span><span class="cw-name">Digital Systems Fundamentals</span></div>
-            <div class="cw-row"><span class="cw-code">CS 300</span><span class="cw-name">Programming II</span></div>
-            <div class="cw-row"><span class="cw-code">ECE 354</span><span class="cw-name">Machine Organization &amp; Programming</span></div>
-            <div class="cw-row"><span class="cw-code">ECE 552</span><span class="cw-name">Computer Architecture</span></div>
-            <div class="cw-row"><span class="cw-code">ECE 340</span><span class="cw-name">Electronic Circuits II</span></div>
-            <div class="cw-row"><span class="cw-code">CS 400</span><span class="cw-name">Data Structures II</span></div>
-            <div class="cw-row"><span class="cw-code">ECE 222</span><span class="cw-name">Electrodynamics I</span></div>
-            <div class="cw-row" style="border-bottom:none;"><span class="cw-code">ECE 270</span><span class="cw-name">Circuit Lab I</span></div>
-          </div>
+      <div class="skills-grid reveal">
+        <div>
+          <div class="skills-cat-label">Languages</div>
+          <div class="skills-chips"><span class="chip">C</span><span class="chip">Python</span><span class="chip">Verilog</span><span class="chip">SystemVerilog</span><span class="chip">MATLAB</span><span class="chip">Java</span><span class="chip">MIPS / ARM / x86 Assembly</span><span class="chip">CUDA</span></div>
+        </div>
+        <div>
+          <div class="skills-cat-label">Tools &amp; Software</div>
+          <div class="skills-chips"><span class="chip">Altium</span><span class="chip">KiCad</span><span class="chip">LTspice</span><span class="chip">ModelSim</span><span class="chip">Quartus Prime</span><span class="chip">VSCode</span><span class="chip">Git</span><span class="chip">Vim</span></div>
+        </div>
+        <div>
+          <div class="skills-cat-label">Hardware</div>
+          <div class="skills-chips"><span class="chip">Oscilloscope</span><span class="chip">DMM</span><span class="chip">Soldering</span><span class="chip">Breadboarding</span></div>
+        </div>
+        <div>
+          <div class="skills-cat-label">Protocols</div>
+          <div class="skills-chips"><span class="chip">CAN</span><span class="chip">I²C</span><span class="chip">SPI</span><span class="chip">Ethernet</span><span class="chip">Serial / UART</span></div>
         </div>
       </div>
     </div>
-  </div>
+  </section>
 
-  <!-- ═══════════════════ CONTACT ═══════════════════ -->
-  <div id="page-contact" class="page">
+  <!-- CONTACT -->
+  <section id="contact" data-section="contact">
     <div class="container">
-      <div class="contact-section">
-        <p class="sec-label reveal">Contact</p>
-        <h2 class="sec-heading reveal">Get in touch</h2>
-        <p class="reveal" style="font-size:0.92rem;color:var(--text-2);line-height:1.75;font-family:'Inter',sans-serif;max-width:400px;margin:0.5rem 0 2rem;">
-          Student at <span style="color:var(--text);">UW–Madison</span>. Open to research, internships, or anything engineering.
-        </p>
-        <div style="width:100%;max-width:480px;">
-          <div class="contact-links reveal">
-            <a href="mailto:rspatwardha2@wisc.edu" class="contact-card">
-              <div class="contact-icon"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#3a68d0" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg></div>
-              <div><div class="contact-platform">Email</div><div class="contact-value">rspatwardha2@wisc.edu</div></div>
-              <svg class="contact-arrow" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-            </a>
-            <a href="https://www.linkedin.com/in/rohtak-patwardhan" target="_blank" rel="noopener" class="contact-card">
-              <div class="contact-icon"><svg width="17" height="17" viewBox="0 0 24 24" fill="#3a68d0"><path d="M20.5 2h-17A1.5 1.5 0 0 0 2 3.5v17A1.5 1.5 0 0 0 3.5 22h17a1.5 1.5 0 0 0 1.5-1.5v-17A1.5 1.5 0 0 0 20.5 2zM8 19H5v-9h3zM6.5 8.25A1.75 1.75 0 1 1 8.3 6.5a1.78 1.78 0 0 1-1.8 1.75zM19 19h-3v-4.74c0-1.42-.6-1.93-1.38-1.93A1.74 1.74 0 0 0 13 14.19a.66.66 0 0 0 0 .14V19h-3v-9h2.9v1.3a3.11 3.11 0 0 1 2.7-1.4c1.55 0 3.36.86 3.36 3.66z"/></svg></div>
-              <div><div class="contact-platform">LinkedIn</div><div class="contact-value">linkedin.com/in/rohtak-patwardhan</div></div>
-              <svg class="contact-arrow" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-            </a>
-            <a href="https://github.com/rohtakpat314" target="_blank" rel="noopener" class="contact-card">
-              <div class="contact-icon"><svg width="17" height="17" viewBox="0 0 24 24" fill="#3a68d0"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.5-1.4-1.3-1.8-1.3-1.8-1-.7.1-.7.1-.7 1.1.1 1.7 1.1 1.7 1.1 1 1.7 2.6 1.2 3.2.9.1-.7.4-1.2.7-1.5-2.6-.3-5.4-1.3-5.4-5.8 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17.3 4.7 18.3 5 18.3 5c.7 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.5-2.8 5.5-5.4 5.8.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3"/></svg></div>
-              <div><div class="contact-platform">GitHub</div><div class="contact-value">github.com/rohtakpat314</div></div>
-              <svg class="contact-arrow" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-            </a>
-          </div>
+      <p class="sec-label reveal">Contact</p>
+      <h2 class="sec-heading reveal">Get in touch</h2>
+      <p class="sec-sub reveal">Student at UW–Madison. Open to research, internships, or anything engineering.</p>
+
+      <div style="max-width:480px;">
+        <div class="contact-links reveal">
+          <a href="mailto:rspatwardha2@wisc.edu" class="contact-card">
+            <div class="contact-icon"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#3a68d0" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg></div>
+            <div><div class="contact-platform">Email</div><div class="contact-value">rspatwardha2@wisc.edu</div></div>
+            <svg class="contact-arrow" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+          <a href="https://www.linkedin.com/in/rohtak-patwardhan" target="_blank" rel="noopener" class="contact-card">
+            <div class="contact-icon"><svg width="17" height="17" viewBox="0 0 24 24" fill="#3a68d0"><path d="M20.5 2h-17A1.5 1.5 0 0 0 2 3.5v17A1.5 1.5 0 0 0 3.5 22h17a1.5 1.5 0 0 0 1.5-1.5v-17A1.5 1.5 0 0 0 20.5 2zM8 19H5v-9h3zM6.5 8.25A1.75 1.75 0 1 1 8.3 6.5a1.78 1.78 0 0 1-1.8 1.75zM19 19h-3v-4.74c0-1.42-.6-1.93-1.38-1.93A1.74 1.74 0 0 0 13 14.19a.66.66 0 0 0 0 .14V19h-3v-9h2.9v1.3a3.11 3.11 0 0 1 2.7-1.4c1.55 0 3.36.86 3.36 3.66z"/></svg></div>
+            <div><div class="contact-platform">LinkedIn</div><div class="contact-value">linkedin.com/in/rohtak-patwardhan</div></div>
+            <svg class="contact-arrow" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+          <a href="https://github.com/rohtakpat314" target="_blank" rel="noopener" class="contact-card">
+            <div class="contact-icon"><svg width="17" height="17" viewBox="0 0 24 24" fill="#3a68d0"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.5-1.4-1.3-1.8-1.3-1.8-1-.7.1-.7.1-.7 1.1.1 1.7 1.1 1.7 1.1 1 1.7 2.6 1.2 3.2.9.1-.7.4-1.2.7-1.5-2.6-.3-5.4-1.3-5.4-5.8 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17.3 4.7 18.3 5 18.3 5c.7 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.5-2.8 5.5-5.4 5.8.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3"/></svg></div>
+            <div><div class="contact-platform">GitHub</div><div class="contact-value">github.com/rohtakpat314</div></div>
+            <svg class="contact-arrow" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
         </div>
       </div>
     </div>
-  </div>
+  </section>
 
-  <!-- ═══════════════════ VERILOG MODAL ═══════════════════ -->
-  <div id="verilog-modal" role="dialog" aria-modal="true" aria-label="Verilog Projects">
-    <div class="verilog-modal-box">
-      <button class="verilog-modal-close" onclick="closeVerilogModal()" aria-label="Close">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
-      </button>
-      <p class="verilog-modal-title">// Verilog Projects</p>
-      <div class="verilog-proj-list">
-        <div class="verilog-proj-item">
-          <div class="verilog-proj-name">Custom 32-bit Ripple Carry Adder</div>
-          <div class="verilog-proj-desc">Cascaded 4-bit RCAs for a modular 32-bit adder. Carry chain latency analyzed and verified via ModelSim testbenches.</div>
-        </div>
-        <div class="verilog-proj-item">
-          <div class="verilog-proj-name">Custom ALU with ISA</div>
-          <div class="verilog-proj-desc">Designed a full ISA and implemented an ALU using MUXes and full adder modules. Gate logic simplified via Karnaugh map optimization.</div>
-        </div>
-        <div class="verilog-proj-item" style="opacity:0.45;">
-          <div class="verilog-proj-name" style="color:var(--text-3);">More coming soon...</div>
-          <div class="verilog-proj-desc">Additional Verilog projects will be added here.</div>
-        </div>
+  <footer class="site-footer">Rohtak Patwardhan · EE &amp; CS · UW–Madison</footer>
+</main>
+
+<!-- VERILOG MODAL -->
+<div id="verilog-modal" role="dialog" aria-modal="true" aria-label="Verilog Projects">
+  <div class="verilog-modal-box">
+    <button class="verilog-modal-close" onclick="closeVerilogModal()" aria-label="Close">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    </button>
+    <p class="verilog-modal-title">// Verilog Projects</p>
+    <div class="verilog-proj-list">
+      <div class="verilog-proj-item">
+        <div class="verilog-proj-name">Custom 32-bit Ripple Carry Adder</div>
+        <div class="verilog-proj-desc">Cascaded 4-bit RCAs for a modular 32-bit adder. Carry chain latency analyzed and verified via ModelSim testbenches.</div>
+      </div>
+      <div class="verilog-proj-item">
+        <div class="verilog-proj-name">Custom ALU with ISA</div>
+        <div class="verilog-proj-desc">Designed a full ISA and implemented an ALU using MUXes and full adder modules. Gate logic simplified via Karnaugh map optimization.</div>
+      </div>
+      <div class="verilog-proj-item" style="opacity:0.45;">
+        <div class="verilog-proj-name" style="color:var(--text-3);">More coming soon...</div>
+        <div class="verilog-proj-desc">Additional Verilog projects will be added here.</div>
       </div>
     </div>
   </div>
+</div>
 
-  <!-- ═══════════════════ LIGHTBOX ═══════════════════ -->
-  <div id="lightbox" role="dialog" aria-modal="true" aria-label="Image gallery">
-    <div class="lb-header">
-      <div><div class="lb-title" id="lb-title"></div><div class="lb-meta" id="lb-meta"></div></div>
-      <button class="lb-close" onclick="closeLightbox()" aria-label="Close">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
-      </button>
-    </div>
-    <div class="lb-img-wrap">
-      <img id="lb-img" src="" alt="Project image"/>
-      <div class="lb-nav">
-        <button class="lb-nav-btn" onclick="lightboxPrev()" aria-label="Previous">
-          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
-        </button>
-        <button class="lb-nav-btn" onclick="lightboxNext()" aria-label="Next">
-          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
-        </button>
-      </div>
-    </div>
-    <div class="lb-dots" id="lb-dots"></div>
+<!-- LIGHTBOX -->
+<div id="lightbox" role="dialog" aria-modal="true" aria-label="Image gallery">
+  <div class="lb-header">
+    <div><div class="lb-title" id="lb-title"></div><div class="lb-meta" id="lb-meta"></div></div>
+    <button class="lb-close" onclick="closeLightbox()" aria-label="Close">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    </button>
   </div>
+  <div class="lb-img-wrap">
+    <img id="lb-img" src="" alt="Project image"/>
+    <div class="lb-nav">
+      <button class="lb-nav-btn" onclick="lightboxPrev()" aria-label="Previous"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+      <button class="lb-nav-btn" onclick="lightboxNext()" aria-label="Next"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></button>
+    </div>
+  </div>
+  <div class="lb-dots" id="lb-dots"></div>
+</div>
 
-  <!-- ═══════════════════ SCRIPTS ═══════════════════ -->
-  <script>
-    // ── Project data ──────────────────────────────────────
-    const projects = [
-      { name: 'N-Body Gravity Simulator', images: [
-        'brand_assets/Nbodygravitysim.jpg',
-      ]},
-      { name: 'Audio Spectrum Analyzer', images: [
-        'brand_assets/8x8ledmatrix.jpg',
-        'brand_assets/8x8ledmatrix2.jpg',
-      ]},
-      { name: 'Autonomous 4WD Plant-Identifying Robot', images: [
-        'https://placehold.co/900x506/0b0e16/c91a1a?text=Robot+Overview',
-        'https://placehold.co/900x506/10141f/c91a1a?text=LiDAR+Mapping',
-        'https://placehold.co/900x506/080b14/c91a1a?text=Plant+Detection',
-      ]},
-      { name: 'AI Agent Scheduler & Parallel Runtime', images: [
-        'https://placehold.co/900x506/080b14/c91a1a?text=Agent+Scheduler',
-        'https://placehold.co/900x506/10141f/c91a1a?text=Parallel+Runtime',
-      ]},
-    ];
+<script>
+  // ── Project data ──────────────────────────────
+  const projects = [
+    { name: 'N-Body Gravity Simulator', images: ['brand_assets/Nbodygravitysim.jpg'] },
+    { name: 'Audio Spectrum Analyzer',  images: ['brand_assets/8x8ledmatrix.jpg','brand_assets/8x8ledmatrix2.jpg'] },
+  ];
 
-    function openVerilogModal() {
-      document.getElementById('verilog-modal').classList.add('open');
-      document.body.style.overflow = 'hidden';
-    }
-    function closeVerilogModal() {
-      document.getElementById('verilog-modal').classList.remove('open');
-      document.body.style.overflow = '';
-    }
-    document.getElementById('verilog-modal').addEventListener('click', e => {
-      if (e.target === document.getElementById('verilog-modal')) closeVerilogModal();
+  // ── Scroll to section ─────────────────────────
+  function scrollToSection(id) {
+    document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+  }
+
+  // ── Sidebar nav indicator ─────────────────────
+  function moveIndicator(link) {
+    const track    = document.getElementById('nav-track');
+    const indicator = document.getElementById('nav-indicator');
+    const lRect    = link.getBoundingClientRect();
+    const tRect    = track.getBoundingClientRect();
+    const offset   = lRect.top - tRect.top + (lRect.height - 28) / 2;
+    indicator.style.transform = `translateY(${offset}px)`;
+    indicator.style.height    = `${lRect.height - 10}px`;
+  }
+
+  function setActiveLink(sectionId) {
+    const links = document.querySelectorAll('.s-link');
+    links.forEach(l => l.classList.remove('active'));
+    const active = document.querySelector(`.s-link[data-section="${sectionId}"]`);
+    if (active) { active.classList.add('active'); moveIndicator(active); }
+  }
+
+  // ── Scroll spy ────────────────────────────────
+  const sections = document.querySelectorAll('section[data-section]');
+  const spyObs = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) setActiveLink(e.target.dataset.section); });
+  }, { threshold: 0.25, rootMargin: '-10% 0px -55% 0px' });
+  sections.forEach(s => spyObs.observe(s));
+
+  // ── Reveal on scroll ──────────────────────────
+  const revealObs = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => entry.target.classList.add('shown'), i * 70);
+        revealObs.unobserve(entry.target);
+      }
     });
-    document.addEventListener('keydown', e => {
-      if (e.key === 'Escape' && document.getElementById('verilog-modal').classList.contains('open')) closeVerilogModal();
-    });
-
-    // ── Page nav ──────────────────────────────────────────
-    let currentPage = 'home';
-
-    function showPage(pageId) {
-      if (pageId === currentPage) return;
-      const prev = document.getElementById('page-' + currentPage);
-      const next = document.getElementById('page-' + pageId);
-      document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-      const lnk = document.querySelector(`[data-page="${pageId}"]`);
-      if (lnk) lnk.classList.add('active');
-      prev.classList.remove('visible');
-      setTimeout(() => {
-        prev.classList.remove('active');
-        next.classList.add('active');
-        window.scrollTo({ top: 0, behavior: 'instant' });
-        requestAnimationFrame(() => requestAnimationFrame(() => {
-          next.classList.add('visible');
-          triggerReveal();
-        }));
-      }, 180);
-      currentPage = pageId;
-    }
+  }, { threshold: 0.07, rootMargin: '0px 0px -30px 0px' });
+  document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
 
 
-    // ── Reveal ────────────────────────────────────────────
-    const revealObs = new IntersectionObserver((entries) => {
-      entries.forEach((entry, i) => {
-        if (entry.isIntersecting) {
-          setTimeout(() => entry.target.classList.add('shown'), i * 65);
-          revealObs.unobserve(entry.target);
-        }
-      });
-    }, { threshold: 0.08, rootMargin: '0px 0px -30px 0px' });
 
-    function triggerReveal() {
-      document.querySelectorAll('.page.active .reveal:not(.shown)').forEach(el => revealObs.observe(el));
-    }
+  // ── Init indicator position ───────────────────
+  window.addEventListener('load', () => {
+    const firstActive = document.querySelector('.s-link.active');
+    if (firstActive) moveIndicator(firstActive);
+  });
 
-    // ── Lightbox ──────────────────────────────────────────
-    const lb = { projectIndex: 0, imageIndex: 0 };
+  // ── Verilog modal ─────────────────────────────
+  function openVerilogModal()  { document.getElementById('verilog-modal').classList.add('open');    document.body.style.overflow = 'hidden'; }
+  function closeVerilogModal() { document.getElementById('verilog-modal').classList.remove('open'); document.body.style.overflow = ''; }
+  document.getElementById('verilog-modal').addEventListener('click', e => { if (e.target === document.getElementById('verilog-modal')) closeVerilogModal(); });
 
-    function openLightbox(pi, ii) {
-      lb.projectIndex = pi; lb.imageIndex = ii;
-      renderLightbox();
-      document.getElementById('lightbox').classList.add('open');
-      document.body.style.overflow = 'hidden';
-    }
-    function closeLightbox() {
-      document.getElementById('lightbox').classList.remove('open');
-      document.body.style.overflow = '';
-    }
-    function lightboxNext() { lb.imageIndex = (lb.imageIndex + 1) % projects[lb.projectIndex].images.length; renderLightbox(); }
-    function lightboxPrev() { lb.imageIndex = (lb.imageIndex - 1 + projects[lb.projectIndex].images.length) % projects[lb.projectIndex].images.length; renderLightbox(); }
+  // ── Lightbox ──────────────────────────────────
+  const lb = { pi: 0, ii: 0 };
+  function openLightbox(pi, ii) { lb.pi = pi; lb.ii = ii; renderLightbox(); document.getElementById('lightbox').classList.add('open'); document.body.style.overflow = 'hidden'; }
+  function closeLightbox()      { document.getElementById('lightbox').classList.remove('open'); document.body.style.overflow = ''; }
+  function lightboxNext()       { lb.ii = (lb.ii + 1) % projects[lb.pi].images.length; renderLightbox(); }
+  function lightboxPrev()       { lb.ii = (lb.ii - 1 + projects[lb.pi].images.length) % projects[lb.pi].images.length; renderLightbox(); }
 
-    function renderLightbox() {
-      const project = projects[lb.projectIndex];
-      const img = document.getElementById('lb-img');
-      img.style.opacity = '0';
-      img.src = project.images[lb.imageIndex];
-      img.onload = () => img.style.opacity = '1';
-      document.getElementById('lb-title').textContent = project.name;
-      document.getElementById('lb-meta').textContent  = `${lb.imageIndex + 1} / ${project.images.length}`;
-      const dots = document.getElementById('lb-dots');
-      dots.innerHTML = '';
-      project.images.forEach((_, i) => {
-        const d = document.createElement('button');
-        d.className = 'lb-dot' + (i === lb.imageIndex ? ' active' : '');
-        d.setAttribute('aria-label', `Image ${i+1}`);
-        d.onclick = () => { lb.imageIndex = i; renderLightbox(); };
-        dots.appendChild(d);
-      });
-      const navBtns = document.querySelectorAll('.lb-nav-btn');
-      navBtns.forEach(b => b.style.display = project.images.length < 2 ? 'none' : 'flex');
-    }
+  function renderLightbox() {
+    const p = projects[lb.pi];
+    const img = document.getElementById('lb-img');
+    img.style.opacity = '0'; img.src = p.images[lb.ii]; img.onload = () => img.style.opacity = '1';
+    document.getElementById('lb-title').textContent = p.name;
+    document.getElementById('lb-meta').textContent  = `${lb.ii + 1} / ${p.images.length}`;
+    const dots = document.getElementById('lb-dots'); dots.innerHTML = '';
+    p.images.forEach((_, i) => { const d = document.createElement('button'); d.className = 'lb-dot' + (i === lb.ii ? ' active' : ''); d.onclick = () => { lb.ii = i; renderLightbox(); }; dots.appendChild(d); });
+    document.querySelectorAll('.lb-nav-btn').forEach(b => b.style.display = p.images.length < 2 ? 'none' : 'flex');
+  }
 
-    document.addEventListener('keydown', e => {
-      if (!document.getElementById('lightbox').classList.contains('open')) return;
-      if (e.key === 'Escape')     closeLightbox();
-      if (e.key === 'ArrowRight') lightboxNext();
-      if (e.key === 'ArrowLeft')  lightboxPrev();
-    });
-    document.getElementById('lightbox').addEventListener('click', e => {
-      if (e.target === document.getElementById('lightbox')) closeLightbox();
-    });
-
-    // ── Init ──────────────────────────────────────────────
-    window.addEventListener('load', () => {
-      document.getElementById('page-home').classList.add('visible');
-      triggerReveal();
-    });
-  </script>
+  document.addEventListener('keydown', e => {
+    if (document.getElementById('verilog-modal').classList.contains('open') && e.key === 'Escape') { closeVerilogModal(); return; }
+    if (!document.getElementById('lightbox').classList.contains('open')) return;
+    if (e.key === 'Escape') closeLightbox();
+    if (e.key === 'ArrowRight') lightboxNext();
+    if (e.key === 'ArrowLeft')  lightboxPrev();
+  });
+  document.getElementById('lightbox').addEventListener('click', e => { if (e.target === document.getElementById('lightbox')) closeLightbox(); });
+</script>
 </body>
 </html>
