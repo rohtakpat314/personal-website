@@ -14,20 +14,20 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Playfair+Display:ital,wght@0,700;1,400;1,700&display=swap" rel="stylesheet" />
   <style>
   :root {
-    --bg:          #080808;
-    --sb-bg:       #0a0a0a;
-    --surface:     #101010;
-    --surface-2:   #161616;
-    --border:      #1a1a1a;
-    --border-2:    #262626;
-    --accent:      #7a7a7a;
-    --accent-b:    #c0c0c0;
-    --accent-dim:  rgba(192,192,192,0.05);
-    --accent-glow: rgba(192,192,192,0.10);
-    --text:        #efefef;
-    --text-2:      #707070;
-    --text-3:      #363636;
-    --green:       #7a9e7a;
+    --bg:          #0e0b08;
+    --sb-bg:       #100d09;
+    --surface:     #17120d;
+    --surface-2:   #1e1710;
+    --border:      #261d14;
+    --border-2:    #332618;
+    --accent:      #8a7055;
+    --accent-b:    #c4a882;
+    --accent-dim:  rgba(196,168,130,0.06);
+    --accent-glow: rgba(196,168,130,0.12);
+    --text:        #f0e6d2;
+    --text-2:      #7a6a52;
+    --text-3:      #3d2e1e;
+    --green:       #8a9e7a;
     --sb-w:        260px;
   }
 
@@ -67,6 +67,7 @@
     background: var(--accent); border-radius: 1px;
     transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1), height 0.25s ease;
     will-change: transform;
+    box-shadow: 0 0 10px rgba(192,192,192,0.18), 0 0 24px rgba(192,192,192,0.08);
   }
 
   .s-link {
@@ -169,7 +170,7 @@
     font-size: clamp(3.8rem, 8vw, 6.5rem);
     font-weight: 700; font-style: italic; letter-spacing: -0.02em; line-height: 0.94;
     color: var(--text); margin-bottom: 2rem;
-    opacity: 0; animation: fadeUp 0.65s 0.6s cubic-bezier(0.16,1,0.3,1) both;
+    opacity: 0; animation: fadeUp 0.65s 0.6s cubic-bezier(0.16,1,0.3,1) both, hero-glow 8s ease-in-out infinite 4s;
   }
   .hero-bio {
     font-size: 0.93rem; color: var(--text-2); line-height: 1.9; max-width: 500px; margin-bottom: 2.5rem;
@@ -291,8 +292,8 @@
 
   /* ── EXPERIENCE ──────────────────────────── */
   .timeline { display: flex; flex-direction: column; gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: 5px; overflow: hidden; }
-  .tl-card { padding: 1.5rem; background: var(--surface); transition: background 0.15s ease; }
-  .tl-card:hover { background: var(--surface-2); }
+  .tl-card { padding: 1.5rem; background: var(--surface); border-left: 2px solid transparent; transition: background 0.15s ease, border-left-color 0.2s ease; }
+  .tl-card:hover { background: var(--surface-2); border-left-color: var(--border-2); }
   .tl-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; flex-wrap: wrap; margin-bottom: 0.25rem; }
   .tl-org  { font-family: 'Playfair Display', serif; font-size: 0.88rem; font-style: italic; font-weight: 400; color: var(--accent-b); margin-bottom: 0.3rem; letter-spacing: 0.01em; }
   .tl-role { font-size: 0.93rem; font-weight: 600; color: var(--text); margin-bottom: 0.5rem; }
@@ -396,6 +397,30 @@
   .lb-dot.active { background: var(--text-2); }
 
   /* ── Keyframes ───────────────────────────── */
+  /* ── Cursor glow + scroll progress ──────── */
+  #cursor-glow {
+    position: fixed; inset: 0; pointer-events: none; z-index: 1;
+    opacity: 0; transition: opacity 1s ease;
+  }
+  #cursor-glow.active { opacity: 1; }
+  #scroll-progress {
+    position: fixed; top: 0; left: var(--sb-w); right: 0;
+    height: 1px; z-index: 999; pointer-events: none;
+    background: transparent;
+  }
+  #scroll-fill {
+    height: 100%; width: 0%;
+    background: linear-gradient(90deg, var(--accent), var(--accent-b));
+    transition: width 0.08s linear;
+  }
+  @media (max-width: 800px) { #scroll-progress { left: 0; } }
+
+  /* ── Hero name pulse ─────────────────────── */
+  @keyframes hero-glow {
+    0%, 100% { text-shadow: none; }
+    50% { text-shadow: 0 0 80px rgba(255,255,255,0.07), 0 0 120px rgba(255,255,255,0.04); }
+  }
+
   @keyframes slideInLeft { from { transform: translateX(-100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
   @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
   @keyframes fadeIn  { from { opacity: 0; } to { opacity: 1; } }
@@ -433,6 +458,8 @@
   </style>
 </head>
 <body>
+<div id="cursor-glow"></div>
+<div id="scroll-progress"><div id="scroll-fill"></div></div>
 
 <!-- ═══ SIDEBAR ═══ -->
 <aside class="sidebar">
@@ -481,6 +508,12 @@
       </a>
       <a href="mailto:rohtak.pat314@gmail.com" class="sb-social" title="Email">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+      </a>
+      <a href="https://devpost.com/rohtakpat314" target="_blank" rel="noopener" class="sb-social" title="Devpost">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M4 2h6a10 10 0 0 1 0 20H4V2zm4 4v12h2a6 6 0 0 0 0-12H8z" fill-rule="evenodd"/></svg>
+      </a>
+      <a href="https://medium.com/@rohtak.pat314" target="_blank" rel="noopener" class="sb-social" title="Medium">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M13.54 12a6.8 6.8 0 01-6.77 6.82A6.8 6.8 0 010 12a6.8 6.8 0 016.77-6.82A6.8 6.8 0 0113.54 12zM20.96 12c0 3.54-1.51 6.42-3.38 6.42-1.87 0-3.39-2.88-3.39-6.42s1.52-6.42 3.39-6.42 3.38 2.88 3.38 6.42M24 12c0 3.17-.53 5.75-1.19 5.75-.66 0-1.19-2.58-1.19-5.75s.53-5.75 1.19-5.75C23.47 6.25 24 8.83 24 12z"/></svg>
       </a>
     </div>
   </div>
@@ -600,7 +633,7 @@
           </div>
         </div>
 
-        <!-- 06 FES/OCPD -->
+        <!-- 04 FES/OCPD -->
         <div class="proj-card reveal">
           <div class="proj-gallery" style="pointer-events:none;cursor:default;">
             <img src="brand_assets/ltspice.png" alt="LTspice overcurrent protection schematic" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block;"/>
@@ -610,6 +643,55 @@
             <p class="proj-name">Overcurrent Protection Device, FES Hardware</p>
             <p class="proj-desc">Analog signal chain (op-amp integrator, window comparator, D-latch) that detects overcurrent events and sends an interrupt to the MCU. Integrated into a functional electrical stimulation device for patients.</p>
             <div class="proj-footer"><div class="proj-tools"><span class="chip">Analog Circuit Design</span><span class="chip">Op-Amps</span><span class="chip">CMOS Logic</span><span class="chip">KiCad</span><span class="chip">PCB Design</span></div></div>
+          </div>
+        </div>
+
+        <!-- 05 RV32I Pipelined CPU -->
+        <div class="proj-card reveal">
+          <div class="proj-gallery" style="cursor:pointer;" onclick="window.open('https://github.com/rohtakpat314/riscvcpu','_blank')" role="button" tabindex="0" onkeydown="if(event.key==='Enter')window.open('https://github.com/rohtakpat314/riscvcpu','_blank')">
+            <div style="width:100%;height:100%;background:var(--surface-2);display:flex;align-items:center;justify-content:center;">
+              <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="var(--text-3)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/>
+                <path d="M9 2v2M15 2v2M9 20v2M15 20v2M2 9h2M2 15h2M20 9h2M20 15h2"/>
+              </svg>
+            </div>
+            <div class="proj-gallery-overlay">
+              <button class="gallery-btn" onclick="event.stopPropagation();window.open('https://github.com/rohtakpat314/riscvcpu','_blank')">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.5-1.4-1.3-1.8-1.3-1.8-1-.7.1-.7.1-.7 1.1.1 1.7 1.1 1.7 1.1 1 1.7 2.6 1.2 3.2.9.1-.7.4-1.2.7-1.5-2.6-.3-5.4-1.3-5.4-5.8 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17.3 4.7 18.3 5 18.3 5c.7 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.5-2.8 5.5-5.4 5.8.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3"/></svg>
+                View on GitHub
+              </button>
+              <span class="gallery-count">github.com</span>
+            </div>
+          </div>
+          <div class="proj-body">
+            <p class="proj-num">05</p>
+            <p class="proj-name">RV32I Pipelined 5-Stage CPU</p>
+            <p class="proj-desc">Full RV32I implementation in SystemVerilog with a classic 5-stage pipeline (IF/ID/EX/MEM/WB), hazard detection, data forwarding, and branch handling. Verified in Verilator and synthesized with Vivado.</p>
+            <div class="proj-footer">
+              <div class="proj-tools"><span class="chip">SystemVerilog</span><span class="chip">Verilator</span><span class="chip">Vivado</span><span class="chip">Logisim</span><span class="chip">Git</span></div>
+              <span style="font-size:0.62rem;color:var(--text-3);white-space:nowrap;border:1px solid var(--border);padding:0.18rem 0.55rem;border-radius:4px;flex-shrink:0;">End of Summer</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 06 RV32I Web Simulator -->
+        <div class="proj-card reveal">
+          <div class="proj-gallery" style="pointer-events:none;cursor:default;">
+            <div style="width:100%;height:100%;background:var(--surface-2);display:flex;align-items:center;justify-content:center;">
+              <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="var(--text-3)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/>
+                <polyline points="7 8 4 11 7 14"/><polyline points="14 8 17 11 14 14"/>
+              </svg>
+            </div>
+          </div>
+          <div class="proj-body">
+            <p class="proj-num">06</p>
+            <p class="proj-name">RV32I Web Pipeline Simulator</p>
+            <p class="proj-desc">Browser-based simulator for the RV32I instruction set that visualizes pipeline stages, register state, memory, and data hazards in real time — built for students learning computer architecture.</p>
+            <div class="proj-footer">
+              <div class="proj-tools"><span class="chip">React</span><span class="chip">JavaScript</span></div>
+              <span style="font-size:0.62rem;color:var(--text-3);white-space:nowrap;border:1px solid var(--border);padding:0.18rem 0.55rem;border-radius:4px;flex-shrink:0;">End of Summer</span>
+            </div>
           </div>
         </div>
 
@@ -753,6 +835,16 @@
             <div><div class="contact-platform">GitHub</div><div class="contact-value">github.com/rohtakpat314</div></div>
             <svg class="contact-arrow" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
           </a>
+          <a href="https://devpost.com/rohtakpat314" target="_blank" rel="noopener" class="contact-card">
+            <div class="contact-icon"><svg width="17" height="17" viewBox="0 0 24 24" fill="#efefef"><path d="M4 2h6a10 10 0 0 1 0 20H4V2zm4 4v12h2a6 6 0 0 0 0-12H8z" fill-rule="evenodd"/></svg></div>
+            <div><div class="contact-platform">Devpost</div><div class="contact-value">devpost.com/rohtakpat314</div></div>
+            <svg class="contact-arrow" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+          <a href="https://medium.com/@rohtak.pat314" target="_blank" rel="noopener" class="contact-card">
+            <div class="contact-icon"><svg width="17" height="17" viewBox="0 0 24 24" fill="#efefef"><path d="M13.54 12a6.8 6.8 0 01-6.77 6.82A6.8 6.8 0 010 12a6.8 6.8 0 016.77-6.82A6.8 6.8 0 0113.54 12zM20.96 12c0 3.54-1.51 6.42-3.38 6.42-1.87 0-3.39-2.88-3.39-6.42s1.52-6.42 3.39-6.42 3.38 2.88 3.38 6.42M24 12c0 3.17-.53 5.75-1.19 5.75-.66 0-1.19-2.58-1.19-5.75s.53-5.75 1.19-5.75C23.47 6.25 24 8.83 24 12z"/></svg></div>
+            <div><div class="contact-platform">Medium</div><div class="contact-value">medium.com/@rohtak.pat314</div></div>
+            <svg class="contact-arrow" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
         </div>
       </div>
     </div>
@@ -832,8 +924,6 @@
   }, { threshold: 0.07, rootMargin: '0px 0px -30px 0px' });
   document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
 
-
-
   // ── Init indicator position ───────────────────
   window.addEventListener('load', () => {
     const firstActive = document.querySelector('.s-link.active');
@@ -865,6 +955,21 @@
     if (e.key === 'ArrowLeft')  lightboxPrev();
   });
   document.getElementById('lightbox').addEventListener('click', e => { if (e.target === document.getElementById('lightbox')) closeLightbox(); });
+
+  // ── Cursor glow ───────────────────────────────
+  const cursorGlow = document.getElementById('cursor-glow');
+  let glowActive = false;
+  document.addEventListener('mousemove', e => {
+    if (!glowActive) { cursorGlow.classList.add('active'); glowActive = true; }
+    cursorGlow.style.background = `radial-gradient(700px circle at ${e.clientX}px ${e.clientY}px, rgba(192,192,192,0.046), transparent 80%)`;
+  }, { passive: true });
+
+  // ── Scroll progress ───────────────────────────
+  const scrollFill = document.getElementById('scroll-fill');
+  window.addEventListener('scroll', () => {
+    const pct = window.scrollY / (document.documentElement.scrollHeight - window.innerHeight) * 100;
+    scrollFill.style.width = Math.min(pct, 100) + '%';
+  }, { passive: true });
 </script>
 </body>
 </html>
