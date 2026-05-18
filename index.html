@@ -32,6 +32,15 @@
   }
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body::after {
+    content: '';
+    position: fixed; inset: 0; z-index: 998; pointer-events: none;
+    opacity: 0.15;
+    background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='250' height='250'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='0.72' numOctaves='4' stitchTiles='stitch'/></filter><rect width='250' height='250' filter='url(%23g)'/></svg>");
+    background-repeat: repeat;
+    background-size: 180px 180px;
+  }
   html { scroll-behavior: smooth; }
   body {
     background: var(--bg); color: var(--text);
@@ -57,7 +66,7 @@
     opacity: 0; animation: fadeUp 0.5s 0.4s ease both;
   }
   .sb-name { font-size: 0.9rem; font-weight: 700; color: var(--text); letter-spacing: -0.02em; }
-  .sb-sub  { font-size: 0.67rem; color: var(--text-3); margin-top: 0.1rem; }
+  .sb-sub  { font-size: 0.67rem; color: var(--text-2); margin-top: 0.1rem; }
 
   .nav-track { position: relative; display: flex; flex-direction: column; gap: 0.02rem; flex: 1; }
 
@@ -74,7 +83,7 @@
     display: flex; align-items: center; gap: 0.6rem;
     padding: 0.52rem 0.7rem 0.52rem 0.9rem;
     font-size: 0.81rem; font-weight: 400;
-    color: var(--text-3); text-decoration: none;
+    color: var(--text-2); text-decoration: none;
     border-radius: 0 5px 5px 0; cursor: pointer;
     border: none; background: none; font-family: inherit;
     transition: color 0.18s ease, background 0.18s ease;
@@ -111,7 +120,7 @@
     width: 28px; height: 28px; border-radius: 4px;
     border: 1px solid var(--border-2);
     display: flex; align-items: center; justify-content: center;
-    color: var(--text-3); text-decoration: none;
+    color: var(--text-2); text-decoration: none;
     transition: border-color 0.18s ease, color 0.18s ease, background 0.18s ease;
   }
   .sb-social:hover { border-color: var(--accent); color: var(--accent-b); background: var(--accent-dim); }
@@ -159,6 +168,7 @@
 
   /* ── ABOUT ───────────────────────────────── */
   #about { min-height: 100vh; display: flex; align-items: center; }
+  #about .container { text-align: center; }
 
   .hero-kicker {
     font-size: 0.78rem; color: var(--accent); letter-spacing: 0.18em; margin-bottom: 1.6rem;
@@ -169,16 +179,16 @@
     font-family: 'Playfair Display', serif;
     font-size: clamp(3.8rem, 8vw, 6.5rem);
     font-weight: 700; font-style: italic; letter-spacing: -0.02em; line-height: 0.94;
-    color: var(--text); margin-bottom: 2rem;
+    color: var(--text); margin-bottom: 4rem;
     opacity: 0; animation: fadeUp 0.65s 0.6s cubic-bezier(0.16,1,0.3,1) both, hero-glow 8s ease-in-out infinite 4s;
   }
   .hero-bio {
-    font-size: 0.93rem; color: var(--text-2); line-height: 1.9; max-width: 500px; margin-bottom: 2.5rem;
+    font-size: 0.93rem; color: var(--text-2); line-height: 1.9; max-width: 840px; margin: 0 auto 2.5rem; text-align: left;
     font-weight: 300; letter-spacing: 0.01em;
     opacity: 0; animation: fadeUp 0.6s 0.72s ease both;
   }
   .hero-actions {
-    display: flex; gap: 0.7rem; flex-wrap: wrap; margin-bottom: 3.5rem;
+    display: flex; gap: 0.7rem; flex-wrap: wrap; margin-bottom: 3.5rem; justify-content: center;
     opacity: 0; animation: fadeUp 0.6s 0.82s ease both;
   }
 
@@ -397,12 +407,34 @@
   .lb-dot.active { background: var(--text-2); }
 
   /* ── Keyframes ───────────────────────────── */
-  /* ── Cursor glow + scroll progress ──────── */
+  /* ── Cursor ──────────────────────────────── */
+  * { cursor: none !important; }
+
   #cursor-glow {
     position: fixed; inset: 0; pointer-events: none; z-index: 1;
     opacity: 0; transition: opacity 1s ease;
   }
   #cursor-glow.active { opacity: 1; }
+
+  #cursor-dot {
+    position: fixed; z-index: 9999; pointer-events: none;
+    width: 8px; height: 8px; border-radius: 50%;
+    background: #e8522a;
+    top: 0; left: 0;
+    box-shadow: 0 0 10px rgba(232,82,42,0.95), 0 0 22px rgba(232,82,42,0.55), 0 0 40px rgba(200,50,20,0.25);
+    transition: width 0.18s ease, height 0.18s ease, background 0.18s ease, box-shadow 0.18s ease, opacity 0.2s ease;
+    will-change: transform;
+  }
+  body.cur-hover #cursor-dot {
+    width: 11px; height: 11px;
+    background: #ff7a50;
+    box-shadow: 0 0 14px rgba(232,82,42,1), 0 0 30px rgba(232,82,42,0.7), 0 0 55px rgba(200,50,20,0.35);
+  }
+  body.cur-click #cursor-dot {
+    width: 5px; height: 5px;
+    background: #ffaa80;
+    box-shadow: 0 0 16px rgba(240,180,60,1), 0 0 35px rgba(232,82,42,0.8);
+  }
   #scroll-progress {
     position: fixed; top: 0; left: var(--sb-w); right: 0;
     height: 1px; z-index: 999; pointer-events: none;
@@ -419,6 +451,16 @@
   @keyframes hero-glow {
     0%, 100% { text-shadow: none; }
     50% { text-shadow: 0 0 80px rgba(255,255,255,0.07), 0 0 120px rgba(255,255,255,0.04); }
+  }
+
+  @keyframes emberFade {
+    0%   { opacity: 0.9;  transform: translate(0,0) scale(1); }
+    60%  { opacity: 0.5; }
+    100% { opacity: 0;    transform: translate(var(--ex), var(--ey)) scale(0.1); }
+  }
+  .ember {
+    position: fixed; pointer-events: none; border-radius: 50%; z-index: 9997;
+    will-change: transform, opacity;
   }
 
   @keyframes slideInLeft { from { transform: translateX(-100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
@@ -459,6 +501,7 @@
 </head>
 <body>
 <div id="cursor-glow"></div>
+<div id="cursor-dot"></div>
 <div id="scroll-progress"><div id="scroll-fill"></div></div>
 
 <!-- ═══ SIDEBAR ═══ -->
@@ -551,7 +594,24 @@
     <div class="container">
       <p class="hero-kicker">EE &amp; CS @ UW–Madison · 2028 · Dean's Honor List</p>
       <h1 class="hero-name">Rohtak<br>Patwardhan</h1>
-      <p class="hero-bio">Currently building a pipelined RISC-V CPU in Verilog.<br><br>Interested in Computer Architecture and Operating Systems.</p>
+      <div class="hero-bio" style="border:1px solid var(--border-2);border-radius:8px;overflow:hidden;background:var(--surface);">
+        <div style="padding:1.6rem 1.9rem;display:flex;flex-direction:column;gap:1rem;text-align:left;">
+          <p>i'm a sophomore ee/cs student at uw-madison interested in fpga, operating systems, and low-level embedded systems programming. i'm currently building a rv32i cpu and a web-app simulator for it. in the future, i intend to work on sdr programming for metop satellites and a container tool that captures what happens when pulling or starting a container image.</p>
+          <p>so far, i've completed research with dr. feng ye, learning about mmwave configuration and sound reconstruction. looking ahead, i'm interested in research with low-level hardware and software. i've also worked on the fes hardware team with insight wisconsin, building a modern, cheaper, fes device for patients. finally, i worked with badger solar racing's low voltage team.</p>
+          <div>
+            <p style="margin-bottom:0.45rem;">here are some of my personal interests:</p>
+            <ul style="list-style:none;display:flex;flex-direction:column;gap:0.25rem;">
+              <li style="display:flex;gap:0.55rem;"><span style="color:var(--accent);">—</span> 2% latte, 2 splendas</li>
+              <li style="display:flex;gap:0.55rem;"><span style="color:var(--accent);">—</span> asap rocky, drake, tame impala, bryson tiller, miguel. radiohead</li>
+              <li style="display:flex;gap:0.55rem;"><span style="color:var(--accent);">—</span> cars</li>
+              <li style="display:flex;gap:0.55rem;"><span style="color:var(--accent);">—</span> lifting</li>
+              <li style="display:flex;gap:0.55rem;"><span style="color:var(--accent);">—</span> watching breaking bad, bcs, other shows</li>
+              <li style="display:flex;gap:0.55rem;"><span style="color:var(--accent);">—</span> sidequesting with skilled friends and picking up a thing or two</li>
+            </ul>
+          </div>
+          <p>i have a vision for my works and project development. i admire strong technical documentation and seek to reach industry-level standards in my work as well. if you're interested in working with me and have some skills, please reach out at <a href="mailto:rohtak.pat314@gmail.com" style="color:var(--accent-b);text-decoration:none;">rohtak.pat314@gmail.com</a> or <a href="mailto:rspatwardha2@wisc.edu" style="color:var(--accent-b);text-decoration:none;">rspatwardha2@wisc.edu</a>.</p>
+        </div>
+      </div>
       <div class="hero-actions">
         <button class="btn-primary" onclick="scrollToSection('contact')">
           Get in touch
@@ -584,8 +644,8 @@
           <div class="proj-body">
             <p class="proj-num">01</p>
             <p class="proj-name">N-Body Gravity Simulator</p>
-            <p class="proj-desc">Simulates gravitational interactions between N particles using numerical integration. Visualizes orbital trajectories and gravitational clustering in real time.</p>
-            <div class="proj-footer"><div class="proj-tools"><span class="chip">Python</span><span class="chip">NumPy</span><span class="chip">Matplotlib</span><span class="chip">ODE Integration</span></div><a href="brand_assets/N-Body%20Gravity%20Simulator%20(DOCUMENTATION).pdf" target="_blank" rel="noopener" class="proj-docs"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Documentation</a></div>
+            <p class="proj-desc">Simulates orbits with N-bodies using Newtonian physics. Visualizes orbit trajectories and gravitational clustering in real-time.</p>
+            <div class="proj-footer"><div class="proj-tools"><span class="chip">Python</span><span class="chip">Matplotlib</span><span class="chip">Pandas</span><span class="chip">NumPy</span><span class="chip">ODEs</span><span class="chip">JSON</span></div><a href="brand_assets/N-Body%20Gravity%20Simulator%20(DOCUMENTATION).pdf" target="_blank" rel="noopener" class="proj-docs"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Documentation</a></div>
           </div>
         </div>
 
@@ -606,8 +666,8 @@
           <div class="proj-body">
             <p class="proj-num">02</p>
             <p class="proj-name">8×8 NeoPixel Mini Arcade</p>
-            <p class="proj-desc">ECE 210 project — a playable arcade game on an 8×8 NeoPixel LED matrix driven by an ATmega MCU, built with a custom-designed ISA.</p>
-            <div class="proj-footer"><div class="proj-tools"><span class="chip">Embedded C++</span><span class="chip">ATmega (AVR)</span><span class="chip">NeoPixel</span><span class="chip">Custom ISA</span><span class="chip">PCB Design</span></div><a href="brand_assets/Patwardhan_Rohtak_ECE210.pdf" target="_blank" rel="noopener" class="proj-docs"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Documentation</a></div>
+            <p class="proj-desc">A playable arcade game on an 8×8 NeoPixel LED Matrix (WS2812B) driven by an ATmega328P MCU.</p>
+            <div class="proj-footer"><div class="proj-tools"><span class="chip">C++</span><span class="chip">Prompt Engineering</span><span class="chip">ATmega328P</span><span class="chip">WS2812B NeoPixel</span><span class="chip">PCB Design</span><span class="chip">Soldering</span></div><a href="brand_assets/Patwardhan_Rohtak_ECE210.pdf" target="_blank" rel="noopener" class="proj-docs"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Documentation</a></div>
           </div>
         </div>
 
@@ -628,8 +688,8 @@
           <div class="proj-body">
             <p class="proj-num">03</p>
             <p class="proj-name">AI Agent Scheduler &amp; Parallel Runtime</p>
-            <p class="proj-desc">Schedules and dispatches AI agents across parallel execution contexts, managing task dependencies, resource contention, and runtime orchestration.</p>
-            <div class="proj-footer"><div class="proj-tools"><span class="chip">Python</span><span class="chip">Concurrent Systems</span><span class="chip">LLM APIs</span><span class="chip">Task Scheduling</span></div></div>
+            <p class="proj-desc">Python code for AI Agent scheduling. Skeleton code for contributors who want to create an AI agent dispatching system.</p>
+            <div class="proj-footer"><div class="proj-tools"><span class="chip">Python</span><span class="chip">JSON</span><span class="chip">LLM APIs</span></div></div>
           </div>
         </div>
 
@@ -641,19 +701,20 @@
           <div class="proj-body">
             <p class="proj-num">04</p>
             <p class="proj-name">Overcurrent Protection Device, FES Hardware</p>
-            <p class="proj-desc">Analog signal chain (op-amp integrator, window comparator, D-latch) that detects overcurrent events and sends an interrupt to the MCU. Integrated into a functional electrical stimulation device for patients.</p>
-            <div class="proj-footer"><div class="proj-tools"><span class="chip">Analog Circuit Design</span><span class="chip">Op-Amps</span><span class="chip">CMOS Logic</span><span class="chip">KiCad</span><span class="chip">PCB Design</span></div></div>
+            <p class="proj-desc">Chain of an op-amp integrator, window comparator, and SR-latch that detects overcurrent events and sends an interrupt (EXTI) to an MCU.</p>
+            <div class="proj-footer"><div class="proj-tools"><span class="chip">KiCad</span><span class="chip">Altium</span><span class="chip">LTspice</span><span class="chip">CMOS Logic</span><span class="chip">Circuit Design</span></div></div>
           </div>
         </div>
 
         <!-- 05 RV32I Pipelined CPU -->
         <div class="proj-card reveal">
           <div class="proj-gallery" style="cursor:pointer;" onclick="window.open('https://github.com/rohtakpat314/riscvcpu','_blank')" role="button" tabindex="0" onkeydown="if(event.key==='Enter')window.open('https://github.com/rohtakpat314/riscvcpu','_blank')">
-            <div style="width:100%;height:100%;background:var(--surface-2);display:flex;align-items:center;justify-content:center;">
+            <div style="width:100%;height:100%;background:var(--surface-2);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.75rem;">
               <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="var(--text-3)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                 <rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/>
                 <path d="M9 2v2M15 2v2M9 20v2M15 20v2M2 9h2M2 15h2M20 9h2M20 15h2"/>
               </svg>
+              <span style="font-size:0.6rem;color:var(--text-3);letter-spacing:0.12em;text-transform:uppercase;border:1px solid var(--border);padding:0.2rem 0.6rem;border-radius:3px;">coming soon</span>
             </div>
             <div class="proj-gallery-overlay">
               <button class="gallery-btn" onclick="event.stopPropagation();window.open('https://github.com/rohtakpat314/riscvcpu','_blank')">
@@ -666,7 +727,7 @@
           <div class="proj-body">
             <p class="proj-num">05</p>
             <p class="proj-name">RV32I Pipelined 5-Stage CPU</p>
-            <p class="proj-desc">Full RV32I implementation in SystemVerilog with a classic 5-stage pipeline (IF/ID/EX/MEM/WB), hazard detection, data forwarding, and branch handling. Verified in Verilator and synthesized with Vivado.</p>
+            <p class="proj-desc">RV32I single-cycle, custom CPU implementation done with SystemVerilog, Verilator, Vivado, and Logisim. Stay tuned.</p>
             <div class="proj-footer">
               <div class="proj-tools"><span class="chip">SystemVerilog</span><span class="chip">Verilator</span><span class="chip">Vivado</span><span class="chip">Logisim</span><span class="chip">Git</span></div>
               <span style="font-size:0.62rem;color:var(--text-3);white-space:nowrap;border:1px solid var(--border);padding:0.18rem 0.55rem;border-radius:4px;flex-shrink:0;">End of Summer</span>
@@ -677,17 +738,18 @@
         <!-- 06 RV32I Web Simulator -->
         <div class="proj-card reveal">
           <div class="proj-gallery" style="pointer-events:none;cursor:default;">
-            <div style="width:100%;height:100%;background:var(--surface-2);display:flex;align-items:center;justify-content:center;">
+            <div style="width:100%;height:100%;background:var(--surface-2);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.75rem;">
               <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="var(--text-3)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                 <rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/>
                 <polyline points="7 8 4 11 7 14"/><polyline points="14 8 17 11 14 14"/>
               </svg>
+              <span style="font-size:0.6rem;color:var(--text-3);letter-spacing:0.12em;text-transform:uppercase;border:1px solid var(--border);padding:0.2rem 0.6rem;border-radius:3px;">coming soon</span>
             </div>
           </div>
           <div class="proj-body">
             <p class="proj-num">06</p>
             <p class="proj-name">RV32I Web Pipeline Simulator</p>
-            <p class="proj-desc">Browser-based simulator for the RV32I instruction set that visualizes pipeline stages, register state, memory, and data hazards in real time — built for students learning computer architecture.</p>
+            <p class="proj-desc">Web app that guides users or students on pipeline stages, register state, memory, hazards, and forwarding.</p>
             <div class="proj-footer">
               <div class="proj-tools"><span class="chip">React</span><span class="chip">JavaScript</span></div>
               <span style="font-size:0.62rem;color:var(--text-3);white-space:nowrap;border:1px solid var(--border);padding:0.18rem 0.55rem;border-radius:4px;flex-shrink:0;">End of Summer</span>
@@ -771,18 +833,14 @@
       <p class="sec-label reveal">Coursework</p>
 
       <div class="cw-list reveal">
-        <div class="cw-row"><div class="cw-row-top"><span class="cw-code">CS 200</span><span class="cw-name">Programming I</span></div><span class="cw-note">Intro to OOP, Java fundamentals, problem decomposition</span></div>
-        <div class="cw-row"><div class="cw-row-top"><span class="cw-code">CS 300</span><span class="cw-name">Programming II</span></div><span class="cw-note">Data structures, recursion, generics, exception handling</span></div>
         <div class="cw-row"><div class="cw-row-top"><span class="cw-code">ECE 203</span><span class="cw-name">Signals, Information &amp; Computation</span></div><span class="cw-note">Fourier series, probability, information theory</span></div>
-        <div class="cw-row"><div class="cw-row-top"><span class="cw-code">ECE 210</span><span class="cw-name">Introductory Experience in EE</span></div><span class="cw-note">Circuits, devices, and systems via hands-on project</span></div>
         <div class="cw-row"><div class="cw-row-top"><span class="cw-code">ECE 230</span><span class="cw-name">Circuit Analysis</span></div><span class="cw-note">Kirchhoff's laws, op-amps, AC/DC phasor analysis</span></div>
-        <div class="cw-row"><div class="cw-row-top"><span class="cw-code">ECE 252</span><span class="cw-name">Introduction to Computer Engineering</span></div><span class="cw-note">Boolean algebra, combinational/sequential logic, computer organization</span></div>
         <div class="cw-row"><div class="cw-row-top"><span class="cw-code">ECE 352</span><span class="cw-name">Digital System Fundamentals</span></div><span class="cw-note">Logic design, Verilog, synchronous sequential circuits</span></div>
         <div class="cw-row"><div class="cw-row-top"><span class="cw-code">ECE 222</span><span class="cw-name">Electrodynamics I</span><span class="cw-badge">Next Sem</span></div><span class="cw-note">Vector calculus, Maxwell's equations, EM waves, transmission lines</span></div>
-        <div class="cw-row"><div class="cw-row-top"><span class="cw-code">ECE 270</span><span class="cw-name">Circuits Laboratory I</span><span class="cw-badge">Next Sem</span></div><span class="cw-note">Hands-on circuits, oscilloscopes, op-amp experiments</span></div>
         <div class="cw-row"><div class="cw-row-top"><span class="cw-code">ECE 340</span><span class="cw-name">Electronic Circuits I</span><span class="cw-badge">Next Sem</span></div><span class="cw-note">BJTs, MOSFETs, amplifiers, frequency response</span></div>
         <div class="cw-row"><div class="cw-row-top"><span class="cw-code">ECE 552</span><span class="cw-name">Computer Architecture</span><span class="cw-badge">Next Sem</span></div><span class="cw-note">Processor design, pipelining, caches, memory hierarchy</span></div>
         <div class="cw-row"><div class="cw-row-top"><span class="cw-code">CS 400</span><span class="cw-name">Advanced Data Structures</span><span class="cw-badge">Next Sem</span></div><span class="cw-note">Advanced data structures, graphs, hashing, complexity</span></div>
+        <div class="cw-row"><div class="cw-row-top"><span class="cw-code">ECE 354</span><span class="cw-name">Machine Organization and Programming</span><span class="cw-badge">Next Sem</span></div><span class="cw-note"></span></div>
       </div>
     </div>
   </section>
@@ -956,13 +1014,56 @@
   });
   document.getElementById('lightbox').addEventListener('click', e => { if (e.target === document.getElementById('lightbox')) closeLightbox(); });
 
-  // ── Cursor glow ───────────────────────────────
+  // ── Cursor ────────────────────────────────────
   const cursorGlow = document.getElementById('cursor-glow');
-  let glowActive = false;
+  const cursorDot = document.getElementById('cursor-dot');
+
+  let mouseX = 0, mouseY = 0, prevX = 0, prevY = 0, glowActive = false;
+
+  const EMBER_COLORS = ['#e8522a','#f07040','#d44020','#f09050','#c83820','#ff6030','#e84010'];
+  let lastEmber = 0;
+
+  function spawnEmber(x, y, vx, vy) {
+    const count = 1;
+    for (let i = 0; i < count; i++) {
+      const el = document.createElement('div');
+      el.className = 'ember';
+      const size = 1.5 + Math.random() * 3;
+      const speed = 0.3 + Math.random() * 0.7;
+      const angle = Math.random() * Math.PI * 2;
+      const ex = (Math.cos(angle) * 18 + vx * 0.4) * speed;
+      const ey = (Math.sin(angle) * 18 + vy * 0.4 + 14) * speed;
+      const dur = 0.55 + Math.random() * 0.5;
+      const col = EMBER_COLORS[Math.floor(Math.random() * EMBER_COLORS.length)];
+      el.style.cssText = `width:${size}px;height:${size}px;left:${x - size/2}px;top:${y - size/2}px;background:${col};box-shadow:0 0 ${size*2}px ${col};--ex:${ex}px;--ey:${ey}px;animation:emberFade ${dur}s ease-in forwards;`;
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), dur * 1000);
+    }
+  }
+
   document.addEventListener('mousemove', e => {
+    mouseX = e.clientX; mouseY = e.clientY;
+    cursorDot.style.transform = `translate(${mouseX - 3.5}px, ${mouseY - 3.5}px)`;
     if (!glowActive) { cursorGlow.classList.add('active'); glowActive = true; }
-    cursorGlow.style.background = `radial-gradient(700px circle at ${e.clientX}px ${e.clientY}px, rgba(192,192,192,0.046), transparent 80%)`;
+    cursorGlow.style.background = `radial-gradient(600px circle at ${mouseX}px ${mouseY}px, rgba(232,82,42,0.06), transparent 80%)`;
+    const now = Date.now();
+    if (now - lastEmber > 28) {
+      spawnEmber(mouseX, mouseY, mouseX - prevX, mouseY - prevY);
+      lastEmber = now;
+    }
+    prevX = mouseX; prevY = mouseY;
   }, { passive: true });
+
+  document.querySelectorAll('a, button, [role="button"], [tabindex="0"]').forEach(el => {
+    el.addEventListener('mouseenter', () => document.body.classList.add('cur-hover'));
+    el.addEventListener('mouseleave', () => document.body.classList.remove('cur-hover'));
+  });
+
+  document.addEventListener('mousedown', () => document.body.classList.add('cur-click'));
+  document.addEventListener('mouseup',   () => document.body.classList.remove('cur-click'));
+
+  document.addEventListener('mouseleave', () => { cursorDot.style.opacity = '0'; });
+  document.addEventListener('mouseenter', () => { cursorDot.style.opacity = '1'; });
 
   // ── Scroll progress ───────────────────────────
   const scrollFill = document.getElementById('scroll-fill');
