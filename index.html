@@ -44,9 +44,11 @@
   html { scroll-behavior: smooth; }
   body {
     background: var(--bg); color: var(--text);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='87' height='150'%3E%3Cpolygon points='43,0 87,25 87,75 43,100 0,75 0,25' fill='none' stroke='rgba(196,168,130,0.03)' stroke-width='1'/%3E%3Cpolygon points='0,75 43,100 43,150 0,175 -43,150 -43,100' fill='none' stroke='rgba(196,168,130,0.03)' stroke-width='1'/%3E%3Cpolygon points='87,75 130,100 130,150 87,175 43,150 43,100' fill='none' stroke='rgba(196,168,130,0.03)' stroke-width='1'/%3E%3C/svg%3E");
     font-family: 'Inter', sans-serif; font-size: 15px;
     line-height: 1.7; -webkit-font-smoothing: antialiased; overflow-x: hidden;
   }
+  #about { background: var(--bg); }
   ::-webkit-scrollbar { width: 3px; }
   ::-webkit-scrollbar-track { background: var(--bg); }
   ::-webkit-scrollbar-thumb { background: var(--border-2); border-radius: 2px; }
@@ -167,7 +169,8 @@
   .reveal.shown { opacity: 1; transform: none; }
 
   /* ── ABOUT ───────────────────────────────── */
-  #about { min-height: 100vh; display: flex; align-items: center; }
+  #about { min-height: 100vh; display: flex; align-items: center; position: relative; overflow: hidden; }
+  #hero-canvas { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
   #about .container { text-align: center; }
 
   .hero-kicker {
@@ -567,6 +570,7 @@
 
   <!-- ABOUT -->
   <section id="about" data-section="about">
+    <canvas id="hero-canvas"></canvas>
     <div class="container">
       <p class="hero-kicker">EE &amp; CS @ UW–Madison · 2028 · Dean's Honor List</p>
       <h1 class="hero-name">Rohtak<br>Patwardhan</h1>
@@ -607,10 +611,11 @@
           </div>
           <div class="proj-body">
             <p class="proj-num">01</p>
-            <p class="proj-name">RV32I Single-Cycle CPU</p>
+            <p class="proj-name">RISC-V Single-Cycle CPU</p>
             <p class="proj-desc">Single-cycle RV32I processor in SystemVerilog implementing all 47 R/I/S/B/U/J-type instructions and 8 M-extension. Synthesized on Altera Cyclone V FPGA at 60.42 MHz, 52mW dynamic power, ~ 1 CPI, verified with self-checking Verilog testbenches with a 100% pass rate. Also verified with GTKWave debugging and Icarus Verilog compilation.</p>
             <div class="proj-footer">
               <div class="proj-tools"><span class="chip">SystemVerilog</span><span class="chip">Quartus Prime</span><span class="chip">GTKWave</span><span class="chip">Icarus Verilog</span><span class="chip">Cyclone V</span></div>
+              <a href="https://github.com/rohtakpat314/riscvcpu" target="_blank" rel="noopener" class="proj-docs"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.5-1.4-1.3-1.8-1.3-1.8-1-.7.1-.7.1-.7 1.1.1 1.7 1.1 1.7 1.1 1 1.7 2.6 1.2 3.2.9.1-.7.4-1.2.7-1.5-2.6-.3-5.4-1.3-5.4-5.8 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17.3 4.7 18.3 5 18.3 5c.7 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.5-2.8 5.5-5.4 5.8.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3"/></svg>GitHub</a>
             </div>
           </div>
         </div>
@@ -637,7 +642,7 @@
         </div>
 
         <!-- 03 Multi-Protocol Instrument Bridge -->
-        <a class="proj-card reveal" href="https://github.com/rohtakpat314/Multi-protocol-instrument-bridge" target="_blank" rel="noopener">
+        <div class="proj-card reveal">
           <div class="proj-gallery">
             <img src="brand_assets/rp2040-removebg-preview.png" alt="RP2040-Zero board" loading="lazy" style="width:75%;height:75%;object-fit:contain;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);"/>
           </div>
@@ -647,9 +652,10 @@
             <p class="proj-desc">USB CDC bench adapter for I2C, SPI, UART, and 1-Wire on RP2040. Text command parser in portable C, host-testable firmware, formal LaTeX technical manual.</p>
             <div class="proj-footer">
               <div class="proj-tools"><span class="chip">C</span><span class="chip">RP2040</span><span class="chip">CMake</span><span class="chip">Pico SDK</span></div>
+              <a href="https://github.com/rohtakpat314/Multi-protocol-instrument-bridge" target="_blank" rel="noopener" class="proj-docs"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.5-1.4-1.3-1.8-1.3-1.8-1-.7.1-.7.1-.7 1.1.1 1.7 1.1 1.7 1.1 1 1.7 2.6 1.2 3.2.9.1-.7.4-1.2.7-1.5-2.6-.3-5.4-1.3-5.4-5.8 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17.3 4.7 18.3 5 18.3 5c.7 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.5-2.8 5.5-5.4 5.8.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3"/></svg>GitHub</a>
             </div>
           </div>
-        </a>
+        </div>
 
         <!-- 03 FES/OCPD -->
         <div class="proj-card reveal">
@@ -680,7 +686,7 @@
             <p class="proj-num">05</p>
             <p class="proj-name">N-Body Gravity Simulator</p>
             <p class="proj-desc">Simulates orbits with N-bodies using Newtonian physics. Visualizes orbit trajectories and gravitational clustering in real-time.</p>
-            <div class="proj-footer"><div class="proj-tools"><span class="chip">Python</span><span class="chip">Matplotlib</span><span class="chip">Pandas</span><span class="chip">NumPy</span><span class="chip">ODEs</span><span class="chip">JSON</span></div><a href="brand_assets/N-Body%20Gravity%20Simulator%20(DOCUMENTATION).pdf" target="_blank" rel="noopener" class="proj-docs"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Documentation</a></div>
+            <div class="proj-footer"><div class="proj-tools"><span class="chip">Python</span><span class="chip">Matplotlib</span><span class="chip">Pandas</span><span class="chip">NumPy</span><span class="chip">ODEs</span><span class="chip">JSON</span></div><div style="display:flex;gap:0.4rem;flex-shrink:0;"><a href="https://github.com/rohtakpat314/N-Body-Gravity-Simulator" target="_blank" rel="noopener" class="proj-docs"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.5-1.4-1.3-1.8-1.3-1.8-1-.7.1-.7.1-.7 1.1.1 1.7 1.1 1.7 1.1 1 1.7 2.6 1.2 3.2.9.1-.7.4-1.2.7-1.5-2.6-.3-5.4-1.3-5.4-5.8 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17.3 4.7 18.3 5 18.3 5c.7 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.5-2.8 5.5-5.4 5.8.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3"/></svg>GitHub</a><a href="brand_assets/N-Body%20Gravity%20Simulator%20(DOCUMENTATION).pdf" target="_blank" rel="noopener" class="proj-docs"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Docs</a></div></div>
           </div>
         </div>
 
@@ -702,7 +708,7 @@
             <p class="proj-num">06</p>
             <p class="proj-name">8×8 NeoPixel Mini Arcade</p>
             <p class="proj-desc">A playable arcade game on an 8×8 NeoPixel LED Matrix (WS2812B) driven by an ATmega328P MCU.</p>
-            <div class="proj-footer"><div class="proj-tools"><span class="chip">C++</span><span class="chip">Prompt Engineering</span><span class="chip">ATmega328P</span><span class="chip">WS2812B NeoPixel</span><span class="chip">PCB Design</span><span class="chip">Soldering</span></div><a href="brand_assets/Patwardhan_Rohtak_ECE210.pdf" target="_blank" rel="noopener" class="proj-docs"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Documentation</a></div>
+            <div class="proj-footer"><div class="proj-tools"><span class="chip">C++</span><span class="chip">Prompt Engineering</span><span class="chip">ATmega328P</span><span class="chip">WS2812B NeoPixel</span><span class="chip">PCB Design</span><span class="chip">Soldering</span></div><div style="display:flex;gap:0.4rem;flex-shrink:0;"><a href="https://github.com/rohtakpat314/ece210-final-project" target="_blank" rel="noopener" class="proj-docs"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.5-1.4-1.3-1.8-1.3-1.8-1-.7.1-.7.1-.7 1.1.1 1.7 1.1 1.7 1.1 1 1.7 2.6 1.2 3.2.9.1-.7.4-1.2.7-1.5-2.6-.3-5.4-1.3-5.4-5.8 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17.3 4.7 18.3 5 18.3 5c.7 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.5-2.8 5.5-5.4 5.8.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3"/></svg>GitHub</a><a href="brand_assets/Patwardhan_Rohtak_ECE210.pdf" target="_blank" rel="noopener" class="proj-docs"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Docs</a></div></div>
           </div>
         </div>
 
@@ -804,7 +810,7 @@
         </div>
         <div>
           <div class="skills-cat-label">Developer Tools</div>
-          <div class="skills-chips"><span class="chip">Git</span><span class="chip">Linux</span><span class="chip">Vim</span><span class="chip">VS Code</span></div>
+          <div class="skills-chips"><span class="chip">Git</span><span class="chip">Linux</span><span class="chip">Vim</span><span class="chip">VS Code</span><span class="chip">PyTorch</span><span class="chip">CUDA</span><span class="chip">Prompt Engineering</span></div>
         </div>
       </div>
     </div>
@@ -955,6 +961,64 @@
     const pct = window.scrollY / (document.documentElement.scrollHeight - window.innerHeight) * 100;
     scrollFill.style.width = Math.min(pct, 100) + '%';
   }, { passive: true });
+
+  // ── Hero particle field ───────────────────────
+  (function () {
+    const canvas = document.getElementById('hero-canvas');
+    const ctx = canvas.getContext('2d');
+    const COUNT = 70, MAX_DIST = 150;
+    let W, H, pts;
+
+    function resize() {
+      W = canvas.width  = canvas.offsetWidth;
+      H = canvas.height = canvas.offsetHeight;
+    }
+
+    function mkPt() {
+      const repR = Math.min(W, H) * 0.5;
+      let x, y;
+      do { x = Math.random() * W; y = Math.random() * H; }
+      while (Math.sqrt((x - W/2) ** 2 + (y - H/2) ** 2) < repR);
+      return { x, y, vx: (Math.random() - 0.5) * 0.15, vy: (Math.random() - 0.5) * 0.15, r: Math.random() * 2 + 1, o: 0 };
+    }
+
+    function init() { resize(); pts = []; }
+    function grow() { if (pts.length < COUNT) { pts.push(mkPt()); setTimeout(grow, 180); } }
+
+    function frame() {
+      ctx.clearRect(0, 0, W, H);
+      const cx = W / 2, cy = H / 2, repR = Math.min(W, H) * 0.5;
+      for (let i = 0; i < pts.length; i++) {
+        const a = pts[i];
+        a.x += a.vx; a.y += a.vy;
+        if (a.x < 0) a.x = W; if (a.x > W) a.x = 0;
+        if (a.y < 0) a.y = H; if (a.y > H) a.y = 0;
+        const dx = a.x - cx, dy = a.y - cy, dc = Math.sqrt(dx*dx + dy*dy);
+        if (dc < repR && dc > 0) { const f = (repR - dc) / repR * 0.04; a.vx += (dx/dc)*f; a.vy += (dy/dc)*f; }
+        const spd = Math.sqrt(a.vx*a.vx + a.vy*a.vy);
+        if (spd > 0.18) { a.vx = (a.vx/spd)*0.18; a.vy = (a.vy/spd)*0.18; }
+        for (let j = i + 1; j < pts.length; j++) {
+          const b = pts[j];
+          const dx = a.x - b.x, dy = a.y - b.y;
+          const d = Math.sqrt(dx * dx + dy * dy);
+          if (d < MAX_DIST) {
+            ctx.strokeStyle = `rgba(196,168,130,${(1 - d / MAX_DIST) * 0.55 * Math.min(a.o, b.o)})`;
+            ctx.lineWidth = 0.6;
+            ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+          }
+        }
+        a.o = Math.min(1, a.o + 0.012);
+        ctx.beginPath();
+        ctx.arc(a.x, a.y, a.r, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(196,168,130,${0.9 * a.o})`;
+        ctx.fill();
+      }
+      requestAnimationFrame(frame);
+    }
+
+    window.addEventListener('resize', init);
+    init(); grow(); frame();
+  })();
 </script>
 </body>
 </html>
