@@ -4,11 +4,19 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Rohtak Patwardhan</title>
-  <meta name="description" content="Rohtak Patwardhan — EE & CS student at UW–Madison. Building a pipelined RISC-V CPU, CUDA n-body simulator, and analog hardware for medical devices." />
+  <meta name="description" content="Rohtak Patwardhan — EE & CS student at UW–Madison. Computer architecture, RTL design, FPGA verification, embedded systems, and AXI4-Lite accelerator work." />
   <meta property="og:title" content="Rohtak Patwardhan" />
-  <meta property="og:description" content="EE & CS @ UW–Madison. Computer architecture, embedded systems, and analog design." />
+  <meta property="og:description" content="EE & CS @ UW–Madison. Computer architecture, RTL design, FPGA verification, and embedded systems." />
   <meta property="og:type" content="website" />
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='4' fill='%23101010'/><text x='50%25' y='54%25' dominant-baseline='middle' text-anchor='middle' font-family='Inter,sans-serif' font-size='13' font-weight='700' fill='%23efefef'>RP</text></svg>" />
+  <meta property="og:url" content="https://rohtakpatwardhan.com" />
+  <meta property="og:image" content="https://rohtakpatwardhan.com/brand_assets/og-image.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Rohtak Patwardhan" />
+  <meta name="twitter:description" content="EE & CS @ UW–Madison. Computer architecture, RTL design, FPGA verification, and embedded systems." />
+  <meta name="twitter:image" content="https://rohtakpatwardhan.com/brand_assets/og-image.png" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%2317120d'/><text x='50%25' y='55%25' dominant-baseline='middle' text-anchor='middle' font-family='Georgia,serif' font-size='15' font-style='italic' font-weight='700' fill='%23c4a882'>RP</text></svg>" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Playfair+Display:ital,wght@0,700;1,400;1,700&display=swap" rel="stylesheet" />
@@ -49,6 +57,7 @@
     line-height: 1.7; -webkit-font-smoothing: antialiased; overflow-x: hidden;
   }
   #about { background: var(--bg); }
+  #education { padding: 4rem 0; }
   ::-webkit-scrollbar { width: 3px; }
   ::-webkit-scrollbar-track { background: var(--bg); }
   ::-webkit-scrollbar-thumb { background: var(--border-2); border-radius: 2px; }
@@ -126,6 +135,16 @@
     transition: border-color 0.18s ease, color 0.18s ease, background 0.18s ease;
   }
   .sb-social:hover { border-color: var(--accent); color: var(--accent-b); background: var(--accent-dim); }
+
+  .sb-resume {
+    display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem;
+    width: 100%; padding: 0.52rem 0.75rem;
+    font-size: 0.72rem; font-weight: 500; font-family: inherit;
+    color: var(--accent-b); text-decoration: none;
+    border: 1px solid var(--border-2); border-radius: 4px;
+    transition: color 0.18s ease, border-color 0.18s ease, background 0.18s ease;
+  }
+  .sb-resume:hover { color: var(--text); border-color: var(--accent); background: var(--accent-dim); }
 
   /* ── Main ────────────────────────────────── */
   .main {
@@ -252,6 +271,8 @@
     aspect-ratio: 16/9; background: var(--surface-2); cursor: pointer;
   }
   .proj-gallery img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.4s ease; }
+  .proj-gallery img.pg-contain { object-fit: contain; background: var(--surface-2); padding: 13%; }
+  .proj-gallery img.pg-diagram { object-fit: contain; background: #efe8d8; padding: 6px; }
   .proj-gallery:hover img { transform: scale(1.04); }
   .proj-gallery-overlay {
     position: absolute; inset: 0;
@@ -294,8 +315,8 @@
   .proj-docs:hover { color: var(--accent-b); border-color: var(--accent); background: var(--accent-dim); }
 
   /* chip wave */
-  .proj-tools .chip { color: var(--text-2); border-color: var(--border-2); transition: color 0.18s ease, border-color 0.18s ease, background 0.18s ease; }
-  .proj-card:hover .proj-tools .chip { color: var(--accent-b); border-color: var(--border-2); background: rgba(192,192,192,0.05); }
+  .proj-tools .chip { color: var(--accent-b); border-color: var(--border-2); background: var(--accent-dim); font-weight: 500; transition: color 0.18s ease, border-color 0.18s ease, background 0.18s ease; }
+  .proj-card:hover .proj-tools .chip { color: var(--accent-b); border-color: var(--accent); background: var(--accent-dim); }
   .proj-card:hover .proj-tools .chip:nth-child(1) { transition-delay: 0.00s; }
   .proj-card:hover .proj-tools .chip:nth-child(2) { transition-delay: 0.05s; }
   .proj-card:hover .proj-tools .chip:nth-child(3) { transition-delay: 0.10s; }
@@ -305,7 +326,16 @@
   .proj-card:hover .proj-tools .chip:nth-child(7) { transition-delay: 0.30s; }
   .proj-card:hover .proj-tools .chip:nth-child(8) { transition-delay: 0.35s; }
 
-  a.proj-card { text-decoration: none; color: inherit; display: flex; flex-direction: column; }
+  a.proj-card { text-decoration: none; color: inherit; display: flex; flex-direction: column; cursor: pointer; }
+  .proj-card-hint {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center; gap: 0.4rem;
+    background: rgba(0,0,0,0.5);
+    opacity: 0; transition: opacity 0.2s ease;
+    font-size: 0.72rem; font-weight: 500; color: #fff;
+    pointer-events: none;
+  }
+  .proj-card:hover .proj-card-hint { opacity: 1; }
   .proj-placeholder { width: 100%; height: 100%; background: var(--surface-2); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.75rem; }
   .proj-placeholder-badge { font-size: 0.6rem; color: var(--text-3); letter-spacing: 0.12em; text-transform: uppercase; border: 1px solid var(--border); padding: 0.2rem 0.6rem; border-radius: 3px; }
   .proj-status { font-size: 0.62rem; color: var(--text-3); white-space: nowrap; border: 1px solid var(--border); padding: 0.18rem 0.55rem; border-radius: 4px; flex-shrink: 0; }
@@ -313,13 +343,24 @@
 
   /* ── EXPERIENCE ──────────────────────────── */
   .timeline { display: flex; flex-direction: column; gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: 5px; overflow: hidden; }
-  .tl-card { padding: 1.5rem; background: var(--surface); border-left: 2px solid transparent; transition: background 0.15s ease, border-left-color 0.2s ease; }
+  .tl-card { padding: 1.5rem; background: var(--surface); border-left: 2px solid transparent; transition: background 0.15s ease, border-left-color 0.2s ease; display: flex; gap: 1.1rem; align-items: flex-start; }
   .tl-card:hover { background: var(--surface-2); border-left-color: var(--border-2); }
+  .tl-logo-wrap {
+    width: 62px; height: 62px; flex-shrink: 0; margin-top: 0.1rem;
+    border-radius: 12px; background: #fbf7ef;
+    border: 1px solid var(--border-2);
+    box-shadow: 0 3px 10px rgba(0,0,0,0.3), inset 0 0 0 1px rgba(255,255,255,0.04);
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+  }
+  .tl-logo { max-width: 88%; max-height: 88%; object-fit: contain; display: block; }
+  .tl-body { flex: 1; min-width: 0; }
   .tl-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; flex-wrap: wrap; margin-bottom: 0.25rem; }
   .tl-org  { font-family: 'Playfair Display', serif; font-size: 0.88rem; font-style: italic; font-weight: 400; color: var(--accent-b); margin-bottom: 0.3rem; letter-spacing: 0.01em; }
   .tl-role { font-size: 0.93rem; font-weight: 600; color: var(--text); margin-bottom: 0.5rem; }
   .tl-date { font-size: 0.71rem; color: var(--text-3); white-space: nowrap; flex-shrink: 0; }
-  .tl-tags { display: flex; flex-wrap: wrap; gap: 0.3rem; }
+  .tl-tags { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+  .tl-tags .chip { color: var(--accent-b); border-color: var(--border-2); background: var(--accent-dim); font-weight: 500; }
   .tl-bullets { list-style: none; margin-top: 0.85rem; display: flex; flex-direction: column; gap: 0.55rem; }
   .tl-bullets li { font-size: 0.79rem; color: var(--text-2); line-height: 1.65; padding-left: 1.1rem; position: relative; }
   .tl-bullets li::before {
@@ -370,7 +411,7 @@
   }
   .skills-chips { display: flex; flex-wrap: wrap; gap: 0.4rem; }
   .skills-chips .chip {
-    color: var(--text-2); border-color: var(--border-2); cursor: default;
+    color: var(--accent-b); border-color: var(--border-2); background: var(--accent-dim); cursor: default; font-weight: 500;
     transition: color 0.18s ease, border-color 0.18s ease, background 0.18s ease, transform 0.18s cubic-bezier(0.34,1.56,0.64,1);
   }
   .skills-chips .chip:hover { color: var(--text); border-color: var(--accent); background: var(--accent-dim); transform: translateY(-1px); }
@@ -512,6 +553,10 @@
       <svg class="s-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
       Experience
     </button>
+    <button class="s-link" data-section="education" onclick="scrollToSection('education')">
+      <svg class="s-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/></svg>
+      Coursework
+    </button>
     <button class="s-link" data-section="skills" onclick="scrollToSection('skills')">
       <svg class="s-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
       Skills
@@ -555,6 +600,10 @@
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
     Experience
   </button>
+  <button class="mn-btn" data-section="education" onclick="scrollToSection('education')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/></svg>
+    Coursework
+  </button>
   <button class="mn-btn" data-section="skills" onclick="scrollToSection('skills')">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
     Skills
@@ -575,9 +624,9 @@
       <p class="hero-kicker">EE &amp; CS @ UW–Madison · 2028 · Dean's Honor List</p>
       <h1 class="hero-name">Rohtak<br>Patwardhan</h1>
       <div class="hero-bio">
-        <p>I'm a sophomore EE/CS student at UW–Madison interested in FPGAs, operating systems, and low-level embedded systems programming. I'm currently researching AXI4-Lite matrix accelerators to integrate with my RV32IM single-cycle CPU, along with understanding branch prediction and working on pipelining the CPU.</p>
-        <p>So far, I've completed research with Dr. Feng Ye, learning about mmWave configuration and sound reconstruction. Looking ahead, I'm interested in research with low-level hardware and software. I've also worked on the FES hardware team with Insight Wisconsin, building a modern, cheaper FES device for patients. Finally, I worked with Badger Solar Racing's low voltage team.</p>
-        <p>I have a vision for my works and project development. I admire strong technical documentation and seek to reach industry-level standards in my work as well. I'm actively open to internship and co-op opportunities for Fall 2026, Spring 2027, and Summer 2027. If you're interested in working with me, please reach out at <a href="mailto:rohtak.pat314@gmail.com" class="hero-link">rohtak.pat314@gmail.com</a> or <a href="mailto:rspatwardha2@wisc.edu" class="hero-link">rspatwardha2@wisc.edu</a>.</p>
+        <p>I'm a sophomore EE/CS student at UW–Madison interested in computer architecture, RTL design and verification, FPGA, and embedded systems programming. I've currently been working on developing an AXI4-Lite 4×4 systolic matrix accelerator to integrate into my RISC-V 32-bit processor.</p>
+        <p>So far, I've done research with Dr. Feng Ye's lab, learning about mmWave configuration and sound reconstruction. Looking ahead, I'm interested in research with low-level software and hardware. I am also a part of Insight Wisconsin where my team is developing a modern, cheaper FES device for patients. Finally, as a member of Badger Solar Racing, I've worked with PCB design with the low voltage team.</p>
+        <p>I admire strong technical documentation and seek to reach industry-level standards with my work. I'm actively open to internships and co-op opportunities for Fall 2026, Spring 2027, and Summer 2027. Please feel free to reach out at either <a href="mailto:rohtak.pat314@gmail.com" class="hero-link">rohtak.pat314@gmail.com</a> or <a href="mailto:rspatwardha2@wisc.edu" class="hero-link">rspatwardha2@wisc.edu</a>.</p>
       </div>
       <div class="hero-actions">
         <button class="btn-primary" onclick="scrollToSection('contact')">
@@ -585,6 +634,10 @@
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
         </button>
         <button class="btn-ghost" onclick="scrollToSection('projects')">View projects</button>
+        <a href="brand_assets/Rohtak-Patwardhan-Resume.pdf" class="btn-ghost" download>
+          Resume
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><polyline points="9 15 12 18 15 15"/></svg>
+        </a>
       </div>
     </div>
   </section>
@@ -598,119 +651,96 @@
       <div class="proj-grid">
 
         <!-- 01 RV32I CPU -->
-        <div class="proj-card reveal">
-          <div class="proj-gallery" style="cursor:pointer;" onclick="window.open('https://github.com/rohtakpat314/riscvcpu','_blank')" role="button" tabindex="0" onkeydown="if(event.key==='Enter')window.open('https://github.com/rohtakpat314/riscvcpu','_blank')">
-            <img src="brand_assets/RISC-V-logo-square.svg.avif" alt="RISC-V logo" loading="lazy" style="width:80%;height:80%;object-fit:contain;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:var(--surface-2);"/>
-            <div class="proj-gallery-overlay">
-              <button class="gallery-btn" onclick="event.stopPropagation();window.open('https://github.com/rohtakpat314/riscvcpu','_blank')">
-                <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.5-1.4-1.3-1.8-1.3-1.8-1-.7.1-.7.1-.7 1.1.1 1.7 1.1 1.7 1.1 1 1.7 2.6 1.2 3.2.9.1-.7.4-1.2.7-1.5-2.6-.3-5.4-1.3-5.4-5.8 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17.3 4.7 18.3 5 18.3 5c.7 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.5-2.8 5.5-5.4 5.8.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3"/></svg>
-                View on GitHub
-              </button>
-              <span class="gallery-count">github.com</span>
-            </div>
+        <a href="projects/riscv-cpu.html" class="proj-card reveal">
+          <div class="proj-gallery">
+            <img class="pg-contain" src="brand_assets/RISC-V-logo-square.svg.avif" alt="RISC-V logo" loading="lazy"/>
+            <div class="proj-card-hint">View project <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
           </div>
           <div class="proj-body">
             <p class="proj-num">01</p>
             <p class="proj-name">RISC-V Single-Cycle CPU</p>
-            <p class="proj-desc">Single-cycle RV32I processor in SystemVerilog implementing all 47 R/I/S/B/U/J-type instructions and 8 M-extension. Synthesized on Altera Cyclone V FPGA at 60.42 MHz, 52mW dynamic power, ~ 1 CPI, verified with self-checking Verilog testbenches with a 100% pass rate. Also verified with GTKWave debugging and Icarus Verilog compilation.</p>
+            <p class="proj-desc">Single-cycle RISC-V processor implementing 47 RV32I and 8 M-extension instructions, synthesized on Cyclone V at 60.42 MHz. 100% pass rate across all self-checking testbenches and waveform debugging.</p>
             <div class="proj-footer">
-              <div class="proj-tools"><span class="chip">SystemVerilog</span><span class="chip">Quartus Prime</span><span class="chip">GTKWave</span><span class="chip">Icarus Verilog</span><span class="chip">Cyclone V</span></div>
-              <a href="https://github.com/rohtakpat314/riscvcpu" target="_blank" rel="noopener" class="proj-docs"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.5-1.4-1.3-1.8-1.3-1.8-1-.7.1-.7.1-.7 1.1.1 1.7 1.1 1.7 1.1 1 1.7 2.6 1.2 3.2.9.1-.7.4-1.2.7-1.5-2.6-.3-5.4-1.3-5.4-5.8 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17.3 4.7 18.3 5 18.3 5c.7 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.5-2.8 5.5-5.4 5.8.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3"/></svg>GitHub</a>
+              <div class="proj-tools"><span class="chip">SystemVerilog</span><span class="chip">Testbench Development</span><span class="chip">GTKWave</span><span class="chip">Icarus Verilog</span><span class="chip">Cyclone V</span><span class="chip">Static Timing Analysis</span><span class="chip">RISC-V</span></div>
             </div>
           </div>
-        </div>
+        </a>
 
         <!-- 02 AXI4-Lite Matrix Accelerator -->
-        <div class="proj-card reveal">
-          <div class="proj-gallery" style="cursor:default;">
-            <div class="proj-placeholder">
-              <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="var(--text-3)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="2" y="2" width="9" height="9"/><rect x="13" y="2" width="9" height="9"/><rect x="2" y="13" width="9" height="9"/><rect x="13" y="13" width="9" height="9"/>
-              </svg>
-              <span class="proj-placeholder-badge">coming soon</span>
-            </div>
+        <a href="projects/axi-matrix.html" class="proj-card reveal">
+          <div class="proj-gallery">
+            <img class="pg-diagram" src="brand_assets/axi4_usethisone.png" alt="RV32IM CPU + 4x4 matrix accelerator architecture" loading="lazy"/>
+            <div class="proj-card-hint">View project <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
           </div>
           <div class="proj-body">
             <p class="proj-num">02</p>
             <p class="proj-name">AXI4-Lite Matrix Accelerator</p>
-            <p class="proj-desc">AXI4-Lite memory-mapped matrix accelerator designed to integrate with the RV32IM single-cycle CPU. Exploring branch prediction and pipelining alongside accelerator integration.</p>
+            <p class="proj-desc">Memory-mapped matrix accelerator computing A x B = C for 4x4 systolic matrices on AXI4-Lite interface. 175x kernel speedup design, ~11x end-to-end. Modular and integrated with RV32IM processor for compute efficiency.</p>
             <div class="proj-footer">
-              <div class="proj-tools"><span class="chip">SystemVerilog</span><span class="chip">AXI4-Lite</span><span class="chip">Quartus Prime</span><span class="chip">Cyclone V</span></div>
-              <span class="proj-status">In Progress</span>
+              <div class="proj-tools"><span class="chip">SystemVerilog</span><span class="chip">Quartus Prime</span><span class="chip">AXI4-Lite</span><span class="chip">Python</span><span class="chip">Testbench Development</span><span class="chip">Cyclone V</span></div>
             </div>
           </div>
-        </div>
+        </a>
 
         <!-- 03 Multi-Protocol Instrument Bridge -->
-        <div class="proj-card reveal">
+        <a href="projects/instrument-bridge.html" class="proj-card reveal">
           <div class="proj-gallery">
-            <img src="brand_assets/rp2040-removebg-preview.png" alt="RP2040-Zero board" loading="lazy" style="width:75%;height:75%;object-fit:contain;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);"/>
+            <img class="pg-contain" src="brand_assets/rp2040-removebg-preview.png" alt="RP2040-Zero board" loading="lazy"/>
+            <div class="proj-card-hint">View project <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
           </div>
           <div class="proj-body">
             <p class="proj-num">03</p>
             <p class="proj-name">Multi-Protocol Instrument Bridge</p>
-            <p class="proj-desc">USB CDC bench adapter for I2C, SPI, UART, and 1-Wire on RP2040. Text command parser in portable C, host-testable firmware, formal LaTeX technical manual.</p>
+            <p class="proj-desc">USB CDC bridge for RP2040 using I2C, SPI, UART, and 1-Wire. Turns hardware validation from write-flash-debug loops into terminal commands.</p>
             <div class="proj-footer">
-              <div class="proj-tools"><span class="chip">C</span><span class="chip">RP2040</span><span class="chip">CMake</span><span class="chip">Pico SDK</span></div>
-              <a href="https://github.com/rohtakpat314/Multi-protocol-instrument-bridge" target="_blank" rel="noopener" class="proj-docs"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.5-1.4-1.3-1.8-1.3-1.8-1-.7.1-.7.1-.7 1.1.1 1.7 1.1 1.7 1.1 1 1.7 2.6 1.2 3.2.9.1-.7.4-1.2.7-1.5-2.6-.3-5.4-1.3-5.4-5.8 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17.3 4.7 18.3 5 18.3 5c.7 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.5-2.8 5.5-5.4 5.8.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3"/></svg>GitHub</a>
+              <div class="proj-tools"><span class="chip">C</span><span class="chip">RP2040</span><span class="chip">CMake</span><span class="chip">Pico SDK</span><span class="chip">USB CDC</span></div>
             </div>
           </div>
-        </div>
+        </a>
 
-        <!-- 03 FES/OCPD -->
-        <div class="proj-card reveal">
-          <div class="proj-gallery" style="pointer-events:none;cursor:default;">
+        <!-- 04 FES/OCPD -->
+        <a href="projects/fes-ocpd.html" class="proj-card reveal">
+          <div class="proj-gallery">
             <img src="brand_assets/ltspice.png" alt="LTspice overcurrent protection schematic" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block;"/>
+            <div class="proj-card-hint">View project <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
           </div>
           <div class="proj-body">
             <p class="proj-num">04</p>
             <p class="proj-name">Overcurrent Protection Device, FES Hardware</p>
-            <p class="proj-desc">Chain of op-amp integrator, window comparator, and SR-latch that detects overcurrent events and sends an interrupt (EXTI) to an MCU. Simulated upper and lower thresholds using LTspice. Designed in KiCad. Integrated into the overall biphasic FES device. The club is in collaboration with the UW Health Orthotics and Prosthetics clinic.</p>
-            <div class="proj-footer"><div class="proj-tools"><span class="chip">KiCad</span><span class="chip">Altium</span><span class="chip">LTspice</span><span class="chip">CMOS Logic</span><span class="chip">Circuit Design</span></div></div>
+            <p class="proj-desc">Analog overcurrent detection for biphasic FES device using an op-amp integrator, window comparator, and SR-latch. During overcurrent events, interrupts sent to MCU, resulting in LOW state (no current delivered to patient). Helps keep patients safe while helping their lower limb musculature.</p>
+            <div class="proj-footer"><div class="proj-tools"><span class="chip">KiCad</span><span class="chip">LTspice</span><span class="chip">Analog Design</span><span class="chip">Medical Devices</span></div></div>
           </div>
-        </div>
+        </a>
 
-        <!-- 04 N-Body -->
-        <div class="proj-card reveal">
-          <div class="proj-gallery" onclick="openLightbox(0,0)" role="button" tabindex="0" aria-label="Open N-Body gallery" onkeydown="if(event.key==='Enter')openLightbox(0,0)">
+        <!-- 05 N-Body -->
+        <a href="projects/n-body.html" class="proj-card reveal">
+          <div class="proj-gallery">
             <img src="brand_assets/Nbody.png" alt="N-Body Gravity Simulator" loading="lazy"/>
-            <div class="proj-gallery-overlay">
-              <button class="gallery-btn" onclick="event.stopPropagation();openLightbox(0,0)">
-                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
-                View Gallery
-              </button>
-              <span class="gallery-count">1 image</span>
-            </div>
+            <div class="proj-card-hint">View project <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
           </div>
           <div class="proj-body">
             <p class="proj-num">05</p>
             <p class="proj-name">N-Body Gravity Simulator</p>
-            <p class="proj-desc">Simulates orbits with N-bodies using Newtonian physics. Visualizes orbit trajectories and gravitational clustering in real-time.</p>
-            <div class="proj-footer"><div class="proj-tools"><span class="chip">Python</span><span class="chip">Matplotlib</span><span class="chip">Pandas</span><span class="chip">NumPy</span><span class="chip">ODEs</span><span class="chip">JSON</span></div><div style="display:flex;gap:0.4rem;flex-shrink:0;"><a href="https://github.com/rohtakpat314/N-Body-Gravity-Simulator" target="_blank" rel="noopener" class="proj-docs"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.5-1.4-1.3-1.8-1.3-1.8-1-.7.1-.7.1-.7 1.1.1 1.7 1.1 1.7 1.1 1 1.7 2.6 1.2 3.2.9.1-.7.4-1.2.7-1.5-2.6-.3-5.4-1.3-5.4-5.8 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17.3 4.7 18.3 5 18.3 5c.7 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.5-2.8 5.5-5.4 5.8.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3"/></svg>GitHub</a><a href="brand_assets/N-Body%20Gravity%20Simulator%20(DOCUMENTATION).pdf" target="_blank" rel="noopener" class="proj-docs"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Docs</a></div></div>
+            <p class="proj-desc">A program that simulates N-bodies with real-time trajectory visualization and Newtonian physics built at a small-scale. Allows speed up/slow down, FPS monitoring, and has JSON configurable bodies.</p>
+            <div class="proj-footer"><div class="proj-tools"><span class="chip">Python</span><span class="chip">Matplotlib</span><span class="chip">NumPy</span><span class="chip">ODEs</span></div></div>
           </div>
-        </div>
+        </a>
 
-        <!-- 05 8x8 Arcade -->
-        <div class="proj-card reveal">
-          <div class="proj-gallery" onclick="openLightbox(1,0)" role="button" tabindex="0" aria-label="Open 8x8 arcade gallery" onkeydown="if(event.key==='Enter')openLightbox(1,0)">
+        <!-- 06 8x8 Arcade -->
+        <a href="projects/arcade.html" class="proj-card reveal">
+          <div class="proj-gallery">
             <video autoplay muted loop playsinline style="width:100%;height:100%;object-fit:cover;display:block;pointer-events:none;">
               <source src="brand_assets/IMG_5784.MOV" type="video/mp4"/>
             </video>
-            <div class="proj-gallery-overlay">
-              <button class="gallery-btn" onclick="event.stopPropagation();openLightbox(1,0)">
-                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
-                View Gallery
-              </button>
-              <span class="gallery-count">2 images</span>
-            </div>
+            <div class="proj-card-hint">View project <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
           </div>
           <div class="proj-body">
             <p class="proj-num">06</p>
             <p class="proj-name">8×8 NeoPixel Mini Arcade</p>
-            <p class="proj-desc">A playable arcade game on an 8×8 NeoPixel LED Matrix (WS2812B) driven by an ATmega328P MCU.</p>
-            <div class="proj-footer"><div class="proj-tools"><span class="chip">C++</span><span class="chip">Prompt Engineering</span><span class="chip">ATmega328P</span><span class="chip">WS2812B NeoPixel</span><span class="chip">PCB Design</span><span class="chip">Soldering</span></div><div style="display:flex;gap:0.4rem;flex-shrink:0;"><a href="https://github.com/rohtakpat314/ece210-final-project" target="_blank" rel="noopener" class="proj-docs"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.5-1.4-1.3-1.8-1.3-1.8-1-.7.1-.7.1-.7 1.1.1 1.7 1.1 1.7 1.1 1 1.7 2.6 1.2 3.2.9.1-.7.4-1.2.7-1.5-2.6-.3-5.4-1.3-5.4-5.8 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17.3 4.7 18.3 5 18.3 5c.7 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.5-2.8 5.5-5.4 5.8.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3"/></svg>GitHub</a><a href="brand_assets/Patwardhan_Rohtak_ECE210.pdf" target="_blank" rel="noopener" class="proj-docs"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Docs</a></div></div>
+            <p class="proj-desc">A mini-arcade built using a WS2812B and ATmega328P / Arduino UNO. Hand-soldered, designed with EasyEDA, and implemented on perfboard. Players can play Snake, Ping Pong, and more.</p>
+            <div class="proj-footer"><div class="proj-tools"><span class="chip">C++</span><span class="chip">ATmega328P</span><span class="chip">WS2812B</span><span class="chip">PCB Design</span></div></div>
           </div>
-        </div>
+        </a>
 
 
       </div>
@@ -725,11 +755,13 @@
 
       <div class="timeline reveal">
         <div class="tl-card">
+          <span class="tl-logo-wrap"><img class="tl-logo" src="brand_assets/badgersolarracing_logo.jpeg" alt="Badger Solar Racing logo" loading="lazy"/></span>
+          <div class="tl-body">
           <div class="tl-header">
             <div><div class="tl-org">Badger Solar Racing</div><div class="tl-role">Low Voltage Team</div></div>
             <span class="tl-date">Sep 2025 – Present</span>
           </div>
-          <div class="tl-tags"><span class="chip">Altium</span><span class="chip">CAN</span><span class="chip">Analog MUX</span><span class="chip">SolidWorks</span><span class="chip">PCB</span></div>
+          <div class="tl-tags"><span class="chip">Altium</span><span class="chip">STM32</span><span class="chip">Soldering</span><span class="chip">PCB Design</span><span class="chip">DMM</span></div>
           <ul class="tl-bullets">
             <li>Standardized CAN bus communication across all low-voltage components to improve data reliability throughout the car</li>
             <li>Diagnosed PDC faults using DMM measurements and circuit analysis</li>
@@ -737,9 +769,12 @@
             <li>Updated Altium schematics for the voltage protection circuit on the new PCB</li>
             <li>Contributed to telemetry sensor placement strategy (temperature, current, and voltage) for competition readiness</li>
           </ul>
+          </div>
         </div>
 
         <div class="tl-card">
+          <span class="tl-logo-wrap"><img class="tl-logo" src="brand_assets/ce245e_badb215d09ba4788b9e45018d1bb3aad~mv2.avif" alt="Insight Wisconsin logo" loading="lazy"/></span>
+          <div class="tl-body">
           <div class="tl-org tl-org--spaced">Insight Wisconsin</div>
           <div class="tl-roles-list">
             <div class="tl-role-section">
@@ -747,7 +782,7 @@
                 <div class="tl-role">FES Hardware Co-Lead</div>
                 <span class="tl-date">Present</span>
               </div>
-              <div class="tl-tags"><span class="chip">Leadership</span><span class="chip">FES</span><span class="chip">Hardware</span></div>
+              <div class="tl-tags"><span class="chip">Leadership</span></div>
               <ul class="tl-bullets">
                 <li>Ran weekly meetings, tracked deliverables, and distributed work across hardware subteams</li>
                 <li>Evaluated existing FES devices to identify design gaps and guide improvements to the team's implementation</li>
@@ -758,7 +793,7 @@
                 <div class="tl-role tl-role--sm">FES Hardware Member · Overcurrent Protection Device Lead</div>
                 <span class="tl-date">Sep 2025</span>
               </div>
-              <div class="tl-tags"><span class="chip">LTspice</span><span class="chip">Op-Amps</span><span class="chip">Analog Design</span><span class="chip">Medical Devices</span></div>
+              <div class="tl-tags"><span class="chip">LTspice</span><span class="chip">KiCad</span><span class="chip">Medical Device Applications</span></div>
               <ul class="tl-bullets">
                 <li>Designed a full overcurrent protection signal chain (op-amp integrator, window comparator, SR latch) and laid out the schematic in KiCad</li>
                 <li>Characterized threshold windows in LTspice, tuning V_H and V_L to ensure correct triggering across expected current profiles</li>
@@ -767,9 +802,12 @@
               </ul>
             </div>
           </div>
+          </div>
         </div>
 
         <div class="tl-card">
+          <span class="tl-logo-wrap"><img class="tl-logo" src="brand_assets/crest-only-logo-print-color.png" alt="UW–Madison logo" loading="lazy"/></span>
+          <div class="tl-body">
           <div class="tl-header">
             <div><div class="tl-org">Advanced Network Security &amp; Communications Lab</div><div class="tl-role">Undergraduate Research Assistant, TI mmWave</div></div>
             <span class="tl-date">Feb 2025 – Present</span>
@@ -779,11 +817,78 @@
             <li>Configured the TI IWR1843 mmWave radar via mmWave Studio and MATLAB Runtime 8.5.1, setting up ADC parameters and verifying SPI/UART communication for real-time audio reconstruction</li>
             <li>Modernized legacy MATLAB data acquisition scripts, resolving deprecated syntax to restore reliable real-time capture</li>
           </ul>
+          </div>
         </div>
       </div>
     </div>
   </section>
 
+
+  <!-- EDUCATION -->
+  <section id="education" data-section="education">
+    <div class="container">
+      <p class="sec-label reveal">Coursework</p>
+      <div class="cw-list reveal" style="max-width:640px;">
+        <div class="cw-row">
+          <div class="cw-row-top">
+            <span class="cw-code">ECE 210</span>
+            <span class="cw-name">Intro to Electrical Engineering</span>
+          </div>
+        </div>
+        <div class="cw-row">
+          <div class="cw-row-top">
+            <span class="cw-code">ECE 203</span>
+            <span class="cw-name">Signals, Information, &amp; Computation</span>
+          </div>
+        </div>
+        <div class="cw-row">
+          <div class="cw-row-top">
+            <span class="cw-code">ECE 252</span>
+            <span class="cw-name">Intro to Computer Engineering</span>
+          </div>
+        </div>
+        <div class="cw-row">
+          <div class="cw-row-top">
+            <span class="cw-code">ECE 352</span>
+            <span class="cw-name">Digital Systems</span>
+          </div>
+        </div>
+        <div class="cw-row">
+          <div class="cw-row-top">
+            <span class="cw-code">ECE 230</span>
+            <span class="cw-name">Circuit Analysis</span>
+          </div>
+        </div>
+        <div class="cw-row">
+          <div class="cw-row-top">
+            <span class="cw-code">CS 300</span>
+            <span class="cw-name">Programming II</span>
+          </div>
+        </div>
+        <div class="cw-row">
+          <div class="cw-row-top">
+            <span class="cw-code">ECE 552</span>
+            <span class="cw-name">Computer Architecture</span>
+            <span class="cw-badge">Planned</span>
+          </div>
+        </div>
+        <div class="cw-row">
+          <div class="cw-row-top">
+            <span class="cw-code">ECE 340</span>
+            <span class="cw-name">Electronic Circuits I</span>
+            <span class="cw-badge">Planned</span>
+          </div>
+        </div>
+        <div class="cw-row">
+          <div class="cw-row-top">
+            <span class="cw-code">ECE 222</span>
+            <span class="cw-name">Electrodynamics</span>
+            <span class="cw-badge">Planned</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 
   <!-- SKILLS -->
   <section id="skills" data-section="skills">
@@ -852,31 +957,7 @@
   <footer class="site-footer">Rohtak Patwardhan · EE &amp; CS · UW–Madison</footer>
 </main>
 
-<!-- LIGHTBOX -->
-<div id="lightbox" role="dialog" aria-modal="true" aria-label="Image gallery">
-  <div class="lb-header">
-    <div><div class="lb-title" id="lb-title"></div><div class="lb-meta" id="lb-meta"></div></div>
-    <button class="lb-close" onclick="closeLightbox()" aria-label="Close">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
-    </button>
-  </div>
-  <div class="lb-img-wrap">
-    <img id="lb-img" src="" alt="Project image"/>
-    <div class="lb-nav">
-      <button class="lb-nav-btn" onclick="lightboxPrev()" aria-label="Previous"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
-      <button class="lb-nav-btn" onclick="lightboxNext()" aria-label="Next"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></button>
-    </div>
-  </div>
-  <div class="lb-dots" id="lb-dots"></div>
-</div>
-
 <script>
-  // ── Project data ──────────────────────────────
-  const projects = [
-    { name: 'N-Body Gravity Simulator', images: ['brand_assets/Nbody.png'] },
-    { name: '8×8 NeoPixel Mini Arcade',  images: ['brand_assets/8x8led1.png','brand_assets/ledmatrix2.png'] },
-  ];
-
   // ── Scroll to section ─────────────────────────
   function scrollToSection(id) {
     document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
@@ -928,32 +1009,6 @@
     const firstActive = document.querySelector('.s-link.active');
     if (firstActive) moveIndicator(firstActive);
   });
-
-  // ── Lightbox ──────────────────────────────────
-  const lb = { pi: 0, ii: 0 };
-  function openLightbox(pi, ii) { lb.pi = pi; lb.ii = ii; renderLightbox(); document.getElementById('lightbox').classList.add('open'); document.body.style.overflow = 'hidden'; }
-  function closeLightbox()      { document.getElementById('lightbox').classList.remove('open'); document.body.style.overflow = ''; }
-  function lightboxNext()       { lb.ii = (lb.ii + 1) % projects[lb.pi].images.length; renderLightbox(); }
-  function lightboxPrev()       { lb.ii = (lb.ii - 1 + projects[lb.pi].images.length) % projects[lb.pi].images.length; renderLightbox(); }
-
-  function renderLightbox() {
-    const p = projects[lb.pi];
-    const img = document.getElementById('lb-img');
-    img.style.opacity = '0'; img.src = p.images[lb.ii]; img.onload = () => img.style.opacity = '1';
-    document.getElementById('lb-title').textContent = p.name;
-    document.getElementById('lb-meta').textContent  = `${lb.ii + 1} / ${p.images.length}`;
-    const dots = document.getElementById('lb-dots'); dots.innerHTML = '';
-    p.images.forEach((_, i) => { const d = document.createElement('button'); d.className = 'lb-dot' + (i === lb.ii ? ' active' : ''); d.onclick = () => { lb.ii = i; renderLightbox(); }; dots.appendChild(d); });
-    document.querySelectorAll('.lb-nav-btn').forEach(b => b.style.display = p.images.length < 2 ? 'none' : 'flex');
-  }
-
-  document.addEventListener('keydown', e => {
-    if (!document.getElementById('lightbox').classList.contains('open')) return;
-    if (e.key === 'Escape') closeLightbox();
-    if (e.key === 'ArrowRight') lightboxNext();
-    if (e.key === 'ArrowLeft')  lightboxPrev();
-  });
-  document.getElementById('lightbox').addEventListener('click', e => { if (e.target === document.getElementById('lightbox')) closeLightbox(); });
 
   // ── Scroll progress ───────────────────────────
   const scrollFill = document.getElementById('scroll-fill');

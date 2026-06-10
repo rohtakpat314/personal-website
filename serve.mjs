@@ -21,6 +21,10 @@ const mime = {
   '.woff2': 'font/woff2',
   '.woff': 'font/woff',
   '.pdf': 'application/pdf',
+  '.avif': 'image/avif',
+  '.mov': 'video/quicktime',
+  '.mp4': 'video/mp4',
+  '.webp': 'image/webp',
 };
 
 const server = createServer(async (req, res) => {
