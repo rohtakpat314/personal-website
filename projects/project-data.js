@@ -41,7 +41,7 @@ const PROJECTS = {
     summary: 'Memory-mapped matrix accelerator computing A x B = C for 4x4 systolic matrices on AXI4-Lite. 175x kernel speedup, ~11x end-to-end, integrated with RV32IM.',
     tools: ['SystemVerilog', 'Quartus Prime', 'AXI4-Lite', 'Python', 'Testbench Development', 'Cyclone V'],
     status: null,
-    github: null,
+    github: 'https://github.com/rohtakpat314/axi4-lite-matrix-accelerator',
     docs: [],
     overview: [
       'AXI4-Lite memory-mapped coprocessor with a 4×4 systolic array (16 MAC processing elements) that computes C = A × B on fixed 32-bit integer matrices. Integrated with the RV32IM processor at base address 0x1000_0000, with matrix operands, control, status, and result registers exposed over a 12-bit address map.',
@@ -372,7 +372,7 @@ line_editor.c  ->  command.c  ->  bus.h  ->  bus_pico.c
       'Full hardware build: schematic, soldering, and integration debug',
     ],
     visuals: [
-      { type: 'video', src: '../brand_assets/IMG_5784.MOV', alt: 'Arcade gameplay demo', caption: 'Gameplay demo' },
+      { type: 'video', src: '../brand_assets/arcade-demo.mp4', alt: 'Arcade gameplay demo', caption: 'Gameplay demo' },
       { type: 'image', src: '../brand_assets/8x8led1.png', alt: '8x8 LED matrix board', caption: 'Assembled hardware' },
       { type: 'image', src: '../brand_assets/ledmatrix2.png', alt: 'LED matrix close-up', caption: 'NeoPixel matrix close-up' },
     ],

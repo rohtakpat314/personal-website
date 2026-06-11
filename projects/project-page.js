@@ -58,14 +58,20 @@
     </section>`;
   }
 
-  function renderLinks() {
-    const links = [];
-    if (project.github) {
-      links.push(`<a href="${esc(project.github)}" target="_blank" rel="noopener" class="p-link p-link--primary">
+  const githubLink = project.github
+    ? `<a href="${esc(project.github)}" target="_blank" rel="noopener" class="p-link p-link--primary">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.5-1.4-1.3-1.8-1.3-1.8-1-.7.1-.7.1-.7 1.1.1 1.7 1.1 1.7 1.1 1 1.7 2.6 1.2 3.2.9.1-.7.4-1.2.7-1.5-2.6-.3-5.4-1.3-5.4-5.8 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17.3 4.7 18.3 5 18.3 5c.7 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.5-2.8 5.5-5.4 5.8.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3"/></svg>
         View on GitHub
-      </a>`);
-    }
+      </a>`
+    : '';
+
+  function renderTopLink() {
+    if (!githubLink) return '';
+    return `<div class="p-top-links">${githubLink}</div>`;
+  }
+
+  function renderLinks() {
+    const links = [];
     project.docs.forEach(d => {
       links.push(`<a href="${esc(d.href)}" target="_blank" rel="noopener" class="p-link">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
@@ -182,6 +188,8 @@
           ${project.tools.map(t => `<span class="chip">${esc(t)}</span>`).join('')}
           ${project.status ? `<span class="p-status">${esc(project.status)}</span>` : ''}
         </div>
+
+        ${renderTopLink()}
 
         ${renderHero(project.visuals)}
 
