@@ -272,6 +272,7 @@
   }
   .proj-gallery img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.4s ease; }
   .proj-gallery img.pg-contain { object-fit: contain; background: var(--surface-2); padding: 13%; }
+  .proj-gallery img.pg-contain.pg-logo { padding: 6%; }
   .proj-gallery img.pg-diagram { object-fit: contain; background: #efe8d8; padding: 6px; }
   .proj-gallery:hover img { transform: scale(1.04); }
   .proj-gallery-overlay {
@@ -660,13 +661,13 @@
         <!-- 01 RV32I CPU -->
         <a href="projects/riscv-cpu.html" class="proj-card reveal">
           <div class="proj-gallery">
-            <img class="pg-contain" src="brand_assets/RISC-V-logo-square.svg.avif" alt="RISC-V logo" loading="lazy"/>
+            <img class="pg-contain pg-logo" src="brand_assets/RISC-V-logo-square.svg.avif" alt="RISC-V logo" loading="lazy"/>
             <div class="proj-card-hint">View project <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
           </div>
           <div class="proj-body">
             <p class="proj-num">01</p>
             <p class="proj-name">RISC-V Single-Cycle CPU</p>
-            <p class="proj-desc">Single-cycle RISC-V processor implementing 47 RV32I and 8 M-extension instructions, synthesized on Cyclone V at 60.42 MHz. 100% pass rate across all self-checking testbenches and waveform debugging.</p>
+            <p class="proj-desc">Single-cycle RV32IM processor implementing 47 RV32I and 8 M-extension instructions. Timing optimization raised Fmax from 28 MHz to 49.18 MHz on Cyclone V while cutting resource use ~15×. 100% pass rate across self-checking and directed testbenches.</p>
             <div class="proj-footer">
               <div class="proj-tools"><span class="chip">SystemVerilog</span><span class="chip">Testbench Development</span><span class="chip">GTKWave</span><span class="chip">Icarus Verilog</span><span class="chip">Cyclone V</span><span class="chip">Static Timing Analysis</span><span class="chip">RISC-V</span></div>
             </div>
@@ -719,21 +720,7 @@
           </div>
         </a>
 
-        <!-- 05 N-Body -->
-        <a href="projects/n-body.html" class="proj-card reveal">
-          <div class="proj-gallery">
-            <img src="brand_assets/Nbody.png" alt="N-Body Gravity Simulator" loading="lazy"/>
-            <div class="proj-card-hint">View project <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
-          </div>
-          <div class="proj-body">
-            <p class="proj-num">05</p>
-            <p class="proj-name">N-Body Gravity Simulator</p>
-            <p class="proj-desc">A program that simulates N-bodies with real-time trajectory visualization and Newtonian physics built at a small-scale. Allows speed up/slow down, FPS monitoring, and has JSON configurable bodies.</p>
-            <div class="proj-footer"><div class="proj-tools"><span class="chip">Python</span><span class="chip">Matplotlib</span><span class="chip">NumPy</span><span class="chip">ODEs</span></div></div>
-          </div>
-        </a>
-
-        <!-- 06 8x8 Arcade -->
+        <!-- 05 8x8 Arcade -->
         <a href="projects/arcade.html" class="proj-card reveal">
           <div class="proj-gallery">
             <video autoplay muted loop playsinline style="width:100%;height:100%;object-fit:cover;display:block;pointer-events:none;">
@@ -742,7 +729,7 @@
             <div class="proj-card-hint">View project <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
           </div>
           <div class="proj-body">
-            <p class="proj-num">06</p>
+            <p class="proj-num">05</p>
             <p class="proj-name">8×8 NeoPixel Mini Arcade</p>
             <p class="proj-desc">A mini-arcade built using a WS2812B and ATmega328P / Arduino UNO. Hand-soldered, designed with EasyEDA, and implemented on perfboard. Players can play Snake, Ping Pong, and more.</p>
             <div class="proj-footer"><div class="proj-tools"><span class="chip">C++</span><span class="chip">ATmega328P</span><span class="chip">WS2812B</span><span class="chip">PCB Design</span></div></div>
@@ -770,11 +757,10 @@
           </div>
           <div class="tl-tags"><span class="chip">Altium</span><span class="chip">STM32</span><span class="chip">Soldering</span><span class="chip">PCB Design</span><span class="chip">DMM</span></div>
           <ul class="tl-bullets">
-            <li>Standardized CAN bus communication across all low-voltage components to improve data reliability throughout the car</li>
-            <li>Diagnosed PDC faults using DMM measurements and circuit analysis</li>
-            <li>Soldered a new op-amp and performed STM rework on the PDC Revision B during hardware iteration</li>
-            <li>Updated Altium schematics for the voltage protection circuit on the new PCB</li>
-            <li>Contributed to telemetry sensor placement strategy (temperature, current, and voltage) for competition readiness</li>
+            <li>Diagrammed CAN cabling around the entire solar car by referencing SolidWorks model</li>
+            <li>Designed changes to the voltage protection stage of the PDC_revB in Altium, changing specific resistors and MOSFETs to match Altium values and maintain voltage constraints</li>
+            <li>Applied circuit analysis and DMM techniques for the PCBs to check voltage and current values at different pads</li>
+            <li>Soldered op-amp post debugging onto the PDC and soldered the STM32</li>
           </ul>
           </div>
         </div>
@@ -787,12 +773,11 @@
             <div class="tl-role-section">
               <div class="tl-header tl-header--compact">
                 <div class="tl-role">FES Hardware Co-Lead</div>
-                <span class="tl-date">Present</span>
+                <span class="tl-date">Fall 2026</span>
               </div>
               <div class="tl-tags"><span class="chip">Leadership</span></div>
               <ul class="tl-bullets">
-                <li>Ran weekly meetings, tracked deliverables, and distributed work across hardware subteams</li>
-                <li>Evaluated existing FES devices to identify design gaps and guide improvements to the team's implementation</li>
+                <li>Fall 2026</li>
               </ul>
             </div>
             <div class="tl-role-section">
@@ -802,10 +787,10 @@
               </div>
               <div class="tl-tags"><span class="chip">LTspice</span><span class="chip">KiCad</span><span class="chip">Medical Device Applications</span></div>
               <ul class="tl-bullets">
-                <li>Designed a full overcurrent protection signal chain (op-amp integrator, window comparator, SR latch) and laid out the schematic in KiCad</li>
-                <li>Characterized threshold windows in LTspice, tuning V_H and V_L to ensure correct triggering across expected current profiles</li>
-                <li>Presented the design at Insight Design Reviews in F25 and SP26 before professors, club leads, and members</li>
-                <li>On overcurrent detection, the circuit interrupts the MCU to halt stimulation and enforce safe biphasic current delivery to the patient</li>
+                <li>Designed an overcurrent protection circuit in KiCad with a 50mA limit and max 25ms response time for patients with lower limb muscle conditions</li>
+                <li>Simulated upper and lower window comparator thresholds in LTspice and used a pulsing voltage for testing with tuned parameters based off FES devices on the market</li>
+                <li>Presented the design at F25 and SP26 design reviews to the team and incorporated feedback from the team, board, and professors</li>
+                <li>Worked with teammates to design a BOM database for electronic parts for the semester</li>
               </ul>
             </div>
           </div>
@@ -819,10 +804,11 @@
             <div><div class="tl-org">Advanced Network Security &amp; Communications Lab</div><div class="tl-role">Undergraduate Research Assistant, TI mmWave</div></div>
             <span class="tl-date">Feb 2025 – Present</span>
           </div>
-          <div class="tl-tags"><span class="chip">MATLAB</span><span class="chip">mmWave Radar</span><span class="chip">Signal Processing</span><span class="chip">Whisper API</span></div>
+          <div class="tl-tags"><span class="chip">MATLAB</span><span class="chip">mmWave Radar</span><span class="chip">Signal Processing</span></div>
           <ul class="tl-bullets">
-            <li>Configured the TI IWR1843 mmWave radar via mmWave Studio and MATLAB Runtime 8.5.1, setting up ADC parameters and verifying SPI/UART communication for real-time audio reconstruction</li>
-            <li>Modernized legacy MATLAB data acquisition scripts, resolving deprecated syntax to restore reliable real-time capture</li>
+            <li>Configured the TI IWR1843 module in mmWave Studio and MATLAB Runtime 8.5.1, setting up ADC, SPI, and verifying compatibility to begin data collection</li>
+            <li>Modernized legacy MATLAB post-processing scripts for real-time sound reconstruction by changing serial port references in the script to allow for better port recognition</li>
+            <li>Applied signal processing techniques including DFT/FFT, chirps, and spectrogram analysis</li>
           </ul>
           </div>
         </div>

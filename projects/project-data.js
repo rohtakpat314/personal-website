@@ -3,33 +3,189 @@ const PROJECTS = {
     num: '01',
     slug: 'riscv-cpu',
     file: 'riscv-cpu.html',
-    title: 'RISC-V Single-Cycle CPU',
-    summary: 'Single-cycle RV32IM processor in SystemVerilog, synthesized on Altera Cyclone V.',
+    title: 'RV32IM CPU',
+    summary: 'Single-cycle RV32IM processor in SystemVerilog. Timing optimization raised Fmax from 28 MHz to 49.18 MHz on Cyclone V while cutting resource use ~15×.',
     tools: ['SystemVerilog', 'Testbench Development', 'GTKWave', 'Icarus Verilog', 'Cyclone V', 'Static Timing Analysis', 'RISC-V'],
     status: null,
     github: 'https://github.com/rohtakpat314/riscvcpu',
     docs: [],
-    overview: [
-      'Single-cycle RV32I processor in SystemVerilog implementing all 47 R/I/S/B/U/J-type instructions and 8 M-extension multiply/divide operations. The design follows a classic datapath + control-unit architecture with a unified register file, immediate generation, and memory interface.',
-      'Synthesized on an Altera Cyclone V FPGA at 60.42 MHz with 52 mW dynamic power and approximately 1 CPI for the implemented instruction set. Verified with self-checking Verilog testbenches achieving a 100% pass rate, plus GTKWave waveform debugging and Icarus Verilog simulation.',
-    ],
-    specs: [
-      { label: 'ISA', value: 'RV32IM (47 base + 8 M-ext)' },
-      { label: 'Architecture', value: 'Single-cycle' },
-      { label: 'FPGA', value: 'Altera Cyclone V' },
-      { label: 'Max Frequency', value: '60.42 MHz' },
-      { label: 'Dynamic Power', value: '52 mW' },
-      { label: 'CPI', value: '~1' },
-      { label: 'Verification', value: 'Self-checking testbenches, GTKWave' },
-    ],
-    highlights: [
-      'Full RV32I decode and execute for R, I, S, B, U, and J-type instructions',
-      'M-extension hardware multiply and divide unit',
-      'Quartus Prime synthesis with timing closure at 60+ MHz',
-      'Simulation pipeline with Icarus Verilog and GTKWave debug',
+    overview: [],
+    sections: [
+      {
+        title: 'Why I Built This',
+        blocks: [
+          { p: 'After completing my first two undergraduate courses teaching digital system fundamentals, SystemVerilog, and FSMs, I wanted to build an entire processor from scratch. Seeing as RISC-V was an open-source and popular instruction-set, I decided to start with implementing all 47 RV32I instructions. At first, my idea was to only build a subset of instructions, but I created an implementation by designing each module that would eventually support RV32IM. The reason I added the 8 M-extension instructions was to have a hardware multiply and divide, so multiplying didn\'t have to feel like a sequence of additions of registers (e.g. doing $8+8+8$ instead of $8 \\times 3$). Also, I knew that for larger numbers multiplication and division built-in would be helpful. I was also curious about how the M-extension would affect my timing parameters. Prior to adding the M-extension, I synthesized my design at 60.42 MHz and 52mW of power. An issue with my original design was using 0 DSP blocks and no block memory, causing everything to be implemented in logic costing a large fraction of the Cyclone V\'s ALMs, or adaptive logic models. Adding the M-extension did affect my timing parameters, leading to a longer critical path and a degradation in my clock frequency from 60.42 MHz to ~ 28 MHz at one point due to the complexity of large multiplication and division operations and their datapath. Fixing this max clock frequency to a formidable number was one of the most valuable debugging and design modification changes I did on this project.' },
+        ],
+      },
+      {
+        title: 'Overview',
+        blocks: [
+          { p: 'Single-cycle RV32IM processor that executes the full integer instruction set plus the M-extension. Verified via simulation, testbenches, waveforms, and synthesis on FPGA. The main win wasn\'t designing this CPU, but using timing optimization to bring the max clock frequency from 28 MHz to 49 MHz while shrinking the design by $\\sim 15x$.' },
+          { p: '$$F_{\\max,\\mathrm{final}} / F_{\\max,\\mathrm{worst}} = 49.18 / 28 \\approx 1.76\\times$$' },
+        ],
+      },
+      {
+        title: 'Tech Specs',
+        blocks: [
+          { specs: [
+            { label: 'ISA', value: 'RV32I + M-extension (RV32IM)' },
+            { label: 'Microarchitecture', value: 'Single-cycle base (CPI = 1 for RV32I); MUL ~3 cycles, DIV ~34 cycles with stall control' },
+            { label: 'Multiply/divide', value: 'Pipelined (3-cycle) / iterative (34-cycle) units with stall control' },
+            { label: 'Target', value: 'Intel Cyclone V 5CGXFC7D7F31C8' },
+            { label: 'Verification', value: 'self-checking manual and directed unit tests' },
+          ] },
+        ],
+      },
+      {
+        title: 'Architecture',
+        blocks: [
+          { code: `assign opcode = instruction[6:0];
+assign funct3 = instruction[14:12];
+assign funct7 = instruction[31:25];
+assign rs1    = instruction[19:15];
+assign rs2    = instruction[24:20];
+assign rd     = instruction[11:7];` },
+          { p: 'A decoding change: instead of a second decode stage to pick the ALU op, I encoded the ALU control so that ALU_control[2:0] are funct3, with the upper bit being used to distinguish base from M-extension. This lets is_mul/is_div and the operation variant fall out of simple bit tests, which makes the logic simpler.' },
+          { table: {
+            plain: true,
+            headers: ['alu_control[4:2]', 'Family'],
+            rows: [
+              ['000', 'RV32I base'],
+              ['100', 'MUL / MULH / MULHSU / MULHU'],
+              ['101', 'DIV / DIVU / REM / REMU'],
+            ],
+          } },
+          { code: `assign is_mul = (alu_control[4:2] == 3'b100);
+assign is_div = (alu_control[4:2] == 3'b101);` },
+          { code: `if (funct7 == FUNCT7_M)
+    alu_control = {1'b1, 1'b0, funct3};
+else
+    alu_control = {1'b0, funct7[5], funct3};` },
+          { subhead: 'ALU: base RV32I' },
+          { code: `ADD: {carry, result} = {1'b0, a} + {1'b0, b};` },
+          { subhead: 'Overflow logic' },
+          { p: '$$\\mathrm{ovf}_{\\mathrm{ADD}} = \\big(a[31] = b[31]\\big) \\land \\big(r[31] \\neq a[31]\\big)$$' },
+          { p: 'For ADD; SUB uses opposite sign check - see code.' },
+          { code: `assign overflow = ((ALU_control == ADD) && (a[31] == b[31]) && (result[31] != a[31])) ||
+                  ((ALU_control == SUB) && (a[31] != b[31]) && (result[31] != a[31]));` },
+          { subhead: 'Branching logic' },
+          { p: 'XOR branch: handles BEQ/BNE through the zero flag, BLT/BGE with SLT result and $\\texttt{funct3[0]}$ as an invert bit.' },
+          { code: `assign branch_taken = branch && (funct3_out[2] ? (alu_result[0] ^ funct3_out[0])
+                                               : (alu_zero ^ funct3_out[0]));` },
+          { subhead: 'Data Memory:' },
+          { p: '$$\\mathrm{FFs} = \\mathrm{depth} \\times 32;\\quad 1024 \\times 32 = 32{,}768 \\rightarrow 64 \\times 32 = 2{,}048$$' },
+          { code: `logic [DATA_WIDTH-1:0] memory [0:63];
+memory[addr[7:2]] <= write_data;` },
+        ],
+      },
+      {
+        title: 'How I Optimized This Processor',
+        blocks: [
+          { p: 'The fundamental constant is the clock time, which follows s.t.' },
+          { p: '$$T_{\\mathrm{clk}} \\geq \\max(\\text{instruction combinational path delay})$$' },
+          { p: 'The clock is set by the slowest instruction since it takes the longest time, so that means even if I had theoretically made 46 $5\\,\\mathrm{ns}$ operations ($200\\,\\mathrm{MHz}$), one $20\\,\\mathrm{ns}$ operation could completely destroy my max clock frequency.' },
+          { p: 'Thus, the M-extension was the bottleneck because the RV32I base operations were only $10\\text{-}16\\,\\mathrm{ns}$ on average, but the divide and multiply on my M-extension took $> 30\\,\\mathrm{ns}$ because' },
+          { list: [
+            'Divide is serial, so every quotient bit depends on the previous partial remainder',
+            'Can\'t parallelize a dependency chain, which is what occurs in the case of a 32-bit divider',
+            'Multiply is a deep partial-product tree of adders, since it\'s functionally equivalent to performing many, many additions',
+          ] },
+          { p: 'I found that the M-extension was my bottleneck by synthesizing in Quartus, and the timing-closure report pointed at the divider being the likely cause of a long critical path for setup time.' },
+          { subhead: 'Fix 1: replace the combinational divide with a 34-cycle restoring divider performing one subtract per clock' },
+          { code: `wire [63:0] aq_sl  = {aq[62:0], 1'b0};
+wire [32:0] trial  = {1'b0, aq_sl[63:32]} - {1'b0, dvsr};
+wire        ge     = ~trial[32];
+wire [63:0] aq_nxt = ge ? {trial[31:0], aq_sl[31:1], 1'b1}
+                        : aq_sl;` },
+          { subhead: 'Fix 2: the data memory was traditionally implemented in logic because my data memory had an asynchronous read, which cannot infer block RAM' },
+          { p: 'An array [0:1023] is 32 KiB or 1024 words * 32 bits, which is synthesized as 32768 registers. Shrinking to 64 words results in only 2048 FFs. This explains most of the register drop.' },
+          { subhead: 'Fix 3: I moved multiply into a 3-cycle pipelined unit, registering operands and the product so that Quartus would pack the DSP registers.' },
+          { code: `wire a_signed = (op != 2'b11);
+wire b_signed = (op == 2'b00) | (op == 2'b01);
+wire signed [32:0] a_ext = a_signed ? {a[31], a} : {1'b0, a};
+wire signed [32:0] b_ext = b_signed ? {b[31], b} : {1'b0, b};` },
+          { subhead: 'Fix 4: Stall Control' },
+          { code: `assign start_mul = (mul_state == 1'b0) & is_mul;
+assign start_div = (div_state == 1'b0) & is_div;
+assign mul_stall = is_mul & ~mul_done;
+assign div_stall = is_div & ~div_done;
+assign stall     = mul_stall | div_stall;
+
+assign pc_in       = stall ? pc_out : pc_next;
+assign reg_write_g = reg_write & ~stall;
+assign mem_write_g = mem_write & ~stall;
+
+assign write_data = is_mul          ? mul_result
+                  : is_div          ? div_wb
+                  : lui            ? imm
+                  : mem_to_reg[1] ? pc_plus4
+                  : mem_to_reg[0] ? mem_read_data
+                  :                 alu_result;` },
+          { p: 'Trade-off here: CPI vs. Fmax. These units are blocking, the core stalls while they run. Original RV32I had a CPI of 1. Multiply costs $\\sim 3$ cycles, divide $\\sim 34$, but because the $F_{\\max}$ increased, so did the real time.' },
+        ],
+      },
+      {
+        title: 'Performance Metrics',
+        blocks: [
+          { table: {
+            headers: ['Configuration', 'Fmax', 'ALMs', 'Registers', 'DSPs'],
+            rows: [
+              ['Combinational mul + div', '28 MHz', '36805', '33962', '9'],
+              ['Iterative divide + mem shrink', '32 MHz', '2546', '3229', '9'],
+              ['Adding pipelined multiply', '49.18 MHz', '2469/56480', '3208', '3'],
+            ],
+          } },
+          { image: {
+            src: '../brand_assets/img1_rv32im.png',
+            alt: 'Quartus timing analyzer Fmax summary',
+            caption: 'Static timing analysis, Fmax = 49.18 MHz',
+            contain: true,
+          } },
+          { image: {
+            src: '../brand_assets/img2_rv32im.png',
+            alt: 'Quartus Prime Flow Summary',
+            caption: 'Quartus Flow Summary',
+            contain: true,
+          } },
+          { image: {
+            src: '../brand_assets/img4_rv32im.png',
+            alt: 'Quartus PowerPlay power analysis',
+            caption: 'Power Analysis Summary',
+            contain: true,
+          } },
+        ],
+      },
+      {
+        title: 'Design Challenges',
+        blocks: [
+          { subhead: '1. Finding the timing issue' },
+          { p: 'When first adding the M-extension, Quartus kept struggling to fit my new design into the FPGA board of my choice due to ALM consumption and had a very low Fmax. Reading the fitter report and Quartus\'s recommendations led me to use aggressive fitting and notice how the four combinational dividers were each using 10–13 K ALMs' },
+          { image: {
+            src: '../brand_assets/img3_rv32im.png',
+            alt: 'Quartus timing closure recommendations',
+            caption: 'Timing Closure Report',
+            contain: true,
+          } },
+          { subhead: '2. The incorrect lui bug' },
+          { p: 'After noticing all my results being X in my simulations, I read through the RISC-V manual and did some research and blamed my lui function too early, since it seemed like a common point for failure. I wrote a directed testbench just for lui and it passed, which taught me about targeted testing and finding where the points of failure actually are in RTL design, along with the importance of modularity in designs.' },
+          { code: 'lui(x, 0x10000) → x20 = 0x10000000' },
+          { subhead: '3. Stall logic' },
+          { p: 'Making multiply/divide multi-cycle meant the PC and register/memory writes had to freeze for the correct number of cycles and then resume right after. I had to carefully reason and also diagram these operations to avoid having any writeback issues in the last stage of the instruction cycle.' },
+        ],
+      },
+      {
+        title: 'Future Work',
+        blocks: [
+          { list: [
+            'Pipeline the core (IF/ID/EX/MEM/WB) to get past the 49 MHz ceiling and entering 100+ MHz territory',
+            'Hazard detection and forwarding for pipelining',
+            'Using Block RAM',
+          ] },
+        ],
+      },
     ],
     visuals: [
-      { type: 'image', src: '../brand_assets/RISC-V-logo-square.svg.avif', alt: 'RISC-V logo', caption: 'RISC-V architecture', contain: true },
+      { type: 'image', src: '../brand_assets/RISC-V-logo-square.svg.avif', alt: 'RISC-V logo', caption: 'RISC-V architecture', contain: true, aspect: 'square' },
     ],
   },
 
@@ -42,118 +198,151 @@ const PROJECTS = {
     tools: ['SystemVerilog', 'Quartus Prime', 'AXI4-Lite', 'Python', 'Testbench Development', 'Cyclone V'],
     status: null,
     github: 'https://github.com/rohtakpat314/axi4-lite-matrix-accelerator',
+    webapp: 'https://rohtakpat314.github.io/axi4-lite-matrix-accelerator/',
     docs: [],
-    overview: [
-      'AXI4-Lite memory-mapped coprocessor with a 4×4 systolic array (16 MAC processing elements) that computes C = A × B on fixed 32-bit integer matrices. Integrated with the RV32IM processor at base address 0x1000_0000, with matrix operands, control, status, and result registers exposed over a 12-bit address map.',
-      'The compute core finishes in 6 cycles once operands are loaded, but end-to-end latency is dominated by single-beat AXI4-Lite I/O — 48 words moved one transaction at a time by the CPU. Kernel speedup is 175× (1050 → 6 cycles); end-to-end speedup is 10.9× (1110 → 102 cycles).',
+    overview: [],
+    sections: [
+      {
+        title: 'Why I Built This',
+        blocks: [
+          { p: 'Entering this project, I understood the behavior of CPUs and mine in particular, which was a RV32IM processor. However, I noticed a large bottleneck in my operational efficiency when implementing the M-extension, leading to a large critical path for DIV and MUL operations due to the arithmetic complexity.' },
+          { p: "Inspired by the systolic arrays behind modern AI accelerators such as Google's TPU, I built a small 4x4 matrix accelerator with an AXI4-Lite interface and systolic-style MAC array to learn the hardware acceleration loop end-to-end and measure the speed-up. However, I had one lingering question during this entire process: when making the compute that much faster, what becomes the new bottleneck?" },
+        ],
+      },
+      {
+        title: 'Overview',
+        blocks: [
+          { p: 'A $4 \\times 4$ integer matrix multiply $C = A \\times B$ is offloaded from an RV32IM host CPU to a dedicated spatial MAC array over a memory-mapped AXI4-Lite interface. My project sought to answer these main questions:' },
+          { list: ['Compute kernel speedup?', 'End-to-end system speedup?', 'New performance bottleneck?'] },
+          { p: 'For this project, I chose the following specs to work with:' },
+          { list: ['AXI4-Lite slave interface', '4 x 4 spatial MAC array compute engine (16 processing elements)', '32-bit integer datatype', 'RV32IM single-cycle CPU as the host', 'Intel Cyclone V as the FPGA target for synthesis and compilation'] },
+        ],
+      },
+      {
+        title: 'Results at a Glance',
+        blocks: [
+          { stats: [
+            { value: '175×', label: 'Kernel speedup (1050 → 6 cycles)' },
+            { value: '~10.3×', label: 'End-to-end system speedup' },
+            { value: '6', label: 'Compute cycles in the systolic array' },
+            { value: '65.35 MHz', label: 'Fmax on Cyclone V' },
+          ] },
+        ],
+      },
+      {
+        title: 'Architecture',
+        blocks: [
+          { p: "A matrix multiply is a set of dot products, to obtain the i,j'th element of our output matrix C, we need to perform a dot product of the ith row of A and the jth column of B, for $A \\times B = C$." },
+          { p: 'This can be rewritten as:' },
+          { p: '$$C_{ij} = \\sum_{k=0}^{3} A_{ik}\\,B_{kj}, \\quad i, j \\in \\{0, 1, 2, 3\\}$$' },
+          { p: 'For an $n \\times n$ product this is $n^3$ multiply-accumulates, or 64 MACs. This is because every element of the output corresponds to the sum of 4 products, so obtaining a 4x4 result would take 64 total sums of products.' },
+          { p: 'Spatially, I instantiate 16 processing elements, one per output element $C_{ij}$. The idea here is to share the index $k$ or the contraction index across all PEs, meaning that on each compute cycle every PE multiplies its $A_{ik}\\,B_{kj}$ for the same $k$ and accumulates. Therefore, instead of needing 64 total MACs sequentially, I can do 16 MACs per cycle (one MAC corresponding to one product), and then do 4 of them due to the four sums, leading to 4 cycles of 16 MACs.' },
+          { code: `always @(*) begin
+    for (int i = 0; i < 4; i++)
+        for (int j = 0; j < 4; j++)
+            prod[i][j] = {{32{1'b0}}, a[i*4 + k]} *
+                         {{32{1'b0}}, b[k*4 + j]};
+end` },
+          { p: '$$\\text{Cycles}_{\\text{compute}} = n + \\text{overhead} = 4 + \\text{latch} \\approx 6$$' },
+        ],
+      },
+      {
+        title: 'FSM Design',
+        blocks: [
+          { p: 'IDLE -> COMPUTE -> LATCH' },
+          { p: 'During the compute phase, all 16 multipliers are working in parallel, so the partial products are accumulating. After $k = 3$, LATCH will write the 16 results and the signal "done" will be effectively declared.' },
+        ],
+      },
+      {
+        title: 'Accumulator Bit-Width',
+        blocks: [
+          { p: 'An interesting design choice I noticed while performing these 32-bit $\\times$ 32-bit multiplies is how the result is 64 bits, but accumulating 4 of them can increase the bitwidth to 66 due to $\\log_2(4)$, hence why I designed the accumulators to be 66 bits just in case. This design choice led to a 100% verification that there would be absolutely no chance for overflow.' },
+          { code: `logic [65:0] acc  [0:3][0:3];
+logic [63:0] prod [0:3][0:3];` },
+        ],
+      },
+      {
+        title: 'Memory-Mapped I/O',
+        blocks: [
+          { p: 'This is the memory-mapped I/O:' },
+          { list: [
+            '0x000 - 0x03C is Matrix A, write',
+            '0x040 - 0x07C is Matrix B, write',
+            '0x080 is CONTROL, or write',
+            "0x084 is the status, which is read, bit 1's value being sticky vs. busy determines whether it's ready",
+            '0x088 - 0x0C4 is a read result, which reads Matrix C',
+          ] },
+          { code: `if (s_awvalid && s_wvalid) begin
+    if      (s_awaddr[7:6] == 2'b00)       matrix_a[s_awaddr[5:2]] <= s_wdata;
+    else if (s_awaddr[7:6] == 2'b01)       matrix_b[s_awaddr[5:2]] <= s_wdata;
+    else if (s_awaddr[7:0] == 8'h80)       accel_start             <= s_wdata[0];
+end` },
+        ],
+      },
+      {
+        title: 'Performance Metrics',
+        blocks: [
+          { list: [
+            'The software MATMUL on the CPU took 1050 cycles',
+            'The accelerator kernel took 6 cycles',
+            'The actual accelerator end-to-end, including the accelerator kernel took 102 cycles',
+          ] },
+          { p: 'This is a kernel speed-up of 175x, and a end-to-end speedup of about 10.3x, which is expected' },
+        ],
+      },
+      {
+        title: 'Quartus Prime Synthesis',
+        blocks: [
+          { list: [
+            'Fmax: 65.35 MHz',
+            'ALMs: 1,411/56,480 (2%)',
+            'Registers: 2772',
+            "DSP Blocks: 32/156 ~ 21%, makes complete sense since it's 16 PEs and 2 DSP slices per 32-bit multiply",
+            'Block RAM - 0',
+            'Core dynamic power of 23 mW',
+          ] },
+        ],
+      },
+      {
+        title: 'Why the Kernel and System Disagree in Performance Boost',
+        blocks: [
+          { p: 'The kernel may be 175x faster, but the system is only 10.3x faster. Why?' },
+          { p: "The math behind this is as follows: The compute is $6$ cycles, but moving the data is $48$ words since you have to move $16$ words for A, B, and C across a single bus, which means $1$ CPU Load/Store per word. The CPU does a load from memory + a store to the AXI bus, so that's $96$ cycles of data movement." },
+          { p: "Using Amdahl's Law, we get:" },
+          { p: '$$\\frac{T_{sw}}{T_{move} + T_{compute}} = \\frac{1050}{96 + 6} \\approx 10.3\\times$$' },
+          { p: 'This can also be explained through a simple analogy:' },
+          { subhead: 'Ordering food at a restaurant…' },
+          { callout: "When ordering food at a restaurant, you make an order, the chef makes the dish, and you receive it. During this process, the longest path is typically the chef making the dish. Therefore, if the server decides to walk with your food to your table faster, it makes a nearly negligible difference in the long-run. What would really make a difference in the time it takes for your food to come is the chef's speed, and I'd honestly prefer my food being well-cooked." },
+        ],
+      },
+      {
+        title: 'Challenges',
+        blocks: [
+          { subhead: 'A result = x bug' },
+          { p: 'When running simulations and writing testbenches, I kept getting returned result = x. My first guess was an issue with the lui instruction, but I was wrong. I created an entire lui testbench and wrote some Python code below to try to diagnose the issue, but lui seemed to work fine. After running all RISC-V instructions and noticing the issue was with the accelerator (plus reading up on simulator behavior and asking the open-source community), I realized that Icarus Verilog mishandles variable-indexed unpacked array module ports. I fixed it by passing the matrices as a flat [511:0] packed vector and unpacking them internally.' },
+          { subhead: 'The AXI compliance with a host that never waits' },
+          { p: "A single-cycle CPU doesn't stall, but the protocol requires proper handshaking (ready and write). This was the hardest fix in terms of technical adjustments, requiring me to create a pollable status register and have always-ready channels." },
+        ],
+      },
+      {
+        title: 'Design Decisions and Tradeoffs',
+        blocks: [
+          { list: [
+            "Spatial MAC array, since it's not perfectly systolic. A true systolic array would forward operands PE-to-PE pipelined instead of broadcasting k.",
+            'AXI4-Lite and not AXI4 (Full). AXI4-Lite had a clean register map, and was easy to verify, but the I/O bottleneck was very obvious after verification.',
+            "Combinational reads and non-stalling writes, so the host's single-cycle timing is matched (hardest part by far)",
+          ] },
+        ],
+      },
+      {
+        title: 'Web App',
+        blocks: [
+          { p: "I designed a web-app to simulate how the entire system works. You're welcome to check it out." },
+          { link: { href: 'https://rohtakpat314.github.io/axi4-lite-matrix-accelerator/', label: 'Open the interactive web app' } },
+        ],
+      },
     ],
-    specs: [],
-    specSections: [
-      {
-        title: 'Interface',
-        specs: [
-          { label: 'Protocol', value: 'AXI4-Lite (slave)' },
-          { label: 'Channels', value: 'AW, W, B, AR, R (all 5)' },
-          { label: 'Address width', value: '12-bit (s_awaddr / s_araddr)' },
-          { label: 'Data width', value: '32-bit' },
-          { label: 'Write strobe', value: '4-bit (s_wstrb)' },
-          { label: 'Response codes', value: "BRESP / RRESP = 2'b00 (OKAY)" },
-          { label: 'Write handshake', value: 'AWREADY = WREADY = 1 (zero backpressure)' },
-          { label: 'Read handshake', value: 'Combinational, zero-latency (RVALID = ARVALID)' },
-          { label: 'Base address', value: '0x1000_0000' },
-        ],
-      },
-      {
-        title: 'Register / Address Map',
-        table: {
-          headers: ['Offset', 'Name', 'Access', 'Description'],
-          rows: [
-            ['0x000–0x03C', 'Matrix A', 'Write', '16 × 32-bit words'],
-            ['0x040–0x07C', 'Matrix B', 'Write', '16 × 32-bit words'],
-            ['0x080', 'Control', 'R/W', 'bit0 = START (1-cycle pulse, auto-clears)'],
-            ['0x084', 'Status', 'Read', 'bit1 = DONE (sticky), bit0 = BUSY'],
-            ['0x088–0x0C4', 'Result C', 'Read', '16 × 32-bit words'],
-          ],
-        },
-      },
-      {
-        title: 'Compute Core',
-        specs: [
-          { label: 'Engine', value: '4×4 systolic array' },
-          { label: 'Processing elements', value: '16 PEs (one 32-bit MAC each)' },
-          { label: 'Matrix size', value: 'Fixed 4×4' },
-          { label: 'Data type', value: '32-bit integer' },
-          { label: 'Operation', value: 'C = A × B' },
-          { label: 'Compute latency', value: '6 cycles' },
-          { label: 'Result capture', value: 'Snapshot into result_c on DONE' },
-        ],
-      },
-      {
-        title: 'Performance',
-        specs: [
-          { label: 'Kernel speedup vs SW', value: '175× (1050 → 6 cycles)' },
-          { label: 'End-to-end speedup', value: '10.9× (1110 → 102 cycles)' },
-          { label: 'End-to-end bottleneck', value: 'AXI single-beat I/O (data movement)' },
-        ],
-      },
-      {
-        title: 'Synthesis (Cyclone V 5CGXFC7C7F23C8, Quartus 25.1 Lite)',
-        specs: [
-          { label: 'Fmax (sign-off, slow 0°C)', value: '63.8 MHz' },
-          { label: 'Fmax (slow 85°C)', value: '65.35 MHz' },
-          { label: 'ALMs', value: '1,411 / 56,480 (2%)' },
-          { label: 'Registers', value: '2,772' },
-          { label: 'DSP blocks', value: '32 / 156 (21%)' },
-          { label: 'Block RAM', value: '0 bits' },
-          { label: 'PLLs', value: '0' },
-        ],
-      },
-      {
-        title: 'Power (PowerPlay, vectorless)',
-        specs: [
-          { label: 'Core dynamic', value: '23.0 mW @ 100 MHz' },
-          { label: 'Core static', value: '349.6 mW' },
-          { label: 'I/O', value: '4.8 mW' },
-          { label: 'Total thermal', value: '377.4 mW' },
-        ],
-      },
-      {
-        title: 'Verification',
-        specs: [
-          { label: 'Method', value: 'Self-checking testbenches (Icarus Verilog)' },
-          { label: 'Functional result', value: '16/16 elements correct (PASS)' },
-          { label: 'Levels', value: 'Standalone accelerator TB + full system TB' },
-        ],
-      },
-    ],
-    cycleBreakdown: {
-      title: 'End-to-End Cycle Breakdown',
-      intro: 'The 6-cycle compute latency is only the systolic matmul once operands are loaded and START is pulsed. End-to-end latency is ~102 cycles because the CPU moves 48 words across the bus one at a time.',
-      headers: ['Phase', 'Cycles', 'Why'],
-      rows: [
-        ['Write Matrix A', '~16', '16 words × 1 store each'],
-        ['Write Matrix B', '~16', '16 words × 1 store each'],
-        ['Write START', '~1', 'One control write'],
-        ['Compute', '6', 'Systolic matmul'],
-        ['Poll DONE', 'a few', 'Read status until done'],
-        ['Read Matrix C', '~16', '16 words × 1 load'],
-        ['Store C to memory', '~16', '16 words × 1 store'],
-        ['Pointer / loop setup', 'a handful', 'Addressing overhead'],
-      ],
-      summary:       'Only 6 of ~102 cycles are compute. The other ~94 are the CPU shuffling 48 words over single-beat AXI4-Lite — one instruction per word.',
-    },
-    analysis: [
-      'AXI4-Lite is single-beat: every word is its own independent transaction with separate address and data handshakes. The accelerator finishes the math almost instantly and then waits while the CPU spoon-feeds it data.',
-      'This is a textbook Amdahl\'s Law case — the 6-cycle kernel got 175× faster, but it was already a tiny fraction of total latency, so system speedup is 10.9×. Data movement is now the dominant cost.',
-      'The fix is burst transfers or DMA (AXI4 full): move all 16 words in one transaction instead of 16 separate bus trips. That is the natural next step to push end-to-end speedup well beyond 10.9×.',
-    ],
-    highlights: [
-      '175× kernel speedup — systolic array vs software matmul',
-      '10.9× end-to-end speedup with full CPU + accelerator integration',
-      'Profiled system and identified AXI single-beat I/O as the bottleneck',
-      '63.8 MHz sign-off timing on Cyclone V with 32 DSP blocks utilized',
-      '16/16 elements verified across standalone and full-system testbenches',
-    ],
+    highlights: [],
     visuals: [
       { type: 'image', src: '../brand_assets/axi4_usethisone.png', alt: 'RV32IM CPU + 4x4 matrix accelerator architecture', caption: 'System architecture — CPU, address decoder, and 4×4 PE array', contain: true },
       { type: 'image', src: '../brand_assets/axi-matrix-cover.png', alt: 'RV32IM CPU + 4x4 matrix accelerator writeup', caption: 'Project writeup' },
@@ -164,7 +353,7 @@ const PROJECTS = {
     num: '03',
     slug: 'instrument-bridge',
     file: 'instrument-bridge.html',
-    title: 'Multi-Protocol Instrument Bridge',
+    title: 'USB CDC Bridge for RP2040',
     summary: 'USB CDC bridge for RP2040 using I2C, SPI, UART, and 1-Wire. Turns hardware validation from write-flash-debug loops into terminal commands.',
     tools: ['C', 'RP2040', 'CMake', 'Pico SDK', 'USB CDC'],
     status: null,
@@ -175,14 +364,40 @@ const PROJECTS = {
       { label: 'Hardware Bring-Up', href: 'https://github.com/rohtakpat314/Multi-protocol-instrument-bridge/blob/main/docs/hardware-bringup.md' },
       { label: 'Testing Strategy', href: 'https://github.com/rohtakpat314/Multi-protocol-instrument-bridge/blob/main/docs/testing.md' },
     ],
-    overview: [
-      'A USB CDC adapter for I2C, SPI, UART, and bit-banged 1-Wire. The host sees a virtual serial port and sends newline-terminated text commands; firmware executes the corresponding bus transactions and replies with OK, ERR, or TIMEOUT prefixes.',
-      'Built as an internal bench tool for hardware validation. The command parser in command.c is written in portable C with no SDK dependencies — host-side parser tests link against fake bus backends in tests/parser_tests.c, so grammar and reply formatting are testable without hardware. Hardware-specific code lives behind include/bridge/bus.h, the portability boundary for future MCU backends.',
-    ],
-    specs: [],
-    designFlow: {
-      title: 'Data Flow',
-      text: `PC terminal or script
+    overview: [],
+    sections: [
+      {
+        title: 'Why I Built This',
+        blocks: [
+          { p: 'When bringing up sensors and peripherals on the bench, I kept falling into write-flash-debug loops for every I2C scan, SPI read, or UART check. Each small experiment meant rebuilding firmware, reflashing, and reading back over a debugger or ad-hoc test code.' },
+          { p: 'I wanted a single RP2040 board that exposes I2C, SPI, UART, and 1-Wire over a USB virtual serial port. The host sends newline-terminated text commands; firmware parses them, runs the bus transaction, and replies with OK, ERR, or TIMEOUT. That turns hardware validation into terminal work instead of repeated flash cycles.' },
+        ],
+      },
+      {
+        title: 'Overview',
+        blocks: [
+          { p: 'A USB CDC adapter for I2C, SPI, UART, and bit-banged 1-Wire. The host sees a virtual serial port and sends newline-terminated text commands. Firmware executes the corresponding bus transactions and replies with OK, ERR, or TIMEOUT prefixes.' },
+          { p: 'The command parser in command.c is written in portable C with no Pico SDK dependencies. Host-side parser tests in tests/parser_tests.c link against fake bus backends, so grammar and reply formatting are testable without hardware. Hardware-specific code lives behind include/bridge/bus.h, the portability boundary for future MCU backends.' },
+        ],
+      },
+      {
+        title: 'Tech Specs',
+        blocks: [
+          { specs: [
+            { label: 'Host interface', value: 'USB CDC virtual serial port (no custom driver)' },
+            { label: 'Protocols', value: 'I2C, SPI, UART, 1-Wire' },
+            { label: 'Number formats', value: 'Decimal, hex (0x1A), octal, binary (0b11010)' },
+            { label: 'Max transfer', value: '64 bytes (bounded RAM and blocking time)' },
+            { label: 'Reply prefixes', value: 'OK, ERR, TIMEOUT' },
+            { label: 'Flash artifact', value: 'build/probebridge.uf2' },
+          ] },
+        ],
+      },
+      {
+        title: 'Architecture',
+        blocks: [
+          { p: 'The design splits a portable command layer from a replaceable bus backend. command.c owns user-facing syntax and validation. bus_pico.c owns RP2040 peripheral setup and transactions. bus.h is the contract that lets you swap in another MCU backend without touching the parser.' },
+          { code: `PC terminal or script
         |
         | USB CDC text lines
         v
@@ -192,85 +407,71 @@ stdio USB
 line_editor.c  ->  command.c  ->  bus.h  ->  bus_pico.c
                                               |
                                               v
-                                    I2C / SPI / UART / 1-Wire`,
-    },
-    specSections: [
-      {
-        title: 'Firmware Modules',
-        table: {
-          headers: ['Module', 'Responsibility'],
-          rows: [
-            ['src/main.c', 'Boots USB stdio, initializes buses, runs the command loop'],
-            ['src/line_editor.c', 'Collects characters into newline-terminated command strings'],
-            ['src/command.c', 'Tokenizes commands, validates args, dispatches ops, formats replies'],
-            ['include/bridge/bus.h', 'Bus abstraction used by the parser and host tests'],
-            ['src/bus_pico.c', 'RP2040 I2C, SPI, UART, GPIO, and 1-Wire implementation'],
-            ['tests/parser_tests.c', 'Host-side parser tests with fake bus functions'],
-          ],
-          plain: true,
-        },
+                                    I2C / SPI / UART / 1-Wire` },
+          { table: {
+            plain: true,
+            headers: ['Module', 'Responsibility'],
+            rows: [
+              ['src/main.c', 'Boots USB stdio, initializes buses, runs the command loop'],
+              ['src/line_editor.c', 'Collects characters into newline-terminated command strings'],
+              ['src/command.c', 'Tokenizes commands, validates args, dispatches ops, formats replies'],
+              ['include/bridge/bus.h', 'Bus abstraction used by the parser and host tests'],
+              ['src/bus_pico.c', 'RP2040 I2C, SPI, UART, GPIO, and 1-Wire implementation'],
+              ['tests/parser_tests.c', 'Host-side parser tests with fake bus functions'],
+            ],
+          } },
+          { p: 'Text commands over USB CDC trade throughput for bench usability: readable, scriptable, and debuggable from any terminal. Transfer payloads are capped at 64 bytes to keep RAM use and accidental long-blocking commands bounded.' },
+          { p: 'Host-testable parser tests are the key architectural choice. Command grammar and reply formatting are verified on the build machine before flashing, using fake bus functions that mirror the bus.h interface.' },
+        ],
       },
       {
-        title: 'Hardware Target (RP2040)',
-        table: {
-          headers: ['Protocol', 'Signal', 'GPIO'],
-          rows: [
-            ['I2C0', 'SDA / SCL', 'GP4 / GP5'],
-            ['SPI0', 'MISO / CS / SCK / MOSI', 'GP16 / GP17 / GP18 / GP19'],
-            ['UART0', 'TX / RX', 'GP0 / GP1'],
-            ['1-Wire', 'DQ', 'GP22'],
-          ],
-          plain: true,
-        },
-      },
-      {
-        title: 'Capabilities',
-        specs: [
-          { label: 'I2C', value: 'Bus scan, read, write, repeated-start write-read' },
-          { label: 'SPI', value: 'Full-duplex transfers with chip-select control' },
-          { label: 'UART', value: 'Configurable baud, byte-level read and write (8N1)' },
-          { label: '1-Wire', value: 'Bit-banged reset, read, write' },
-          { label: 'Number formats', value: 'Decimal, hex (0x1A), octal, binary (0b11010)' },
-          { label: 'Max transfer', value: '64 bytes (bounded RAM and blocking time)' },
-          { label: 'Reply prefixes', value: 'OK, ERR, TIMEOUT' },
+        title: 'Hardware',
+        blocks: [
+          { table: {
+            plain: true,
+            headers: ['Protocol', 'Signal', 'GPIO'],
+            rows: [
+              ['I2C0', 'SDA / SCL', 'GP4 / GP5'],
+              ['SPI0', 'MISO / CS / SCK / MOSI', 'GP16 / GP17 / GP18 / GP19'],
+              ['UART0', 'TX / RX', 'GP0 / GP1'],
+              ['1-Wire', 'DQ', 'GP22'],
+            ],
+          } },
+          { specs: [
+            { label: 'I2C', value: 'Bus scan, read, write, repeated-start write-read' },
+            { label: 'SPI', value: 'Full-duplex transfers with chip-select control' },
+            { label: 'UART', value: 'Configurable baud, byte-level read and write (8N1)' },
+            { label: '1-Wire', value: 'Bit-banged reset, read, write' },
+          ] },
         ],
       },
       {
         title: 'Command Examples',
-        table: {
-          headers: ['Command', 'Description'],
-          rows: [
-            ['i2c scan', 'Scan I2C bus for devices'],
-            ['i2c read 0x68 6', 'Read 6 bytes from device 0x68'],
-            ['i2c wr 0x68 2 0x75', 'Write-read sequence'],
-            ['spi xfer 0x9F 0x00 0x00 0x00', 'Full-duplex SPI transfer'],
-            ['uart speed 115200', 'Set UART baud rate'],
-            ['ow reset / ow read 8', '1-Wire reset and read'],
-          ],
-          plain: true,
-        },
-      },
-      {
-        title: 'Build & Test',
-        specs: [
-          { label: 'Firmware build', value: 'cmake -S . -B build && cmake --build build' },
-          { label: 'Flash artifact', value: 'build/probebridge.uf2' },
-          { label: 'Host parser tests', value: 'cmake -DBRIDGE_HOST_TESTS=ON (no Pico SDK required)' },
-          { label: 'Documentation', value: 'Markdown docs + LaTeX manual (docs/latex/manual.tex)' },
+        blocks: [
+          { table: {
+            plain: true,
+            headers: ['Command', 'Description'],
+            rows: [
+              ['i2c scan', 'Scan I2C bus for devices'],
+              ['i2c read 0x68 6', 'Read 6 bytes from device 0x68'],
+              ['i2c wr 0x68 2 0x75', 'Write-read sequence'],
+              ['spi xfer 0x9F 0x00 0x00 0x00', 'Full-duplex SPI transfer'],
+              ['uart speed 115200', 'Set UART baud rate'],
+              ['ow reset / ow read 8', '1-Wire reset and read'],
+            ],
+          } },
         ],
       },
-    ],
-    analysis: [
-      'The core design splits a portable command layer from a replaceable bus backend. command.c owns user-facing syntax and validation; bus_pico.c owns RP2040 peripheral setup and transactions; bus.h is the contract that lets you swap in an STM32 backend without touching the parser.',
-      'Text commands over USB CDC trade throughput for bench usability — readable, scriptable, and debuggable from any terminal. Transfer payloads are capped at 64 bytes to keep RAM use and accidental long-blocking commands bounded.',
-      'Host-testable parser tests are the key architectural choice: command grammar and reply formatting are verified on the build machine before flashing, using fake bus functions that mirror the bus.h interface.',
-    ],
-    highlights: [
-      'USB CDC virtual serial — no custom driver install required',
-      'SDK-independent command parser, host-testable without hardware',
-      'bus.h portability boundary for future STM32 or other MCU backends',
-      'I2C, SPI, UART, and 1-Wire from one RP2040 board',
-      'Formal docs: architecture, command reference, bring-up guide, LaTeX manual',
+      {
+        title: 'Build and Test',
+        blocks: [
+          { specs: [
+            { label: 'Firmware build', value: 'cmake -S . -B build && cmake --build build' },
+            { label: 'Host parser tests', value: 'cmake -DBRIDGE_HOST_TESTS=ON (no Pico SDK required)' },
+            { label: 'Documentation', value: 'Markdown docs + LaTeX manual (docs/latex/manual.tex)' },
+          ] },
+        ],
+      },
     ],
     visuals: [
       { type: 'image', src: '../brand_assets/rp2040-removebg-preview.png', alt: 'RP2040-Zero board', caption: 'RP2040 development board', contain: true },
@@ -281,71 +482,76 @@ line_editor.c  ->  command.c  ->  bus.h  ->  bus_pico.c
     num: '04',
     slug: 'fes-ocpd',
     file: 'fes-ocpd.html',
-    title: 'Overcurrent Protection Device, FES Hardware',
+    title: 'Overcurrent Protection Circuit',
     summary: 'Analog overcurrent detection for biphasic FES device using an op-amp integrator, window comparator, and SR-latch. During overcurrent events, interrupts sent to MCU, resulting in LOW state (no current delivered to patient). Helps keep patients safe while helping their lower limb musculature.',
     tools: ['KiCad', 'Altium', 'LTspice', 'CMOS Logic', 'Circuit Design'],
     status: null,
     github: null,
     docs: [],
-    overview: [
-      'Overcurrent protection signal chain for a functional electrical stimulation (FES) device developed with Insight Wisconsin in collaboration with the UW Health Orthotics and Prosthetics clinic. The circuit detects overcurrent events and sends an EXTI interrupt to the MCU to halt stimulation.',
-      'The design uses an op-amp integrator, window comparator, and SR-latch. Threshold windows were characterized in LTspice, tuning V_H and V_L for correct triggering across expected current profiles. Schematic captured in KiCad and integrated into the overall biphasic FES device.',
-    ],
-    specs: [
-      { label: 'Signal Chain', value: 'Integrator → Window Comparator → SR Latch' },
-      { label: 'MCU Interface', value: 'EXTI interrupt on fault' },
-      { label: 'Simulation', value: 'LTspice threshold characterization' },
-      { label: 'Schematic', value: 'KiCad' },
-      { label: 'Application', value: 'Biphasic FES medical device' },
-    ],
-    highlights: [
-      'Detects overcurrent and halts stimulation to protect the patient',
-      'Presented at Insight Design Reviews in F25 and SP26',
-      'Threshold windows tuned in LTspice for expected current profiles',
-      'Integrated into club FES hardware alongside UW Health O&P clinic',
+    overview: [],
+    sections: [
+      {
+        title: 'Why I Built This',
+        blocks: [
+          { p: 'As a member of Insight Wisconsin, I worked on a functional electrical stimulation (FES) device in collaboration with the UW Health Orthotics and Prosthetics clinic. The device delivers biphasic current to help patients with lower limb musculature. Because stimulation runs through electrodes on the body, overcurrent events need to be detected and stopped quickly.' },
+          { p: 'I took the lead on the overcurrent protection circuit. The goal was an analog signal chain that flags fault conditions and sends an interrupt to the MCU so stimulation halts before the patient is exposed to unsafe current levels.' },
+        ],
+      },
+      {
+        title: 'Overview',
+        blocks: [
+          { p: 'Overcurrent protection signal chain for a functional electrical stimulation (FES) device developed with Insight Wisconsin in collaboration with the UW Health Orthotics and Prosthetics clinic. The circuit detects overcurrent events and sends an EXTI interrupt to the MCU to halt stimulation.' },
+          { p: 'The design uses an op-amp integrator, window comparator, and SR-latch. Threshold windows were characterized in LTspice, tuning $V_H$ and $V_L$ for correct triggering across expected current profiles. Schematic captured in KiCad and integrated into the overall biphasic FES device.' },
+        ],
+      },
+      {
+        title: 'Tech Specs',
+        blocks: [
+          { specs: [
+            { label: 'Signal chain', value: 'Integrator, window comparator, SR latch' },
+            { label: 'MCU interface', value: 'EXTI interrupt on fault' },
+            { label: 'Simulation', value: 'LTspice threshold characterization' },
+            { label: 'Schematic', value: 'KiCad' },
+            { label: 'Application', value: 'Biphasic FES medical device' },
+          ] },
+        ],
+      },
+      {
+        title: 'Signal Chain',
+        blocks: [
+          { p: 'Current is integrated over time by an op-amp integrator so brief spikes and sustained overcurrent both produce a measurable voltage. A window comparator compares that voltage against upper and lower thresholds ($V_H$ and $V_L$). When the window is violated, an SR-latch holds the fault state and the MCU receives an EXTI interrupt to shut off stimulation.' },
+          { image: {
+            src: '../brand_assets/ltspice.png',
+            alt: 'LTspice overcurrent protection schematic',
+            caption: 'LTspice simulation, overcurrent thresholds',
+            contain: true,
+          } },
+          { p: 'During an overcurrent event, the interrupt drives the system to a LOW state so no current is delivered to the patient until the fault is cleared and stimulation is re-enabled under software control.' },
+        ],
+      },
+      {
+        title: 'Simulation and Integration',
+        blocks: [
+          { p: 'Threshold windows were tuned in LTspice for expected current profiles across the biphasic stimulation waveform. $V_H$ and $V_L$ were adjusted until the comparator triggered reliably at the intended overcurrent levels without false trips during normal operation.' },
+          { list: [
+            'Detects overcurrent and halts stimulation to protect the patient',
+            'Presented at Insight Design Reviews in F25 and SP26',
+            'Threshold windows tuned in LTspice for expected current profiles',
+            'Integrated into club FES hardware alongside UW Health O&P clinic',
+          ] },
+        ],
+      },
     ],
     visuals: [
-      { type: 'image', src: '../brand_assets/ltspice.png', alt: 'LTspice overcurrent protection schematic', caption: 'LTspice simulation — overcurrent thresholds' },
-    ],
-  },
-
-  'n-body': {
-    num: '05',
-    slug: 'n-body',
-    file: 'n-body.html',
-    title: 'N-Body Gravity Simulator',
-    summary: 'A program that simulates N-bodies with real-time trajectory visualization and Newtonian physics built at a small-scale. Allows speed up/slow down, FPS monitoring, and has JSON configurable bodies.',
-    tools: ['Python', 'Matplotlib', 'Pandas', 'NumPy', 'ODEs', 'JSON'],
-    status: null,
-    github: 'https://github.com/rohtakpat314/N-Body-Gravity-Simulator',
-    docs: [
-      { label: 'Technical Documentation', href: '../brand_assets/N-Body%20Gravity%20Simulator%20(DOCUMENTATION).pdf' },
-    ],
-    overview: [
-      'Simulates gravitational orbits for N bodies using Newtonian physics and numerical ODE integration. Visualizes orbit trajectories and gravitational clustering in real time with Matplotlib.',
-      'Initial conditions and body parameters are loaded from JSON configuration files, making it easy to set up new simulation scenarios without modifying core code.',
-    ],
-    specs: [
-      { label: 'Physics Model', value: 'Newtonian gravitation' },
-      { label: 'Integration', value: 'Numerical ODE solver' },
-      { label: 'Visualization', value: 'Matplotlib real-time plots' },
-      { label: 'Configuration', value: 'JSON input files' },
-    ],
-    highlights: [
-      'Real-time orbit trajectory and clustering visualization',
-      'Configurable N-body scenarios via JSON',
-      'Full technical documentation with methodology and results',
-    ],
-    visuals: [
-      { type: 'image', src: '../brand_assets/Nbody.png', alt: 'N-Body simulation output', caption: 'Orbit trajectory visualization' },
+      { type: 'image', src: '../brand_assets/ltspice.png', alt: 'LTspice overcurrent protection schematic', caption: 'LTspice simulation, overcurrent thresholds', contain: true },
     ],
   },
 
   'arcade': {
-    num: '06',
+    num: '05',
     slug: 'arcade',
     file: 'arcade.html',
-    title: '8×8 NeoPixel Mini Arcade',
+    title: '8x8 NeoPixel Mini Arcade',
     summary: 'A mini-arcade built using a WS2812B and ATmega328P / Arduino UNO. Hand-soldered, designed with EasyEDA, and implemented on perfboard. Players can play Snake, Ping Pong, and more.',
     tools: ['C++', 'ATmega328P', 'WS2812B NeoPixel', 'PCB Design', 'Soldering'],
     status: null,
@@ -353,28 +559,118 @@ line_editor.c  ->  command.c  ->  bus.h  ->  bus_pico.c
     docs: [
       { label: 'ECE 210 Report', href: '../brand_assets/Patwardhan_Rohtak_ECE210.pdf' },
     ],
-    overview: [
-      'A playable arcade console on an 8×8 NeoPixel LED matrix (WS2812B) driven by an ATmega328P MCU. Implements Snake, Pong, and Flappy Bird with a menu-driven game selector — all on 64 pixels and two push buttons.',
-      'Built with a custom 8-bit instruction set for display control and state management, separating game logic from rendering. Hand-soldered PCB assembled in a single 7-hour lab session for ECE 210.',
-    ],
-    specs: [
-      { label: 'MCU', value: 'ATmega328P (32 KB flash, 2 KB RAM)' },
-      { label: 'Display', value: '8×8 WS2812B NeoPixel matrix' },
-      { label: 'Games', value: 'Snake, Pong, Flappy Bird' },
-      { label: 'Input', value: '2 push buttons' },
-      { label: 'Refresh Rate', value: '~60 FPS' },
-      { label: 'Button Latency', value: '<50 ms' },
-    ],
-    highlights: [
-      'Custom 8-bit ISA for display control and game state transitions',
-      'Console-style menu to switch between three games without reflashing',
-      'Real-time NeoPixel rendering with precise timing requirements',
-      'Full hardware build: schematic, soldering, and integration debug',
+    overview: [],
+    sections: [
+      {
+        title: 'Why I Built This',
+        blocks: [
+          { p: "During my first-year of undergraduate Electrical Engineering, we had a 2-credit lab course where students were tasked with creating a project of their choice. I decided that I wanted to explore the Arduino libraries more, specifically Adafruit's NeoPixel library, and using a NeoPixel WS2812B seemed versatile in practice." },
+          { p: "At first, my original idea was to make an Audio Spectrum Analyzer using Arduino's DFT/FFT libraries and using a sound sensor to input noises and obtain a real-time spectrogram reflecting the frequencies (categorized in bins). However, our parts order never fully came through. At this point, I decided to change the project to be a mini arcade, but also allow functionality for a future extension to be implemented for the spectrum analyzer." },
+        ],
+      },
+      {
+        title: 'Overview',
+        blocks: [
+          { p: 'This project reflects a playable arcade console on an 8x8 NeoPixel LED Matrix (WS2812B) driven by an ATmega328P on an Arduino UNO. The 8x8 NeoPixel is capable of implementing compact games and visuals within a 64-pixel display, making it extremely multifaceted in practice. The code, written in C++, has control for game state management and has a logical flow for edge detection and game logic.' },
+        ],
+      },
+      {
+        title: 'Circuit',
+        blocks: [
+          { p: 'The hardware was designed in EasyEDA and built on perfboard. An Arduino UNO (ATmega328P) drives an 8×8 WS2812B NeoPixel matrix over a single data line, with two soldered push buttons for game input and a 500 µF decoupling capacitor on the 5 V rail.' },
+          { p: 'In terms of putting this together, I used an EPLZON PCB Board (perfboard), solder wire, and a soldering iron to create all the connections.' },
+          { image: {
+            src: '../brand_assets/ledmatrix2.png',
+            alt: 'EasyEDA circuit schematic — Arduino UNO, 8x8 NeoPixel matrix, and push buttons',
+            caption: 'EasyEDA schematic — NeoPixel data on D4 (via 1 kΩ), buttons on D2 and D3, 500 µF bulk cap on 5 V',
+            contain: true,
+          } },
+          { specs: [
+            { label: 'NeoPixel data', value: 'Arduino D4 → 1 kΩ → Din' },
+            { label: 'Left button', value: 'Arduino D3 → GND (INPUT_PULLUP)' },
+            { label: 'Right button', value: 'Arduino D2 → GND (INPUT_PULLUP)' },
+            { label: 'Power', value: '5 V + 500 µF decoupling cap' },
+          ] },
+        ],
+      },
+      {
+        title: 'Tech Specs',
+        blocks: [
+          { specs: [
+            { label: 'MCU', value: 'ATmega328P, 32KB flash, 2KB ram' },
+            { label: 'Display', value: '8x8 WS2812B Neopixel' },
+            { label: 'Games (tested)', value: 'Snake, Pong, Flappy Bird' },
+            { label: 'Input', value: '2 general-purpose, soldered push buttons' },
+            { label: 'Refresh Rate', value: '~23.9 FPS' },
+            { label: 'Push Button Average Input Latency', value: '~20 ms' },
+          ] },
+        ],
+      },
+      {
+        title: 'Code',
+        blocks: [
+          { p: 'The game loop runs every delay(40), meaning each iteration takes $T_{\\mathrm{loop}} = 40\\,\\mathrm{ms}$. The loop frequency is' },
+          { p: '$$f_{\\mathrm{loop}} = \\frac{1000}{40} = 25\\,\\mathrm{Hz}$$' },
+          { p: 'Since draw() is also called every iteration, the display refresh rate is approximately $25\\,\\mathrm{FPS}$. Snake movement is handled separately:' },
+          { code: `tick++;
+if (tick > 6) {
+    tick = 0;
+    updateSnake();
+}` },
+          { p: 'Movement occurs every 7 loops:' },
+          { p: '$$T_{\\mathrm{step}} = 7 \\times 40\\,\\mathrm{ms} = 280\\,\\mathrm{ms}$$' },
+          { p: 'So the snake movement rate is' },
+          { p: '$$f_{\\mathrm{snake}} = \\frac{1}{0.280\\,\\mathrm{s}} \\approx 3.57\\,\\mathrm{Hz}$$' },
+          { p: 'Therefore:' },
+          { p: '$$f_{\\mathrm{loop}} = 25\\,\\mathrm{Hz}, \\quad f_{\\mathrm{render}} = 25\\,\\mathrm{FPS}, \\quad f_{\\mathrm{snake}} \\approx 3.57\\,\\mathrm{Hz}, \\quad T_{\\mathrm{step}} \\approx 280\\,\\mathrm{ms}$$' },
+          { p: 'However, in reality, the documentation says the show() method can add a small amount of time. For 64 LEDs, the serial transmission time is' },
+          { p: '$$T_{\\mathrm{show}} = 64 \\times 24 \\times 1.25\\,\\mu\\mathrm{s} = 1.92\\,\\mathrm{ms}$$' },
+          { p: 'The effective frame period is $T_{\\mathrm{frame}} \\approx 40 + 1.92 = 41.92\\,\\mathrm{ms}$, so the actual frame rate is closer to' },
+          { p: '$$f_{\\mathrm{render}} \\approx \\frac{1000}{41.92} \\approx 23.9\\,\\mathrm{FPS}$$' },
+        ],
+      },
+      {
+        title: 'Challenges in Code',
+        blocks: [
+          { subhead: '1. Food can spawn inside the Snake' },
+          { p: 'The food can spawn inside the Snake, since the code is' },
+          { code: `foodX = random(0, 8);
+foodY = random(0, 8);` },
+          { subhead: '2. Snake growth visual glitch' },
+          { p: 'The snake growth has a bug that causes the new tail segment to not be initialized' },
+          { code: `if (snakeLen < MAX_SNAKE) snakeLen++;` },
+          { p: 'In theory this works, but it can cause visual glitches.' },
+          { subhead: '3. Relative rotation control for two push-buttons' },
+          { p: 'Noticed issues with controlling Snake via two push-buttons, so I implemented a relative rotation control rather than absolutely directional. Since right is akin to clockwise, or the way a clock rotates, pressing the right button will rotate the figure clockwise by $90^\\circ$, and the other option will do $90^\\circ$ counterclockwise.' },
+          { list: [
+            'Left rotates counter-clockwise by $90^\\circ$',
+            'Right rotates clockwise by $90^\\circ$',
+          ] },
+          { code: `if (left && !prevL) {
+  dir--;
+  if (dir < 0) dir = 3;
+}
+
+if (right && !prevR) {
+  dir++;
+  if (dir > 3) dir = 0;
+}` },
+        ],
+      },
+      {
+        title: 'Future Improvements',
+        blocks: [
+          { list: [
+            'Additional arcade games tested',
+            'Score-tracking and storage for game score',
+            'Improved food spawning logic for Snake',
+          ] },
+        ],
+      },
     ],
     visuals: [
       { type: 'video', src: '../brand_assets/arcade-demo.mp4', alt: 'Arcade gameplay demo', caption: 'Gameplay demo' },
       { type: 'image', src: '../brand_assets/8x8led1.png', alt: '8x8 LED matrix board', caption: 'Assembled hardware' },
-      { type: 'image', src: '../brand_assets/ledmatrix2.png', alt: 'LED matrix close-up', caption: 'NeoPixel matrix close-up' },
     ],
   },
 };
@@ -384,6 +680,5 @@ const PROJECT_ORDER = [
   'axi-matrix',
   'instrument-bridge',
   'fes-ocpd',
-  'n-body',
   'arcade',
 ];

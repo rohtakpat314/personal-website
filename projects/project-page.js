@@ -11,6 +11,27 @@
 
   const lb = { index: 0, items: [] };
 
+  function buildLightboxItems() {
+    const items = [];
+    const seen = new Set();
+    function add(item) {
+      const key = item.src;
+      if (seen.has(key)) return;
+      seen.add(key);
+      items.push({ type: item.type || 'image', src: item.src, alt: item.alt, caption: item.caption, contain: item.contain });
+    }
+    (project.visuals || []).forEach(add);
+    project.sections?.forEach(sec => {
+      sec.blocks?.forEach(b => {
+        if (b.image) add({ type: 'image', src: b.image.src, alt: b.image.alt, caption: b.image.caption, contain: b.image.contain });
+      });
+    });
+    return items;
+  }
+
+  const lbItems = buildLightboxItems();
+  const lbIndexBySrc = new Map(lbItems.map((item, i) => [item.src, i]));
+
   function esc(str) {
     return String(str)
       .replace(/&/g, '&amp;')
@@ -28,11 +49,13 @@
     }
 
     const v = visuals[0];
-    const cls = v.contain ? 'p-hero p-hero-contain' : 'p-hero';
+    const aspectCls = v.aspect === 'square' ? ' p-hero-square' : '';
+    const cls = (v.contain ? 'p-hero p-hero-contain' : 'p-hero') + aspectCls;
+    const lbIdx = lbIndexBySrc.get(v.src) ?? 0;
     if (v.type === 'video') {
-      return `<div class="${cls}"><video autoplay muted loop playsinline><source src="${esc(v.src)}"></video></div>`;
+      return `<div class="${cls} p-lb-trigger" data-lb-index="${lbIdx}" role="button" tabindex="0" aria-label="Enlarge video"><video autoplay muted loop playsinline><source src="${esc(v.src)}"></video></div>`;
     }
-    return `<div class="${cls}"><img src="${esc(v.src)}" alt="${esc(v.alt || project.title)}"></div>`;
+    return `<div class="${cls} p-lb-trigger" data-lb-index="${lbIdx}" role="button" tabindex="0" aria-label="Enlarge image"><img src="${esc(v.src)}" alt="${esc(v.alt || project.title)}"></div>`;
   }
 
   function renderGallery(visuals) {
@@ -41,15 +64,15 @@
     return `<section class="p-section">
       <h2 class="p-sec-label">Gallery</h2>
       <div class="p-gallery" id="gallery">
-        ${extra.map((v, i) => {
-          const index = i + 1;
+        ${extra.map((v) => {
+          const index = lbIndexBySrc.get(v.src) ?? 0;
           if (v.type === 'video') {
-            return `<button class="p-gallery-item" type="button" data-index="${index}" aria-label="${esc(v.caption || 'Video')}">
+            return `<button class="p-gallery-item" type="button" data-lb-index="${index}" aria-label="${esc(v.caption || 'Video')}">
               <video muted playsinline><source src="${esc(v.src)}"></video>
               ${v.caption ? `<span class="p-gallery-caption">${esc(v.caption)}</span>` : ''}
             </button>`;
           }
-          return `<button class="p-gallery-item" type="button" data-index="${index}" aria-label="${esc(v.caption || v.alt || 'Image')}">
+          return `<button class="p-gallery-item" type="button" data-lb-index="${index}" aria-label="${esc(v.caption || v.alt || 'Image')}">
             <img src="${esc(v.src)}" alt="${esc(v.alt || '')}" loading="lazy">
             ${v.caption ? `<span class="p-gallery-caption">${esc(v.caption)}</span>` : ''}
           </button>`;
@@ -59,15 +82,23 @@
   }
 
   const githubLink = project.github
-    ? `<a href="${esc(project.github)}" target="_blank" rel="noopener" class="p-link p-link--primary">
+    ? `<a href="${esc(project.github)}" target="_blank" rel="noopener" class="p-link">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.5-1.4-1.3-1.8-1.3-1.8-1-.7.1-.7.1-.7 1.1.1 1.7 1.1 1.7 1.1 1 1.7 2.6 1.2 3.2.9.1-.7.4-1.2.7-1.5-2.6-.3-5.4-1.3-5.4-5.8 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17.3 4.7 18.3 5 18.3 5c.7 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.5-2.8 5.5-5.4 5.8.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3"/></svg>
         View on GitHub
       </a>`
     : '';
 
+  const webappLink = project.webapp
+    ? `<a href="${esc(project.webapp)}" target="_blank" rel="noopener" class="p-link p-link--primary">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+        Live Web App
+      </a>`
+    : '';
+
   function renderTopLink() {
-    if (!githubLink) return '';
-    return `<div class="p-top-links">${githubLink}</div>`;
+    const items = [webappLink, githubLink].filter(Boolean).join('');
+    if (!items) return '';
+    return `<div class="p-top-links">${items}</div>`;
   }
 
   function renderLinks() {
@@ -153,11 +184,59 @@
     </section>`;
   }
 
+  function renderDocBlock(b) {
+    if (typeof b === 'string') return `<div class="p-body"><p>${esc(b)}</p></div>`;
+    if (b.p) {
+      const paras = Array.isArray(b.p) ? b.p : [b.p];
+      return `<div class="p-body">${paras.map(t => `<p>${esc(t)}</p>`).join('')}</div>`;
+    }
+    if (b.subhead) return `<h3 class="p-subhead">${esc(b.subhead)}</h3>`;
+    if (b.link) return `<div class="p-links"><a href="${esc(b.link.href)}" target="_blank" rel="noopener" class="p-link p-link--primary">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
+        ${esc(b.link.label || 'Open link')}
+      </a></div>`;
+    if (b.code) return `<pre class="p-pre">${esc(b.code)}</pre>`;
+    if (b.callout) return `<div class="p-callout">${esc(b.callout)}</div>`;
+    if (b.list) return `<ul class="p-list">${b.list.map(li => `<li>${esc(li)}</li>`).join('')}</ul>`;
+    if (b.stats) return `<div class="p-stats">${b.stats.map(s => `<div class="p-stat"><span class="p-stat-value">${esc(s.value)}</span><span class="p-stat-label">${esc(s.label)}</span></div>`).join('')}</div>`;
+    if (b.specs) return `<div class="p-specs">${b.specs.map(s => `<div class="p-spec-row"><span class="p-spec-label">${esc(s.label)}</span><span class="p-spec-value">${esc(s.value)}</span></div>`).join('')}</div>`;
+    if (b.table) {
+      const t = b.table;
+      const cls = t.plain ? 'p-table p-table--2col' : 'p-table';
+      return `<div class="p-table-wrap"><table class="${cls}">
+        <thead><tr>${t.headers.map(h => `<th>${esc(h)}</th>`).join('')}</tr></thead>
+        <tbody>${t.rows.map(r => `<tr>${r.map(c => `<td>${esc(c)}</td>`).join('')}</tr>`).join('')}</tbody>
+      </table></div>`;
+    }
+    if (b.image) {
+      const img = b.image;
+      const cls = img.contain !== false ? 'p-doc-figure p-doc-figure--contain' : 'p-doc-figure';
+      const cap = img.caption ? `<figcaption class="p-doc-caption">${esc(img.caption)}</figcaption>` : '';
+      const lbIdx = lbIndexBySrc.get(img.src) ?? 0;
+      const label = esc(img.caption || img.alt || 'Enlarge image');
+      return `<figure class="${cls}">
+        <button type="button" class="p-doc-figure-btn" data-lb-index="${lbIdx}" aria-label="${label}">
+          <img src="${esc(img.src)}" alt="${esc(img.alt || '')}" loading="lazy">
+        </button>
+        ${cap}
+      </figure>`;
+    }
+    return '';
+  }
+
+  function renderDocSections() {
+    if (!project.sections?.length) return '';
+    return project.sections.map(sec => `<section class="p-section">
+      <h2 class="p-sec-label">${esc(sec.title)}</h2>
+      <div class="p-doc">${(sec.blocks || []).map(renderDocBlock).join('')}</div>
+    </section>`).join('');
+  }
+
   function renderNav() {
     return PROJECT_ORDER.map(slug => {
       const p = PROJECTS[slug];
       const active = slug === id ? ' active' : '';
-      return `<a href="${esc(p.file)}" class="p-nav-link${active}">${esc(p.num)} · ${esc(p.title)}</a>`;
+      return `<a href="${esc(p.file)}" class="p-nav-link${active}">${esc(p.num)}: ${esc(p.title)}</a>`;
     }).join('');
   }
 
@@ -193,17 +272,18 @@
 
         ${renderHero(project.visuals)}
 
-        <section class="p-section">
+        ${project.overview?.length ? `<section class="p-section">
           <h2 class="p-sec-label">Overview</h2>
           <div class="p-body">${project.overview.map(p => `<p>${esc(p)}</p>`).join('')}</div>
-        </section>
+        </section>` : ''}
 
+        ${renderDocSections()}
         ${renderSpecSections()}
         ${renderPreBlock(project.designFlow?.title || 'Architecture', project.designFlow?.text)}
         ${renderCycleBreakdown()}
         ${renderAnalysis()}
 
-        ${project.highlights.length ? `<section class="p-section">
+        ${project.highlights?.length ? `<section class="p-section">
           <h2 class="p-sec-label">Highlights</h2>
           <ul class="p-list">${project.highlights.map(h => `<li>${esc(h)}</li>`).join('')}</ul>
         </section>` : ''}
@@ -231,14 +311,32 @@
 
   document.getElementById('project-root').innerHTML = html;
 
-  lb.items = project.visuals;
+  (function loadKatex() {
+    if (!document.querySelector('.p-doc')) return;
+    const css = document.createElement('link');
+    css.rel = 'stylesheet';
+    css.href = 'https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css';
+    document.head.appendChild(css);
+    const s1 = document.createElement('script');
+    s1.src = 'https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js';
+    s1.onload = () => {
+      const s2 = document.createElement('script');
+      s2.src = 'https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js';
+      s2.onload = () => {
+        window.renderMathInElement(document.getElementById('project-root'), {
+          delimiters: [
+            { left: '$$', right: '$$', display: true },
+            { left: '$', right: '$', display: false },
+          ],
+          throwOnError: false,
+        });
+      };
+      document.head.appendChild(s2);
+    };
+    document.head.appendChild(s1);
+  })();
 
-  const hero = document.querySelector('.p-hero');
-  if (hero && lb.items.length) {
-    hero.style.cursor = 'pointer';
-    hero.title = 'Click to enlarge';
-    hero.addEventListener('click', () => openLightbox(0));
-  }
+  lb.items = lbItems;
 
   function renderLightbox() {
     const v = lb.items[lb.index];
@@ -286,9 +384,16 @@
     document.getElementById('lb-media').innerHTML = '';
   }
 
-  document.getElementById('gallery')?.addEventListener('click', e => {
-    const btn = e.target.closest('[data-index]');
-    if (btn) openLightbox(Number(btn.dataset.index));
+  document.getElementById('project-root').addEventListener('click', e => {
+    const trigger = e.target.closest('[data-lb-index]');
+    if (trigger) openLightbox(Number(trigger.dataset.lbIndex));
+  });
+  document.getElementById('project-root').addEventListener('keydown', e => {
+    if (e.key !== 'Enter' && e.key !== ' ') return;
+    const trigger = e.target.closest('.p-lb-trigger[data-lb-index]');
+    if (!trigger) return;
+    e.preventDefault();
+    openLightbox(Number(trigger.dataset.lbIndex));
   });
 
   document.getElementById('lb-close').addEventListener('click', closeLightbox);
