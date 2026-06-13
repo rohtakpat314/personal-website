@@ -1,0 +1,118 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1480 920" font-family="Consolas, 'Courier New', monospace" font-size="13">
+  <defs>
+    <marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 Z" fill="#1a1610"/>
+    </marker>
+  </defs>
+  <rect width="1480" height="920" fill="#e4dac1"/>
+  <text x="740" y="36" text-anchor="middle" font-size="20" font-weight="700" fill="#0f0c08">top_system.sv: RV32IM + AXI4-Lite Matrix Accelerator</text>
+
+  <rect x="40" y="70" width="260" height="300" fill="#f5f0e4" stroke="#1a1610" stroke-width="2"/>
+  <text x="170" y="98" text-anchor="middle" font-weight="700" fill="#0f0c08">cpu_core (u_cpu)</text>
+  <text x="55" y="130" fill="#3d3426">clk, rst</text>
+  <text x="55" y="158" fill="#3d3426">dmem_addr[31:0]</text>
+  <text x="55" y="186" fill="#3d3426">dmem_wdata[31:0]</text>
+  <text x="55" y="214" fill="#3d3426">dmem_wen, dmem_ren</text>
+  <text x="55" y="242" fill="#3d3426">dmem_funct3[2:0]</text>
+  <text x="55" y="270" fill="#3d3426">dmem_rdata[31:0] (in)</text>
+  <text x="55" y="310" fill="#97783f" font-size="11">single-cycle RV32IM host</text>
+  <text x="55" y="330" fill="#97783f" font-size="11">load/store on every cycle</text>
+
+  <rect x="360" y="90" width="200" height="90" fill="#d1c4a4" stroke="#1a1610" stroke-width="1.5"/>
+  <text x="460" y="118" text-anchor="middle" font-weight="700">Address decode</text>
+  <text x="375" y="145" font-size="11" fill="#3d3426">accel_sel =</text>
+  <text x="375" y="163" font-size="11" fill="#3d3426">dmem_addr[31:8] == 24'h100000</text>
+
+  <polygon points="360,230 420,260 360,290" fill="#bcaa83" stroke="#1a1610"/>
+  <text x="330" y="265" text-anchor="end" font-size="11">dmem_rdata</text>
+  <text x="430" y="255" font-size="11">mem_rdata</text>
+  <text x="430" y="275" font-size="11">accel_rdata</text>
+
+  <rect x="360" y="330" width="200" height="170" fill="#f5f0e4" stroke="#1a1610" stroke-width="1.5"/>
+  <text x="460" y="358" text-anchor="middle" font-weight="700">AXI4-Lite bridge</text>
+  <text x="375" y="385" font-size="11">awvalid/arvalid = wen/ren &amp; accel_sel</text>
+  <text x="375" y="405" font-size="11">awaddr/araddr[11:0] = dmem_addr[7:0]</text>
+  <text x="375" y="425" font-size="11">wdata[31:0] = dmem_wdata</text>
+  <text x="375" y="445" font-size="11">bready = 1, rready = 1</text>
+  <text x="375" y="470" font-size="11" fill="#97783f">CPU never stalls on handshake</text>
+
+  <rect x="40" y="420" width="260" height="120" fill="#f5f0e4" stroke="#1a1610" stroke-width="1.5"/>
+  <text x="170" y="448" text-anchor="middle" font-weight="700">data_mem (u_dmem)</text>
+  <text x="55" y="475" font-size="11">0x0000_0000 - 0x0000_0FFF (4 KB)</text>
+  <text x="55" y="495" font-size="11">enabled when ~accel_sel</text>
+  <text x="55" y="515" font-size="11">mem_write/read gated by decode</text>
+
+  <rect x="620" y="70" width="820" height="780" fill="#f5f0e4" stroke="#1a1610" stroke-width="2"/>
+  <text x="1030" y="98" text-anchor="middle" font-weight="700" font-size="16">mat_accel_slave (u_accel) @ 0x1000_0000</text>
+
+  <rect x="650" y="120" width="220" height="200" fill="#d1c4a4" stroke="#1a1610"/>
+  <text x="760" y="148" text-anchor="middle" font-weight="700">AXI4-Lite slave IF</text>
+  <text x="665" y="175" font-size="11">AW/W: awready=wready=1</text>
+  <text x="665" y="195" font-size="11">AR: arready=1</text>
+  <text x="665" y="215" font-size="11">R: rvalid=arvalid (0-wait)</text>
+  <text x="665" y="235" font-size="11">B: bvalid pulse after write</text>
+  <text x="665" y="265" font-size="11" fill="#97783f">combinational reads for</text>
+  <text x="665" y="283" font-size="11" fill="#97783f">single-cycle CPU timing</text>
+
+  <rect x="900" y="120" width="300" height="200" fill="#e4dac1" stroke="#1a1610"/>
+  <text x="1050" y="148" text-anchor="middle" font-weight="700">Memory-mapped registers</text>
+  <text x="915" y="175" font-size="11">0x000-0x03C  matrix_a[15:0]  (W)</text>
+  <text x="915" y="195" font-size="11">0x040-0x07C  matrix_b[15:0]  (W)</text>
+  <text x="915" y="215" font-size="11">0x080        CONTROL start[0] (W)</text>
+  <text x="915" y="235" font-size="11">0x084        STATUS {done,busy} (R)</text>
+  <text x="915" y="255" font-size="11">0x088-0x0C4  result_c[15:0]  (R)</text>
+  <text x="915" y="285" font-size="11" fill="#97783f">awaddr[7:6] selects bank</text>
+
+  <rect x="650" y="350" width="220" height="90" fill="#d1c4a4" stroke="#1a1610"/>
+  <text x="760" y="378" text-anchor="middle" font-weight="700">Pack / unpack</text>
+  <text x="665" y="405" font-size="11">matrix_a/b -&gt; a_flat[511:0]</text>
+  <text x="665" y="425" font-size="11">c_flat[511:0] -&gt; result_c[15:0]</text>
+
+  <rect x="900" y="350" width="300" height="90" fill="#d1c4a4" stroke="#1a1610"/>
+  <text x="1050" y="378" text-anchor="middle" font-weight="700">Control and status</text>
+  <text x="915" y="405" font-size="11">accel_start pulse -&gt; u_sys.start</text>
+  <text x="915" y="425" font-size="11">busy/done track sa_done, latch result_c</text>
+
+  <rect x="650" y="470" width="550" height="350" fill="#e4dac1" stroke="#1a1610" stroke-width="2"/>
+  <text x="925" y="500" text-anchor="middle" font-weight="700" font-size="15">systolic_arr (u_sys)</text>
+
+  <rect x="680" y="520" width="180" height="100" fill="#f5f0e4" stroke="#1a1610"/>
+  <text x="770" y="548" text-anchor="middle" font-weight="700">FSM</text>
+  <text x="695" y="575" font-size="11">IDLE -&gt; COMPUTE -&gt; LATCH</text>
+  <text x="695" y="595" font-size="11">k[1:0]: 0..3</text>
+
+  <rect x="890" y="520" width="280" height="280" fill="#f5f0e4" stroke="#1a1610"/>
+  <text x="1030" y="548" text-anchor="middle" font-weight="700">4x4 MAC array (16 PEs)</text>
+  <text x="905" y="575" font-size="11">PE[i,j]: acc += A[i,k] * B[k,j]</text>
+  <text x="905" y="595" font-size="11">16 comb. 32x32 multipliers (32 DSP)</text>
+  <text x="905" y="615" font-size="11">acc[3:0][3:0], 66-bit</text>
+  <text x="905" y="635" font-size="11">4 COMPUTE cycles + 1 LATCH</text>
+  <text x="905" y="665" font-size="11" fill="#97783f">shared k each cycle</text>
+  <g fill="#bcaa83" stroke="#1a1610" stroke-width="0.5">
+    <rect x="905" y="685" width="42" height="28"/><rect x="952" y="685" width="42" height="28"/><rect x="999" y="685" width="42" height="28"/><rect x="1046" y="685" width="42" height="28"/>
+    <rect x="905" y="718" width="42" height="28"/><rect x="952" y="718" width="42" height="28"/><rect x="999" y="718" width="42" height="28"/><rect x="1046" y="718" width="42" height="28"/>
+    <rect x="905" y="751" width="42" height="28"/><rect x="952" y="751" width="42" height="28"/><rect x="999" y="751" width="42" height="28"/><rect x="1046" y="751" width="42" height="28"/>
+    <rect x="905" y="784" width="42" height="28"/><rect x="952" y="784" width="42" height="28"/><rect x="999" y="784" width="42" height="28"/><rect x="1046" y="784" width="42" height="28"/>
+  </g>
+  <text x="926" y="704" font-size="9">PE00</text><text x="973" y="704" font-size="9">PE01</text>
+  <text x="1020" y="704" font-size="9">PE02</text><text x="1067" y="704" font-size="9">PE03</text>
+
+  <rect x="680" y="650" width="180" height="60" fill="#f5f0e4" stroke="#1a1610"/>
+  <text x="770" y="678" text-anchor="middle" font-weight="700">done</text>
+  <text x="695" y="698" font-size="11">pulse after LATCH</text>
+
+  <line x1="300" y1="170" x2="360" y2="135" stroke="#1a1610" marker-end="url(#arrow)"/>
+  <line x1="300" y1="200" x2="360" y2="200" stroke="#1a1610" marker-end="url(#arrow)"/>
+  <line x1="360" y1="260" x2="300" y2="260" stroke="#1a1610" marker-end="url(#arrow)"/>
+  <line x1="300" y1="380" x2="360" y2="400" stroke="#1a1610" marker-end="url(#arrow)"/>
+  <line x1="560" y1="400" x2="650" y2="220" stroke="#1a1610" marker-end="url(#arrow)"/>
+  <text x="580" y="385" font-size="11">s_aw*, s_w*, s_ar*, s_r*</text>
+  <line x1="170" y1="370" x2="170" y2="420" stroke="#1a1610" marker-end="url(#arrow)"/>
+  <text x="180" y="400" font-size="11">~accel_sel</text>
+
+  <rect x="40" y="580" width="260" height="120" fill="#f5f0e4" stroke="#1a1610"/>
+  <text x="170" y="608" text-anchor="middle" font-weight="700">Address map</text>
+  <text x="55" y="635" font-size="11">0x0000_0000: data_mem (4 KB)</text>
+  <text x="55" y="655" font-size="11">0x1000_0000: mat_accel (256 B)</text>
+  <text x="55" y="680" font-size="11" fill="#97783f">decode bit: addr[31:8]</text>
+</svg>

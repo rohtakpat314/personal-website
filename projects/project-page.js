@@ -7,9 +7,27 @@
     return;
   }
 
-  document.title = `${project.title} — Rohtak Patwardhan`;
+  document.title = `${project.title} | Rohtak Patwardhan`;
 
-  const lb = { index: 0, items: [] };
+  const lb = { index: 0, items: [], activeSet: null };
+  const lbSets = {};
+  let lbSetCounter = 0;
+
+  function registerGallerySet(items) {
+    const id = `lb-set-${lbSetCounter++}`;
+    lbSets[id] = items.map(item => ({
+      type: 'image',
+      src: item.src,
+      alt: item.alt,
+      caption: item.caption,
+      contain: item.contain !== false,
+    }));
+    return id;
+  }
+
+  function lightboxItems() {
+    return lb.activeSet || lb.items;
+  }
 
   function buildLightboxItems() {
     const items = [];
@@ -24,6 +42,8 @@
     project.sections?.forEach(sec => {
       sec.blocks?.forEach(b => {
         if (b.image) add({ type: 'image', src: b.image.src, alt: b.image.alt, caption: b.image.caption, contain: b.image.contain });
+        if (b.figures?.items) b.figures.items.forEach(item => add({ type: 'image', src: item.src, alt: item.alt, caption: b.figures.caption || item.alt, contain: item.contain !== false }));
+        if (b.gallery?.items) b.gallery.items.forEach(item => add({ type: 'image', src: item.src, alt: item.alt, caption: item.caption, contain: item.contain !== false }));
       });
     });
     return items;
@@ -42,6 +62,7 @@
 
   function renderHero(visuals) {
     if (!visuals.length) {
+      if (!project.status) return '';
       return `<div class="p-hero"><div class="p-hero-placeholder">
         <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="9" height="9"/><rect x="13" y="2" width="9" height="9"/><rect x="2" y="13" width="9" height="9"/><rect x="13" y="13" width="9" height="9"/></svg>
         <span class="p-hero-badge">${project.status || 'Visuals coming soon'}</span>
@@ -184,6 +205,28 @@
     </section>`;
   }
 
+  function renderGalleryLink(g) {
+    if (!g?.items?.length) return '';
+    const setId = registerGallerySet(g.items);
+    const hint = g.hint
+      ? `<p class="p-gallery-hint">${esc(g.hint)}</p>`
+      : (g.label ? `<p class="p-gallery-hint">${esc(g.label)}</p>` : '');
+    const previewSrc = g.preview || g.items[0].src;
+    const previewAlt = g.previewAlt || g.items[0].alt || 'View all RTL parts';
+    const aria = esc(g.caption || g.hint || g.label || 'View images');
+    const cls = [
+      'p-doc-figure p-doc-figure--contain p-gallery-preview',
+      g.wide ? 'p-doc-figure--wide' : '',
+    ].filter(Boolean).join(' ');
+    const cap = g.caption ? `<figcaption class="p-doc-caption">${esc(g.caption)}</figcaption>` : '';
+    return `${hint}<figure class="${cls}">
+      <button type="button" class="p-doc-figure-btn p-gallery-link" data-lb-set="${setId}" aria-label="${aria}">
+        <img src="${esc(previewSrc)}" alt="${esc(previewAlt)}" loading="lazy">
+      </button>
+      ${cap}
+    </figure>`;
+  }
+
   function renderDocBlock(b) {
     if (typeof b === 'string') return `<div class="p-body"><p>${esc(b)}</p></div>`;
     if (b.p) {
@@ -210,7 +253,10 @@
     }
     if (b.image) {
       const img = b.image;
-      const cls = img.contain !== false ? 'p-doc-figure p-doc-figure--contain' : 'p-doc-figure';
+      const cls = [
+        img.contain !== false ? 'p-doc-figure p-doc-figure--contain' : 'p-doc-figure',
+        img.wide ? 'p-doc-figure--wide' : '',
+      ].filter(Boolean).join(' ');
       const cap = img.caption ? `<figcaption class="p-doc-caption">${esc(img.caption)}</figcaption>` : '';
       const lbIdx = lbIndexBySrc.get(img.src) ?? 0;
       const label = esc(img.caption || img.alt || 'Enlarge image');
@@ -220,6 +266,54 @@
         </button>
         ${cap}
       </figure>`;
+    }
+    if (b.figures) {
+      const f = b.figures;
+      const cls = [
+        'p-doc-figure p-doc-figure-group',
+        f.contain !== false ? 'p-doc-figure--contain' : '',
+        f.wide ? 'p-doc-figure--wide' : '',
+      ].filter(Boolean).join(' ');
+      const cap = f.caption ? `<figcaption class="p-doc-caption">${esc(f.caption)}</figcaption>` : '';
+      const items = f.items || [];
+      const setId = items.length > 1 ? registerGallerySet(items) : null;
+      let body = '';
+      if (setId) {
+        const label = esc(f.caption || 'View images');
+        body = `<div class="p-doc-figure-stack" role="button" tabindex="0" data-lb-set="${setId}" aria-label="${label}">
+          ${items.map(item => `<img src="${esc(item.src)}" alt="${esc(item.alt || '')}" loading="lazy">`).join('')}
+        </div>`;
+      } else if (items[0]) {
+        const item = items[0];
+        const lbIdx = lbIndexBySrc.get(item.src) ?? 0;
+        const label = esc(item.alt || 'Enlarge image');
+        body = `<button type="button" class="p-doc-figure-btn" data-lb-index="${lbIdx}" aria-label="${label}">
+          <img src="${esc(item.src)}" alt="${esc(item.alt || '')}" loading="lazy">
+        </button>`;
+      }
+      return `<figure class="${cls}">${body}${cap}</figure>`;
+    }
+    if (b.galleryLink) {
+      return renderGalleryLink(b.galleryLink);
+    }
+    if (b.gallery) {
+      const g = b.gallery;
+      const label = g.label ? `<div class="p-rtl-head"><p class="p-rtl-label">${esc(g.label)}</p>${g.hint ? `<span class="p-rtl-hint">${esc(g.hint)}</span>` : ''}</div>` : (g.hint ? `<p class="p-rtl-hint">${esc(g.hint)}</p>` : '');
+      const items = (g.items || []).map(item => {
+        const lbIdx = lbIndexBySrc.get(item.src) ?? 0;
+        const cap = item.caption ? `<span class="p-rtl-caption">${esc(item.caption)}</span>` : '';
+        const aria = esc(item.caption || item.alt || 'Enlarge image');
+        return `<button type="button" class="p-rtl-item" data-lb-index="${lbIdx}" aria-label="${aria}">
+          <img src="${esc(item.src)}" alt="${esc(item.alt || '')}" loading="lazy">
+          ${cap}
+        </button>`;
+      }).join('');
+      return `<div class="p-rtl-gallery">
+        ${label}
+        <div class="p-rtl-scroll" tabindex="0" role="region" aria-label="${esc(g.label || 'RTL module gallery')}">
+          ${items}
+        </div>
+      </div>`;
     }
     return '';
   }
@@ -339,7 +433,8 @@
   lb.items = lbItems;
 
   function renderLightbox() {
-    const v = lb.items[lb.index];
+    const items = lightboxItems();
+    const v = items[lb.index];
     const wrap = document.getElementById('lb-media');
     wrap.innerHTML = '';
     if (v.type === 'video') {
@@ -355,54 +450,79 @@
       wrap.appendChild(img);
     }
     document.getElementById('lb-title').textContent = v.caption || v.alt || project.title;
-    document.getElementById('lb-meta').textContent = `${lb.index + 1} / ${lb.items.length}`;
+    document.getElementById('lb-meta').textContent = `${lb.index + 1} / ${items.length}`;
     const dots = document.getElementById('lb-dots');
     dots.innerHTML = '';
-    lb.items.forEach((_, i) => {
+    items.forEach((_, i) => {
       const d = document.createElement('button');
       d.className = 'lb-dot' + (i === lb.index ? ' active' : '');
       d.type = 'button';
       d.onclick = () => { lb.index = i; renderLightbox(); };
       dots.appendChild(d);
     });
-    const showNav = lb.items.length > 1;
+    const showNav = items.length > 1;
     document.getElementById('lb-prev').style.display = showNav ? 'flex' : 'none';
     document.getElementById('lb-next').style.display = showNav ? 'flex' : 'none';
   }
 
   function openLightbox(index) {
-    if (!lb.items.length) return;
+    const items = lightboxItems();
+    if (!items.length) return;
     lb.index = index;
     renderLightbox();
     document.getElementById('lightbox').classList.add('open');
     document.body.style.overflow = 'hidden';
   }
 
+  function openGallerySet(setId) {
+    if (!lbSets[setId]?.length) return;
+    lb.activeSet = lbSets[setId];
+    openLightbox(0);
+  }
+
   function closeLightbox() {
     document.getElementById('lightbox').classList.remove('open');
     document.body.style.overflow = '';
     document.getElementById('lb-media').innerHTML = '';
+    lb.activeSet = null;
   }
 
   document.getElementById('project-root').addEventListener('click', e => {
+    const setBtn = e.target.closest('[data-lb-set]');
+    if (setBtn) {
+      openGallerySet(setBtn.dataset.lbSet);
+      return;
+    }
     const trigger = e.target.closest('[data-lb-index]');
-    if (trigger) openLightbox(Number(trigger.dataset.lbIndex));
+    if (trigger) {
+      lb.activeSet = null;
+      openLightbox(Number(trigger.dataset.lbIndex));
+    }
   });
   document.getElementById('project-root').addEventListener('keydown', e => {
     if (e.key !== 'Enter' && e.key !== ' ') return;
+    const setBtn = e.target.closest('[data-lb-set]');
+    if (setBtn) {
+      e.preventDefault();
+      openGallerySet(setBtn.dataset.lbSet);
+      return;
+    }
     const trigger = e.target.closest('.p-lb-trigger[data-lb-index]');
     if (!trigger) return;
     e.preventDefault();
+    lb.activeSet = null;
     openLightbox(Number(trigger.dataset.lbIndex));
   });
 
   document.getElementById('lb-close').addEventListener('click', closeLightbox);
   document.getElementById('lb-prev').addEventListener('click', () => {
-    lb.index = (lb.index - 1 + lb.items.length) % lb.items.length;
+    const items = lightboxItems();
+    lb.index = (lb.index - 1 + items.length) % items.length;
     renderLightbox();
   });
   document.getElementById('lb-next').addEventListener('click', () => {
-    lb.index = (lb.index + 1) % lb.items.length;
+    const items = lightboxItems();
+    lb.index = (lb.index + 1) % items.length;
     renderLightbox();
   });
   document.getElementById('lightbox').addEventListener('click', e => {

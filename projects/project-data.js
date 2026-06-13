@@ -14,7 +14,8 @@ const PROJECTS = {
       {
         title: 'Why I Built This',
         blocks: [
-          { p: 'After completing my first two undergraduate courses teaching digital system fundamentals, SystemVerilog, and FSMs, I wanted to build an entire processor from scratch. Seeing as RISC-V was an open-source and popular instruction-set, I decided to start with implementing all 47 RV32I instructions. At first, my idea was to only build a subset of instructions, but I created an implementation by designing each module that would eventually support RV32IM. The reason I added the 8 M-extension instructions was to have a hardware multiply and divide, so multiplying didn\'t have to feel like a sequence of additions of registers (e.g. doing $8+8+8$ instead of $8 \\times 3$). Also, I knew that for larger numbers multiplication and division built-in would be helpful. I was also curious about how the M-extension would affect my timing parameters. Prior to adding the M-extension, I synthesized my design at 60.42 MHz and 52mW of power. An issue with my original design was using 0 DSP blocks and no block memory, causing everything to be implemented in logic costing a large fraction of the Cyclone V\'s ALMs, or adaptive logic models. Adding the M-extension did affect my timing parameters, leading to a longer critical path and a degradation in my clock frequency from 60.42 MHz to ~ 28 MHz at one point due to the complexity of large multiplication and division operations and their datapath. Fixing this max clock frequency to a formidable number was one of the most valuable debugging and design modification changes I did on this project.' },
+          { p: 'After completing two undergraduate courses in digital systems fundamentals, I wanted to build an entire processor from scratch. Seeing as RISC-V was popular and open-source, I decided to design a processor with the full RV32I instruction set. At first, my idea was to only support a subset of instructions, but I ended up implementing a strong, modular processor that I would eventually extend with the M-extension, leading to 55 instructions of support in total.' },
+          { p: 'Prior to adding the M-extension, I synthesized my design at 60.42 MHz. An issue with my original design was using 0 DSP blocks and no block memory, causing everything to be implemented in logic. Adding the M-extension did affect my timing parameters, leading to a longer critical path and a degradation in my clock frequency from 60.42 MHz to ~28 MHz at one point due to the instruction complexity. Fixing this max clock frequency to a formidable number was one of the most valuable debugging and design modification changes I did on this project.' },
         ],
       },
       {
@@ -39,12 +40,31 @@ const PROJECTS = {
       {
         title: 'Architecture',
         blocks: [
-          { code: `assign opcode = instruction[6:0];
-assign funct3 = instruction[14:12];
-assign funct7 = instruction[31:25];
-assign rs1    = instruction[19:15];
-assign rs2    = instruction[24:20];
-assign rd     = instruction[11:7];` },
+          { p: 'RV32IM datapath in top.sv, consisting of PC, instruction memory, control unit, register file, immediate generator, ALU, multiply/divide units, and data memory.' },
+          { image: {
+            src: '../brand_assets/top_rtl.png',
+            alt: 'Quartus RTL Viewer schematic of top.sv datapath',
+            caption: 'Quartus RTL Viewer, top.sv (full datapath)',
+            contain: true,
+            wide: true,
+          } },
+          { galleryLink: {
+            hint: 'Click on this image to view all individual parts from Quartus RTL',
+            preview: '../brand_assets/reg_file_rtl.png',
+            previewAlt: 'Register file RTL preview',
+            items: [
+                { src: '../brand_assets/pc_rtl.png', alt: 'Program counter RTL', caption: 'pc (u_pc)' },
+                { src: '../brand_assets/instr_mem_rtl.png', alt: 'Instruction memory RTL', caption: 'instruction_mem (u_imem)' },
+                { src: '../brand_assets/controlunit_rtl.png', alt: 'Control unit RTL', caption: 'control_unit (u_ctrl)' },
+                { src: '../brand_assets/reg_file_rtl.png', alt: 'Register file RTL', caption: 'reg_file (u_regfile)' },
+                { src: '../brand_assets/imm_gen_rtl.png', alt: 'Immediate generator RTL', caption: 'imm_gen (u_immgen)' },
+                { src: '../brand_assets/ALU_rtl.png', alt: 'ALU RTL', caption: 'alu (u_alu)' },
+                { src: '../brand_assets/mul_unit_rtl.png', alt: 'Pipelined multiply unit RTL', caption: 'mul_unit (u_mul)' },
+                { src: '../brand_assets/div_unit_rtl.png', alt: 'Iterative divide unit RTL', caption: 'div_unit (u_div)' },
+                { src: '../brand_assets/muldiv_rtl.png', alt: 'M-extension stall control RTL', caption: 'M-extension stall logic' },
+                { src: '../brand_assets/datamemory_rtl.png', alt: 'Data memory RTL', caption: 'data_mem (u_dmem)' },
+            ],
+          } },
           { p: 'A decoding change: instead of a second decode stage to pick the ALU op, I encoded the ALU control so that ALU_control[2:0] are funct3, with the upper bit being used to distinguish base from M-extension. This lets is_mul/is_div and the operation variant fall out of simple bit tests, which makes the logic simpler.' },
           { table: {
             plain: true,
@@ -61,8 +81,6 @@ assign is_div = (alu_control[4:2] == 3'b101);` },
     alu_control = {1'b1, 1'b0, funct3};
 else
     alu_control = {1'b0, funct7[5], funct3};` },
-          { subhead: 'ALU: base RV32I' },
-          { code: `ADD: {carry, result} = {1'b0, a} + {1'b0, b};` },
           { subhead: 'Overflow logic' },
           { p: '$$\\mathrm{ovf}_{\\mathrm{ADD}} = \\big(a[31] = b[31]\\big) \\land \\big(r[31] \\neq a[31]\\big)$$' },
           { p: 'For ADD; SUB uses opposite sign check - see code.' },
@@ -72,10 +90,6 @@ else
           { p: 'XOR branch: handles BEQ/BNE through the zero flag, BLT/BGE with SLT result and $\\texttt{funct3[0]}$ as an invert bit.' },
           { code: `assign branch_taken = branch && (funct3_out[2] ? (alu_result[0] ^ funct3_out[0])
                                                : (alu_zero ^ funct3_out[0]));` },
-          { subhead: 'Data Memory:' },
-          { p: '$$\\mathrm{FFs} = \\mathrm{depth} \\times 32;\\quad 1024 \\times 32 = 32{,}768 \\rightarrow 64 \\times 32 = 2{,}048$$' },
-          { code: `logic [DATA_WIDTH-1:0] memory [0:63];
-memory[addr[7:2]] <= write_data;` },
         ],
       },
       {
@@ -121,7 +135,6 @@ assign write_data = is_mul          ? mul_result
                   : mem_to_reg[1] ? pc_plus4
                   : mem_to_reg[0] ? mem_read_data
                   :                 alu_result;` },
-          { p: 'Trade-off here: CPI vs. Fmax. These units are blocking, the core stalls while they run. Original RV32I had a CPI of 1. Multiply costs $\\sim 3$ cycles, divide $\\sim 34$, but because the $F_{\\max}$ increased, so did the real time.' },
         ],
       },
       {
@@ -159,7 +172,7 @@ assign write_data = is_mul          ? mul_result
         title: 'Design Challenges',
         blocks: [
           { subhead: '1. Finding the timing issue' },
-          { p: 'When first adding the M-extension, Quartus kept struggling to fit my new design into the FPGA board of my choice due to ALM consumption and had a very low Fmax. Reading the fitter report and Quartus\'s recommendations led me to use aggressive fitting and notice how the four combinational dividers were each using 10–13 K ALMs' },
+          { p: 'When first adding the M-extension, Quartus kept struggling to fit my new design into the FPGA board of my choice due to ALM consumption and had a very low Fmax. Reading the fitter report and Quartus\'s recommendations led me to use aggressive fitting and notice how the four combinational dividers were each using 10000-13000 ALMs' },
           { image: {
             src: '../brand_assets/img3_rv32im.png',
             alt: 'Quartus timing closure recommendations',
@@ -171,6 +184,40 @@ assign write_data = is_mul          ? mul_result
           { code: 'lui(x, 0x10000) → x20 = 0x10000000' },
           { subhead: '3. Stall logic' },
           { p: 'Making multiply/divide multi-cycle meant the PC and register/memory writes had to freeze for the correct number of cycles and then resume right after. I had to carefully reason and also diagram these operations to avoid having any writeback issues in the last stage of the instruction cycle.' },
+        ],
+      },
+      {
+        title: 'Verification',
+        blocks: [
+          { subhead: '1. Directed testing and GTKWave debugging' },
+          { p: 'Used directed testing by creating hand-written tests in either program.hex or C code and then converting it to machine code. Ran it on the CPU and checked corner cases. Example programs I wrote include Bubble Sort, the Fibonacci Sequence, and MUL/DIV testing programs.' },
+          { list: [
+            'Examples include lui, ADD, SUB, MUL, DIV',
+            'Branch testing to ensure branches were taken appropriately',
+          ] },
+          { p: 'Used GTKWave to analyze waveforms and register file values, comparing them to expected values for each program.' },
+          { image: {
+            src: '../brand_assets/RV32M_extension_waveform.png',
+            alt: 'GTKWave waveform of RV32IM M-extension instructions',
+            caption: 'GTKWave, RV32IM M-extension (lui, mul, div) with stall control',
+            contain: true,
+          } },
+          { image: {
+            src: '../brand_assets/RV32I_fibonacci_sequence.png',
+            alt: 'GTKWave waveform of Fibonacci sequence program on RV32I',
+            caption: 'GTKWave, RV32I Fibonacci loop with branch taken/not taken',
+            contain: true,
+          } },
+          { subhead: '2. Self-checking testbench' },
+          { p: 'Used self-checking testbench methods by running programs and checking to see if specific, expected values were in the register file by the end. I used this to check the Fibonacci sequence program, and I adapted tb_top.sv to each new program I made.' },
+          { image: {
+            src: '../brand_assets/fibonacci.png',
+            alt: 'GTKWave register file values during Fibonacci sequence execution',
+            caption: 'Register file values during Fibonacci sequence execution',
+            contain: true,
+          } },
+          { subhead: '3. SystemVerilog Assertions (SVA)' },
+          { p: 'Used SVA by ensuring that the CPU followed expected behaviors, such as incrementing the PC correctly or no simultaneous operations conflicting with each other.' },
         ],
       },
       {
@@ -244,12 +291,29 @@ assign write_data = is_mul          ? mul_result
                          {{32{1'b0}}, b[k*4 + j]};
 end` },
           { p: '$$\\text{Cycles}_{\\text{compute}} = n + \\text{overhead} = 4 + \\text{latch} \\approx 6$$' },
+          { galleryLink: {
+            caption: 'Quartus RTL Viewer (click to view both pages)',
+            preview: '../brand_assets/mat_accel_rtl.png',
+            previewAlt: 'mat_accel_slave RTL page 1',
+            wide: true,
+            items: [
+              { src: '../brand_assets/mat_accel_rtl.png', alt: 'mat_accel_slave RTL page 1', caption: 'Page 1' },
+              { src: '../brand_assets/mat-accel-2-rtl.png', alt: 'mat_accel_slave RTL page 2', caption: 'Page 2' },
+            ],
+          } },
         ],
       },
       {
         title: 'FSM Design',
         blocks: [
           { p: 'IDLE -> COMPUTE -> LATCH' },
+          { image: {
+            src: '../brand_assets/diagramfinal.drawio.png',
+            alt: 'State diagram for systolic_arr IDLE, Compute, and LATCH states',
+            caption: 'systolic_arr compute FSM',
+            contain: true,
+            wide: true,
+          } },
           { p: 'During the compute phase, all 16 multipliers are working in parallel, so the partial products are accumulating. After $k = 3$, LATCH will write the 16 results and the signal "done" will be effectively declared.' },
         ],
       },
@@ -301,6 +365,18 @@ end` },
             'Block RAM - 0',
             'Core dynamic power of 23 mW',
           ] },
+          { image: {
+            src: '../brand_assets/mat-accel-timing1.png',
+            alt: 'Quartus timing analyzer Fmax summary for mat_accel',
+            caption: 'Static timing analysis, Fmax = 65.35 MHz',
+            contain: true,
+          } },
+          { image: {
+            src: '../brand_assets/mat-ACCEL-timing2.png',
+            alt: 'Quartus timing closure recommendations for systolic array',
+            caption: 'Timing closure report, systolic_arr accumulator critical path',
+            contain: true,
+          } },
         ],
       },
       {
@@ -344,7 +420,7 @@ end` },
     ],
     highlights: [],
     visuals: [
-      { type: 'image', src: '../brand_assets/axi4_usethisone.png', alt: 'RV32IM CPU + 4x4 matrix accelerator architecture', caption: 'System architecture — CPU, address decoder, and 4×4 PE array', contain: true },
+      { type: 'image', src: '../brand_assets/axi4_usethisone.png', alt: 'RV32IM CPU + 4x4 matrix accelerator architecture', caption: 'System architecture: CPU, address decoder, and 4×4 PE array', contain: true },
       { type: 'image', src: '../brand_assets/axi-matrix-cover.png', alt: 'RV32IM CPU + 4x4 matrix accelerator writeup', caption: 'Project writeup' },
     ],
   },
@@ -493,21 +569,23 @@ line_editor.c  ->  command.c  ->  bus.h  ->  bus_pico.c
       {
         title: 'Why I Built This',
         blocks: [
-          { p: 'As a member of Insight Wisconsin, I worked on a functional electrical stimulation (FES) device in collaboration with the UW Health Orthotics and Prosthetics clinic. The device delivers biphasic current to help patients with lower limb musculature. Because stimulation runs through electrodes on the body, overcurrent events need to be detected and stopped quickly.' },
-          { p: 'I took the lead on the overcurrent protection circuit. The goal was an analog signal chain that flags fault conditions and sends an interrupt to the MCU so stimulation halts before the patient is exposed to unsafe current levels.' },
+          { p: 'As a member of the FES Hardware team at Insight Wisconsin, I develop an overcurrent protection circuit that pairs with the overall FES device to protect patients from overcurrent events. The device delivers biphasic current to help patients with lower limb musculature issues, and since stimulation runs through electrodes, overcurrent events should be detected and stopped.' },
+          { p: 'I took the lead for this project. The goal was an analog signal chain that detected overcurrent via an op-amp integrator and window comparator with upper and lower thresholds that would send an interrupt (EXTI) to the MCU to prevent more current from being delivered to the patient.' },
         ],
       },
       {
         title: 'Overview',
         blocks: [
-          { p: 'Overcurrent protection signal chain for a functional electrical stimulation (FES) device developed with Insight Wisconsin in collaboration with the UW Health Orthotics and Prosthetics clinic. The circuit detects overcurrent events and sends an EXTI interrupt to the MCU to halt stimulation.' },
-          { p: 'The design uses an op-amp integrator, window comparator, and SR-latch. Threshold windows were characterized in LTspice, tuning $V_H$ and $V_L$ for correct triggering across expected current profiles. Schematic captured in KiCad and integrated into the overall biphasic FES device.' },
+          { p: 'Overcurrent protection signal chain with FES device developed with Insight Wisconsin in collaboration with UW Health Orthotics and Prosthetics clinic. Detects overcurrent events and sends an EXTI to the MCU to halt stimulation.' },
+          { p: 'The design is a chain of an op-amp integrator, window comparator, and SR-latch (digitalize values to boolean to determine whether current can continue or needs to be stopped). The thresholds were decided via LTspice simulation to determine a VH and VL. The device uses a current source to keep a constant current since the patient is technically the load in this case, or has the same voltage across it as a theoretical load in a circuit.' },
         ],
       },
       {
         title: 'Tech Specs',
         blocks: [
           { specs: [
+            { label: 'Current limit', value: '50mA' },
+            { label: 'Response time', value: '< 25 ms' },
             { label: 'Signal chain', value: 'Integrator, window comparator, SR latch' },
             { label: 'MCU interface', value: 'EXTI interrupt on fault' },
             { label: 'Simulation', value: 'LTspice threshold characterization' },
@@ -517,34 +595,29 @@ line_editor.c  ->  command.c  ->  bus.h  ->  bus_pico.c
         ],
       },
       {
-        title: 'Signal Chain',
+        title: 'LTspice Diagram',
         blocks: [
-          { p: 'Current is integrated over time by an op-amp integrator so brief spikes and sustained overcurrent both produce a measurable voltage. A window comparator compares that voltage against upper and lower thresholds ($V_H$ and $V_L$). When the window is violated, an SR-latch holds the fault state and the MCU receives an EXTI interrupt to shut off stimulation.' },
           { image: {
             src: '../brand_assets/ltspice.png',
             alt: 'LTspice overcurrent protection schematic',
-            caption: 'LTspice simulation, overcurrent thresholds',
+            caption: 'LTspice diagram',
             contain: true,
           } },
-          { p: 'During an overcurrent event, the interrupt drives the system to a LOW state so no current is delivered to the patient until the fault is cleared and stimulation is re-enabled under software control.' },
+          { p: 'The LTspice diagram has disconnections because I used a pulse voltage to help with deciding comparator upper and lower thresholds, and that is what\'s in the screenshot.' },
         ],
       },
       {
-        title: 'Simulation and Integration',
+        title: 'What I Learned',
         blocks: [
-          { p: 'Threshold windows were tuned in LTspice for expected current profiles across the biphasic stimulation waveform. $V_H$ and $V_L$ were adjusted until the comparator triggered reliably at the intended overcurrent levels without false trips during normal operation.' },
-          { list: [
-            'Detects overcurrent and halts stimulation to protect the patient',
-            'Presented at Insight Design Reviews in F25 and SP26',
-            'Threshold windows tuned in LTspice for expected current profiles',
-            'Integrated into club FES hardware alongside UW Health O&P clinic',
+          { p: [
+            'I learned how to research and design a FES EMG project from ground up, using LTspice and KiCad design principles to help with making schematics, PCBs, and testing them.',
+            'Presented at F25 and SP26 design reviews and incorporated feedback from professors and the team, seeking advice and asking for overall opinions to gauge if there are any flaws in my design. Updated the simulation and schematic and brought the revised design back to the team until we all unanimously agreed that the protection path was complete and functional.',
+            'Implementing next stage in Fall 2026 as the FES Hardware Co-Lead: hardware integration with the FES device.',
           ] },
         ],
       },
     ],
-    visuals: [
-      { type: 'image', src: '../brand_assets/ltspice.png', alt: 'LTspice overcurrent protection schematic', caption: 'LTspice simulation, overcurrent thresholds', contain: true },
-    ],
+    visuals: [],
   },
 
   'arcade': {
@@ -581,8 +654,8 @@ line_editor.c  ->  command.c  ->  bus.h  ->  bus_pico.c
           { p: 'In terms of putting this together, I used an EPLZON PCB Board (perfboard), solder wire, and a soldering iron to create all the connections.' },
           { image: {
             src: '../brand_assets/ledmatrix2.png',
-            alt: 'EasyEDA circuit schematic — Arduino UNO, 8x8 NeoPixel matrix, and push buttons',
-            caption: 'EasyEDA schematic — NeoPixel data on D4 (via 1 kΩ), buttons on D2 and D3, 500 µF bulk cap on 5 V',
+            alt: 'EasyEDA circuit schematic: Arduino UNO, 8x8 NeoPixel matrix, and push buttons',
+            caption: 'EasyEDA schematic: NeoPixel data on D4 (via 1 kΩ), buttons on D2 and D3, 500 µF bulk cap on 5 V',
             contain: true,
           } },
           { specs: [
