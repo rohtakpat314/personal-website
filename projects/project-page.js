@@ -3,7 +3,7 @@
   const project = PROJECTS[id];
 
   if (!project) {
-    document.body.innerHTML = '<p style="padding:2rem;color:#f0e6d2;">Project not found. <a href="../index.html#projects" style="color:#c4a882;">Back to portfolio</a></p>';
+    document.body.innerHTML = '<p style="padding:2rem;color:#f3eaf8;">Project not found. <a href="../index.html#projects" style="color:#c9a8d8;">Back to portfolio</a></p>';
     return;
   }
 

@@ -16,25 +16,25 @@
   <meta name="twitter:title" content="Rohtak Patwardhan" />
   <meta name="twitter:description" content="EE & CS @ UW–Madison. Computer architecture, RTL design, FPGA verification, and embedded systems." />
   <meta name="twitter:image" content="https://rohtakpatwardhan.com/brand_assets/og-image.png" />
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%2317120d'/><text x='50%25' y='55%25' dominant-baseline='middle' text-anchor='middle' font-family='Georgia,serif' font-size='15' font-style='italic' font-weight='700' fill='%23c4a882'>RP</text></svg>" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%2316131c'/><text x='50%25' y='55%25' dominant-baseline='middle' text-anchor='middle' font-family='Georgia,serif' font-size='15' font-style='italic' font-weight='700' fill='%23c9a8d8'>RP</text></svg>" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Playfair+Display:ital,wght@0,700;1,400;1,700&display=swap" rel="stylesheet" />
   <style>
   :root {
-    --bg:          #0e0b08;
-    --sb-bg:       #100d09;
-    --surface:     #17120d;
-    --surface-2:   #1e1710;
-    --border:      #261d14;
-    --border-2:    #332618;
-    --accent:      #8a7055;
-    --accent-b:    #c4a882;
-    --accent-dim:  rgba(196,168,130,0.06);
-    --accent-glow: rgba(196,168,130,0.12);
-    --text:        #f0e6d2;
-    --text-2:      #7a6a52;
-    --text-3:      #3d2e1e;
+    --bg:          #0c0a10;
+    --sb-bg:       #100e16;
+    --surface:     #16131c;
+    --surface-2:   #1e1a26;
+    --border:      #2a2433;
+    --border-2:    #3c3348;
+    --accent:      #8d6b9e;
+    --accent-b:    #c9a8d8;
+    --accent-dim:  rgba(201,168,216,0.10);
+    --accent-glow: rgba(201,168,216,0.18);
+    --text:        #f3eaf8;
+    --text-2:      #a898b4;
+    --text-3:      #6d5e7a;
     --green:       #8a9e7a;
     --sb-w:        260px;
   }
@@ -86,7 +86,7 @@
     background: var(--accent); border-radius: 1px;
     transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1), height 0.25s ease;
     will-change: transform;
-    box-shadow: 0 0 10px rgba(192,192,192,0.18), 0 0 24px rgba(192,192,192,0.08);
+    box-shadow: 0 0 10px rgba(201,168,216,0.28), 0 0 24px rgba(201,168,216,0.12);
   }
 
   .s-link {
@@ -263,7 +263,7 @@
     overflow: hidden; background: var(--surface);
     transition: background 0.18s ease, transform 0.25s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.25s ease;
   }
-  .proj-card:hover { background: var(--surface-2); transform: translateY(-3px); box-shadow: 0 14px 36px rgba(0,0,0,0.5), 0 3px 10px rgba(138,112,85,0.10); }
+  .proj-card:hover { background: var(--surface-2); transform: translateY(-3px); box-shadow: 0 14px 36px rgba(0,0,0,0.5), 0 3px 10px rgba(141,107,158,0.18); }
 
   .proj-gallery {
     position: relative; overflow: hidden;
@@ -272,7 +272,7 @@
   .proj-gallery img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.4s ease; }
   .proj-gallery img.pg-contain { object-fit: contain; background: var(--surface-2); padding: 13%; }
   .proj-gallery img.pg-contain.pg-logo { padding: 6%; }
-  .proj-gallery img.pg-diagram { object-fit: contain; background: #efe8d8; padding: 6px; }
+  .proj-gallery img.pg-diagram { object-fit: contain; background: #efeaf6; padding: 6px; }
   .proj-gallery:hover img { transform: scale(1.04); }
   .proj-gallery-overlay {
     position: absolute; inset: 0;
@@ -357,7 +357,7 @@
   .tl-card:hover { background: var(--surface-2); border-left-color: var(--border-2); }
   .tl-logo-wrap {
     width: 62px; height: 62px; flex-shrink: 0; margin-top: 0.1rem;
-    border-radius: 12px; background: #fbf7ef;
+    border-radius: 12px; background: #f6f1fa;
     border: 1px solid var(--border-2);
     box-shadow: 0 3px 10px rgba(0,0,0,0.3), inset 0 0 0 1px rgba(255,255,255,0.04);
     display: flex; align-items: center; justify-content: center;
@@ -377,7 +377,7 @@
     content: ''; position: absolute; left: 0; top: 0.6em;
     width: 4px; height: 4px; border-radius: 50%;
     background: var(--accent);
-    box-shadow: 0 0 6px rgba(192,192,192,0.35);
+    box-shadow: 0 0 6px rgba(201,168,216,0.45);
   }
   .tl-org--spaced { margin-bottom: 0.85rem; }
   .tl-roles-list { display: flex; flex-direction: column; }
@@ -589,9 +589,6 @@
       <a href="mailto:rohtak.pat314@gmail.com" class="sb-social" title="Email">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
       </a>
-      <a href="https://devpost.com/rohtakpat314" target="_blank" rel="noopener" class="sb-social" title="Devpost">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M4 2h6a10 10 0 0 1 0 20H4V2zm4 4v12h2a6 6 0 0 0 0-12H8z" fill-rule="evenodd"/></svg>
-      </a>
     </div>
   </div>
 </aside>
@@ -631,12 +628,13 @@
   <section id="about" data-section="about">
     <canvas id="hero-canvas"></canvas>
     <div class="container">
-      <p class="hero-kicker">EE &amp; CS @ UW–Madison · 2028 · Dean's Honor List</p>
+      <p class="hero-kicker">EE &amp; CS @ UW–Madison · 2028</p>
       <h1 class="hero-name">Rohtak<br>Patwardhan</h1>
       <div class="hero-bio">
-        <p>I'm a sophomore EE/CS student at UW–Madison interested in computer architecture, RTL design and verification, FPGA, and embedded systems programming. I've currently been working on developing an AXI4-Lite 4×4 systolic matrix accelerator to integrate into my RISC-V 32-bit processor.</p>
-        <p>So far, I've done research with Dr. Feng Ye's lab, learning about mmWave configuration and sound reconstruction. Looking ahead, I'm interested in research with low-level software and hardware. I am also a part of Insight Wisconsin where my team is developing a modern, cheaper FES device for patients. Finally, as a member of Badger Solar Racing, I've worked with PCB design with the low voltage team.</p>
-        <p>I admire strong technical documentation and seek to reach industry-level standards with my work. I'm actively open to internships and co-op opportunities for Fall 2026, Spring 2027, and Summer 2027. Please feel free to reach out at either <a href="mailto:rohtak.pat314@gmail.com" class="hero-link">rohtak.pat314@gmail.com</a> or <a href="mailto:rspatwardha2@wisc.edu" class="hero-link">rspatwardha2@wisc.edu</a>.</p>
+        <p>I'm a sophomore Electrical Engineering student at UW-Madison, interested in FPGA, RTL, and embedded systems.</p>
+        <p>Some of the work I've done includes designing and implementing a single-cycle processor with matrix acceleration on an FPGA. I'm currently working with Insight Wisconsin as the hardware co-lead to innovate our system and release an FESv3 board by the end of the semester with UVLO and LC pi-filter integration.</p>
+        <p>I admire strong technical documentation and seek to reach industry-level standards with my work. I'm actively open to new opportunities, so feel free to reach out at <a href="mailto:rohtak.pat314@gmail.com" class="hero-link">rohtak.pat314@gmail.com</a>.</p>
+        <p>Outside of engineering, I enjoy lifting, trying different coffee shops, climbing, and listening to a variety of music.</p>
       </div>
       <div class="hero-actions">
         <button class="btn-primary" onclick="scrollToSection('contact')">
@@ -681,7 +679,7 @@
           </div>
           <div class="proj-body">
             <p class="proj-num">02</p>
-            <p class="proj-name">AXI4-Lite Matrix Accelerator</p>
+            <p class="proj-name">Gemm</p>
             <p class="proj-desc">Memory-mapped matrix accelerator computing A x B = C for 4x4 systolic matrices on AXI4-Lite interface. 175x kernel speedup design, ~11x end-to-end. Modular and integrated with RV32IM processor for compute efficiency.</p>
             <div class="proj-footer">
               <div class="proj-tools"><span class="chip">SystemVerilog</span><span class="chip">Quartus Prime</span><span class="chip">AXI4-Lite</span><span class="chip">Python</span><span class="chip">Testbench Development</span><span class="chip">Cyclone V</span></div>
@@ -735,6 +733,25 @@
           </div>
         </a>
 
+        <!-- 06 Compute-in-memory -->
+        <a href="projects/cim-accelerator.html" class="proj-card reveal">
+          <div class="proj-gallery">
+            <div class="proj-placeholder">
+              <span class="proj-placeholder-badge">In progress</span>
+            </div>
+            <div class="proj-card-hint">View project <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+          </div>
+          <div class="proj-body">
+            <p class="proj-num">06</p>
+            <p class="proj-name">Synapse</p>
+            <p class="proj-desc">In progress. An FPGA compute-in-memory project: the weights stay next to the multiply-accumulate instead of being fetched from external memory.</p>
+            <div class="proj-footer">
+              <div class="proj-tools"><span class="chip">SystemVerilog</span><span class="chip">Cyclone V</span><span class="chip">Block RAM</span><span class="chip">STM32</span><span class="chip">AXI4-Lite</span></div>
+              <span class="proj-status">In progress</span>
+            </div>
+          </div>
+        </a>
+
 
       </div>
     </div>
@@ -776,7 +793,10 @@
               </div>
               <div class="tl-tags"><span class="chip">Leadership</span></div>
               <ul class="tl-bullets">
-                <li>Fall 2026</li>
+                <li>Leading FESv3 board design, integrating an under-voltage lockout (UVLO) circuit using a comparator and P-channel MOSFET to disable gate drive when input voltage exceeds the Vx threshold (under test)</li>
+                <li>Designing LC pi-filters for high-frequency ripple filtering on the +5V and −5V power rails</li>
+                <li>Leading a 10+ member hardware team developing electronics for a lower-limb functional FES device</li>
+                <li>Teaching foundational circuit analysis, KiCad PCB design, LTspice, manufacturing processes, and PCBA terminology, alongside using a DMM, power supplies, oscilloscopes, and other laboratory equipment for testing</li>
               </ul>
             </div>
             <div class="tl-role-section">
@@ -808,6 +828,18 @@
             <li>Configured the TI IWR1843 module in mmWave Studio and MATLAB Runtime 8.5.1, setting up ADC, SPI, and verifying compatibility to begin data collection</li>
             <li>Modernized legacy MATLAB post-processing scripts for real-time sound reconstruction by changing serial port references in the script to allow for better port recognition</li>
             <li>Applied signal processing techniques including DFT/FFT, chirps, and spectrogram analysis</li>
+          </ul>
+          </div>
+        </div>
+
+        <div class="tl-card">
+          <span class="tl-logo-wrap"><img class="tl-logo" src="brand_assets/wisconsin_tech_consulting_logo.jpg" alt="Wisconsin Tech Consulting logo" loading="lazy"/></span>
+          <div class="tl-body">
+          <div class="tl-header">
+            <div><div class="tl-org">Wisconsin Tech Consulting</div><div class="tl-role">Analyst</div></div>
+          </div>
+          <ul class="tl-bullets">
+            <li>Cloud Closet Startup</li>
           </ul>
           </div>
         </div>
@@ -861,20 +893,44 @@
           <div class="cw-row-top">
             <span class="cw-code">ECE 552</span>
             <span class="cw-name">Computer Architecture</span>
-            <span class="cw-badge">Planned</span>
           </div>
         </div>
         <div class="cw-row">
           <div class="cw-row-top">
             <span class="cw-code">ECE 340</span>
             <span class="cw-name">Electronic Circuits I</span>
-            <span class="cw-badge">Planned</span>
           </div>
         </div>
         <div class="cw-row">
           <div class="cw-row-top">
             <span class="cw-code">ECE 222</span>
             <span class="cw-name">Electrodynamics</span>
+          </div>
+        </div>
+        <div class="cw-row">
+          <div class="cw-row-top">
+            <span class="cw-code">MATH 340</span>
+            <span class="cw-name">Matrix &amp; Linear Algebra</span>
+          </div>
+        </div>
+        <div class="cw-row">
+          <div class="cw-row-top">
+            <span class="cw-code">ECE 551</span>
+            <span class="cw-name">Digital System Design and Synthesis</span>
+            <span class="cw-badge">Planned</span>
+          </div>
+        </div>
+        <div class="cw-row">
+          <div class="cw-row-top">
+            <span class="cw-code">CS 557</span>
+            <span class="cw-name">Parallel &amp; Throughput-Optimized Programming</span>
+            <span class="cw-badge">Planned</span>
+          </div>
+        </div>
+        <div class="cw-row">
+          <div class="cw-row-top">
+            <span class="cw-code">MATH 431</span>
+            <span class="cw-name">Introduction to the Theory of Probability</span>
             <span class="cw-badge">Planned</span>
           </div>
         </div>
@@ -891,23 +947,23 @@
       <div class="skills-grid reveal">
         <div>
           <div class="skills-cat-label">Languages</div>
-          <div class="skills-chips"><span class="chip">SystemVerilog</span><span class="chip">C</span><span class="chip">C++</span><span class="chip">Python</span><span class="chip">MATLAB</span><span class="chip">RISC-V Assembly</span></div>
+          <div class="skills-chips"><span class="chip">SystemVerilog</span><span class="chip">Verilog</span><span class="chip">C</span><span class="chip">C++</span><span class="chip">Tcl</span><span class="chip">Python</span><span class="chip">MATLAB</span><span class="chip">RISC-V Assembly</span><span class="chip">IA-32 Assembly</span></div>
         </div>
         <div>
-          <div class="skills-cat-label">FPGA</div>
-          <div class="skills-chips"><span class="chip">Altera Quartus Prime</span><span class="chip">ModelSim</span><span class="chip">Vivado</span><span class="chip">Verilator</span><span class="chip">GTKWave</span></div>
+          <div class="skills-cat-label">FPGA &amp; HDL</div>
+          <div class="skills-chips"><span class="chip">Quartus Prime</span><span class="chip">SVA</span><span class="chip">ModelSim</span><span class="chip">Vivado</span><span class="chip">GTKWave</span><span class="chip">Icarus Verilog</span><span class="chip">Static Timing Analysis</span><span class="chip">FPGA Synthesis</span><span class="chip">PPA</span></div>
         </div>
         <div>
-          <div class="skills-cat-label">Design Tools</div>
+          <div class="skills-cat-label">Design Software</div>
           <div class="skills-chips"><span class="chip">Altium</span><span class="chip">KiCad</span><span class="chip">LTspice</span></div>
         </div>
         <div>
-          <div class="skills-cat-label">Protocols</div>
-          <div class="skills-chips"><span class="chip">UART</span><span class="chip">SPI</span><span class="chip">I2C</span><span class="chip">CAN</span></div>
+          <div class="skills-cat-label">Embedded</div>
+          <div class="skills-chips"><span class="chip">Linux</span><span class="chip">STM32</span><span class="chip">RP2040</span><span class="chip">AXI4-Lite</span><span class="chip">UART</span><span class="chip">SPI</span><span class="chip">I2C</span><span class="chip">GPIO</span></div>
         </div>
         <div>
-          <div class="skills-cat-label">Developer Tools</div>
-          <div class="skills-chips"><span class="chip">Git</span><span class="chip">Linux</span><span class="chip">Vim</span><span class="chip">VS Code</span><span class="chip">PyTorch</span><span class="chip">CUDA</span><span class="chip">Prompt Engineering</span></div>
+          <div class="skills-cat-label">Laboratory</div>
+          <div class="skills-chips"><span class="chip">Oscilloscope</span><span class="chip">DMM</span><span class="chip">Function Generator</span><span class="chip">Power Supply</span><span class="chip">SMT and THT Soldering</span><span class="chip">Breadboarding</span></div>
         </div>
       </div>
     </div>
@@ -934,11 +990,6 @@
           <a href="https://github.com/rohtakpat314" target="_blank" rel="noopener" class="contact-card">
             <div class="contact-icon"><svg width="17" height="17" viewBox="0 0 24 24" fill="#efefef"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.5-1.4-1.3-1.8-1.3-1.8-1-.7.1-.7.1-.7 1.1.1 1.7 1.1 1.7 1.1 1 1.7 2.6 1.2 3.2.9.1-.7.4-1.2.7-1.5-2.6-.3-5.4-1.3-5.4-5.8 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17.3 4.7 18.3 5 18.3 5c.7 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.5-2.8 5.5-5.4 5.8.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3"/></svg></div>
             <div><div class="contact-platform">GitHub</div><div class="contact-value">github.com/rohtakpat314</div></div>
-            <svg class="contact-arrow" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-          </a>
-          <a href="https://devpost.com/rohtakpat314" target="_blank" rel="noopener" class="contact-card">
-            <div class="contact-icon"><svg width="17" height="17" viewBox="0 0 24 24" fill="#efefef"><path d="M4 2h6a10 10 0 0 1 0 20H4V2zm4 4v12h2a6 6 0 0 0 0-12H8z" fill-rule="evenodd"/></svg></div>
-            <div><div class="contact-platform">Devpost</div><div class="contact-value">devpost.com/rohtakpat314</div></div>
             <svg class="contact-arrow" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
           </a>
         </div>
@@ -1049,7 +1100,7 @@
           const dx = a.x - b.x, dy = a.y - b.y;
           const d = Math.sqrt(dx * dx + dy * dy);
           if (d < MAX_DIST) {
-            ctx.strokeStyle = `rgba(196,168,130,${(1 - d / MAX_DIST) * 0.55 * Math.min(a.o, b.o)})`;
+            ctx.strokeStyle = `rgba(201,168,216,${(1 - d / MAX_DIST) * 0.55 * Math.min(a.o, b.o)})`;
             ctx.lineWidth = 0.6;
             ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
           }
@@ -1057,7 +1108,7 @@
         a.o = Math.min(1, a.o + 0.012);
         ctx.beginPath();
         ctx.arc(a.x, a.y, a.r, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(196,168,130,${0.9 * a.o})`;
+        ctx.fillStyle = `rgba(201,168,216,${0.9 * a.o})`;
         ctx.fill();
       }
       requestAnimationFrame(frame);

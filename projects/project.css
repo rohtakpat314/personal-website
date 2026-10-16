@@ -1,16 +1,16 @@
 :root {
-  --bg:          #d9cdb0;
-  --sb-bg:       #cfc2a2;
-  --surface:     #e4dac1;
-  --surface-2:   #d1c4a4;
-  --border:      #bcaa83;
-  --border-2:    #a8956f;
-  --accent:      #97783f;
-  --accent-b:    #7a5d27;
-  --accent-dim:  rgba(151,120,63,0.12);
-  --text:        #0f0c08;
-  --text-2:      #1a1610;
-  --text-3:      #3d3426;
+  --bg:          #e4dceb;
+  --sb-bg:       #d8cfe2;
+  --surface:     #ece4f2;
+  --surface-2:   #ddd4e8;
+  --border:      #c4b6d2;
+  --border-2:    #b09ec4;
+  --accent:      #8a5f9e;
+  --accent-b:    #6b457c;
+  --accent-dim:  rgba(138,95,158,0.14);
+  --text:        #16121c;
+  --text-2:      #2c2434;
+  --text-3:      #5c5168;
   --green:       #5f7048;
   --sb-w:        260px;
 }
@@ -621,7 +621,7 @@ body {
 }
 .p-link:hover { color: var(--accent-b); border-color: var(--accent); background: var(--accent-dim); }
 .p-link--primary { background: var(--text); color: var(--bg); border-color: var(--text); }
-.p-link--primary:hover { background: #1c150d; color: #f3ecdb; border-color: #1c150d; }
+.p-link--primary:hover { background: #241c2c; color: #f3eaf8; border-color: #241c2c; }
 .p-gallery-link { cursor: pointer; font-family: inherit; }
 
 /* ── Lightbox ────────────────────────────── */

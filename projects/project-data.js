@@ -240,7 +240,7 @@ assign write_data = is_mul          ? mul_result
     num: '02',
     slug: 'axi-matrix',
     file: 'axi-matrix.html',
-    title: 'AXI4-Lite Matrix Accelerator',
+    title: 'Gemm',
     summary: 'Memory-mapped matrix accelerator computing A x B = C for 4x4 systolic matrices on AXI4-Lite. 175x kernel speedup, ~11x end-to-end, integrated with RV32IM.',
     tools: ['SystemVerilog', 'Quartus Prime', 'AXI4-Lite', 'Python', 'Testbench Development', 'Cyclone V'],
     status: null,
@@ -746,6 +746,21 @@ if (right && !prevR) {
       { type: 'image', src: '../brand_assets/8x8led1.png', alt: '8x8 LED matrix board', caption: 'Assembled hardware' },
     ],
   },
+
+  'cim-accelerator': {
+    num: '06',
+    slug: 'cim-accelerator',
+    file: 'cim-accelerator.html',
+    title: 'Synapse',
+    summary: 'In progress. An FPGA compute-in-memory project: the weights stay next to the multiply-accumulate instead of being fetched from external memory.',
+    tools: ['SystemVerilog', 'Cyclone V', 'Quartus Prime', 'Block RAM', 'STM32', 'AXI4-Lite'],
+    status: 'In progress',
+    github: null,
+    docs: [],
+    overview: [],
+    sections: [],
+    visuals: [],
+  },
 };
 
 const PROJECT_ORDER = [
@@ -754,4 +769,5 @@ const PROJECT_ORDER = [
   'instrument-bridge',
   'fes-ocpd',
   'arcade',
+  'cim-accelerator',
 ];
