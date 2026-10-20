@@ -257,7 +257,22 @@
     gap: 1px; background: var(--border);
     border: 1px solid var(--border); border-radius: 5px; overflow: hidden;
   }
-  @media (max-width: 620px) { .proj-grid { grid-template-columns: 1fr; } }
+  #proj-fallback {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-top: 1.6rem;
+    background: transparent;
+    border: none;
+    overflow: visible;
+  }
+  #proj-fallback .proj-card { border-radius: 8px; }
+  @media (max-width: 900px) {
+    #proj-fallback { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 620px) {
+    .proj-grid, #proj-fallback { grid-template-columns: 1fr; }
+  }
 
   .proj-card {
     overflow: hidden; background: var(--surface);
@@ -386,31 +401,56 @@
   .tl-role--sm { font-size: 0.88rem; }
 
   /* ── COURSEWORK ──────────────────────────── */
-  .cw-list {
-    border: 1px solid var(--border);
-    border-top: 1px solid var(--border-2);
-    border-radius: 5px; overflow: hidden;
+  .cw-flow {
+    display: flex; flex-direction: column; align-items: stretch; gap: 0.15rem;
+    position: relative; padding-left: 1.15rem;
   }
-  .cw-row {
-    display: flex; flex-direction: column;
-    padding: 0.72rem 1.2rem; border-bottom: 1px solid var(--border);
-    background: var(--surface); transition: background 0.15s ease;
+  .cw-flow::before {
+    content: ''; position: absolute; left: 3px; top: 0.45rem; bottom: 0.45rem;
+    width: 1px; background: var(--border-2);
   }
-  .cw-row:last-child { border-bottom: none; }
-  .cw-row:hover { background: var(--surface-2); }
-  .cw-row-top { display: flex; align-items: center; gap: 1rem; }
-  .cw-code { font-size: 0.66rem; font-weight: 500; color: var(--accent); flex-shrink: 0; width: 64px; }
-  .cw-name { font-size: 0.84rem; color: var(--text); }
-  .cw-note {
-    font-size: 0.69rem; color: var(--text-3); padding-left: calc(64px + 1rem);
-    max-height: 0; overflow: hidden; opacity: 0; margin-top: 0;
-    transition: max-height 0.22s ease, opacity 0.18s ease, margin-top 0.22s ease;
+  .cw-term { min-width: 0; }
+  .cw-term-label {
+    font-size: 0.67rem; font-weight: 500; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--accent-b);
+    display: flex; align-items: center; gap: 0.5rem;
+    margin-bottom: 0.55rem;
   }
-  .cw-row:hover .cw-note { max-height: 30px; opacity: 1; margin-top: 0.28rem; }
+  .cw-term-label::before {
+    content: ''; width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0;
+    background: var(--accent); box-shadow: 0 0 8px rgba(201,168,216,0.5);
+    margin-left: -1.15rem;
+  }
+  .cw-term--next .cw-term-label { color: var(--text); }
+  .cw-term--next .cw-term-label::before { background: var(--accent-b); }
+  .cw-nodes {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 0.4rem;
+  }
+  .cw-node {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 5px; padding: 0.58rem 0.75rem;
+    transition: background 0.15s ease, border-color 0.15s ease;
+  }
+  .cw-node:hover { background: var(--surface-2); border-color: var(--border-2); }
+  .cw-term--next .cw-node { border-color: var(--border-2); background: var(--accent-dim); }
+  .cw-term--next .cw-node:hover { background: var(--surface-2); }
+  .cw-row-top { display: flex; align-items: center; gap: 0.4rem 0.65rem; flex-wrap: wrap; }
+  .cw-code { font-size: 0.66rem; font-weight: 500; color: var(--accent); flex-shrink: 0; width: 62px; }
+  .cw-name { font-size: 0.82rem; color: var(--text); flex: 1; min-width: 8rem; line-height: 1.35; }
+  .cw-cred { font-size: 0.64rem; color: var(--text-3); flex-shrink: 0; }
   .cw-badge {
     font-size: 0.6rem; font-weight: 500; letter-spacing: 0.08em;
     text-transform: uppercase; color: var(--accent); border: 1px solid var(--border-2);
     padding: 0.1rem 0.4rem; border-radius: 3px; margin-left: auto; flex-shrink: 0;
+  }
+  .cw-flow-link {
+    flex: 0 0 auto; height: 1.45rem; display: flex; align-items: center; justify-content: center;
+    gap: 0.15rem; color: var(--accent-b); align-self: center;
+  }
+  .cw-flow-line { flex: 0 0 0.55rem; width: 1px; background: var(--border-2); }
+  .cw-flow-link svg { flex-shrink: 0; transform: rotate(90deg); }
+  @media (max-width: 620px) {
+    .cw-nodes { grid-template-columns: 1fr; }
   }
 
   /* ── SKILLS ──────────────────────────────── */
@@ -651,9 +691,7 @@
     <div class="container">
       <p class="sec-label reveal">Projects</p>
       <h2 class="sec-heading reveal">Engineering Projects</h2>
-      <p class="sec-sub reveal">Please click to view GitHub, specs, and images.</p>
-
-      <div class="proj-grid">
+      <div id="proj-fallback">
 
         <!-- 01 RV32I CPU -->
         <a href="projects/riscv-cpu.html" class="proj-card reveal">
@@ -703,37 +741,7 @@
           </div>
         </a>
 
-        <!-- 04 FES/OCPD -->
-        <a href="projects/fes-ocpd.html" class="proj-card reveal">
-          <div class="proj-gallery">
-            <img src="brand_assets/ltspice.png" alt="LTspice overcurrent protection schematic" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block;"/>
-            <div class="proj-card-hint">View project <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
-          </div>
-          <div class="proj-body">
-            <p class="proj-num">04</p>
-            <p class="proj-name">Overcurrent Protection Device, FES Hardware</p>
-            <p class="proj-desc">Analog overcurrent detection for biphasic FES device using an op-amp integrator, window comparator, and SR-latch. During overcurrent events, interrupts sent to MCU, resulting in LOW state (no current delivered to patient). Helps keep patients safe while helping their lower limb musculature.</p>
-            <div class="proj-footer"><div class="proj-tools"><span class="chip">KiCad</span><span class="chip">LTspice</span><span class="chip">Analog Design</span><span class="chip">Medical Devices</span></div></div>
-          </div>
-        </a>
-
-        <!-- 05 8x8 Arcade -->
-        <a href="projects/arcade.html" class="proj-card reveal">
-          <div class="proj-gallery">
-            <video autoplay muted loop playsinline style="width:100%;height:100%;object-fit:cover;display:block;pointer-events:none;">
-              <source src="brand_assets/arcade-demo.mp4" type="video/mp4"/>
-            </video>
-            <div class="proj-card-hint">View project <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
-          </div>
-          <div class="proj-body">
-            <p class="proj-num">05</p>
-            <p class="proj-name">8×8 NeoPixel Mini Arcade</p>
-            <p class="proj-desc">A mini-arcade built using a WS2812B and ATmega328P / Arduino UNO. Hand-soldered, designed with EasyEDA, and implemented on perfboard. Players can play Snake, Ping Pong, and more.</p>
-            <div class="proj-footer"><div class="proj-tools"><span class="chip">C++</span><span class="chip">ATmega328P</span><span class="chip">WS2812B</span><span class="chip">PCB Design</span></div></div>
-          </div>
-        </a>
-
-        <!-- 06 Compute-in-memory -->
+        <!-- 04 Compute-in-memory -->
         <a href="projects/cim-accelerator.html" class="proj-card reveal">
           <div class="proj-gallery">
             <div class="proj-placeholder">
@@ -742,7 +750,7 @@
             <div class="proj-card-hint">View project <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
           </div>
           <div class="proj-body">
-            <p class="proj-num">06</p>
+            <p class="proj-num">04</p>
             <p class="proj-name">Synapse</p>
             <p class="proj-desc">In progress. An FPGA compute-in-memory project: the weights stay next to the multiply-accumulate instead of being fetched from external memory.</p>
             <div class="proj-footer">
@@ -751,8 +759,6 @@
             </div>
           </div>
         </a>
-
-
       </div>
     </div>
   </section>
@@ -852,86 +858,157 @@
   <section id="education" data-section="education">
     <div class="container">
       <p class="sec-label reveal">Coursework</p>
-      <div class="cw-list reveal" style="max-width:640px;">
-        <div class="cw-row">
-          <div class="cw-row-top">
-            <span class="cw-code">ECE 210</span>
-            <span class="cw-name">Intro to Electrical Engineering</span>
+      <div class="cw-flow reveal">
+        <div class="cw-term" aria-label="Fall 2025">
+          <div class="cw-term-label">Fall 2025</div>
+          <div class="cw-nodes">
+            <div class="cw-node">
+              <div class="cw-row-top">
+                <span class="cw-code">ECE 252</span>
+                <span class="cw-name">Intro to Computer Engineering</span>
+                <span class="cw-cred">3 cr</span>
+              </div>
+            </div>
           </div>
         </div>
-        <div class="cw-row">
-          <div class="cw-row-top">
-            <span class="cw-code">ECE 203</span>
-            <span class="cw-name">Signals, Information, &amp; Computation</span>
+        <div class="cw-flow-link" aria-hidden="true">
+          <span class="cw-flow-line"></span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          <span class="cw-flow-line"></span>
+        </div>
+        <div class="cw-term" aria-label="Spring 2026">
+          <div class="cw-term-label">Spring 2026</div>
+          <div class="cw-nodes">
+            <div class="cw-node">
+              <div class="cw-row-top">
+                <span class="cw-code">ECE 230</span>
+                <span class="cw-name">Circuit Analysis</span>
+                <span class="cw-cred">4 cr</span>
+              </div>
+            </div>
+            <div class="cw-node">
+              <div class="cw-row-top">
+                <span class="cw-code">ECE 203</span>
+                <span class="cw-name">Signals, Information, &amp; Computation</span>
+                <span class="cw-cred">3 cr</span>
+              </div>
+            </div>
+            <div class="cw-node">
+              <div class="cw-row-top">
+                <span class="cw-code">ECE 210</span>
+                <span class="cw-name">Intro to Electrical Engineering</span>
+                <span class="cw-cred">2 cr</span>
+              </div>
+            </div>
+            <div class="cw-node">
+              <div class="cw-row-top">
+                <span class="cw-code">ECE 352</span>
+                <span class="cw-name">Digital Systems</span>
+                <span class="cw-cred">3 cr</span>
+              </div>
+            </div>
+            <div class="cw-node">
+              <div class="cw-row-top">
+                <span class="cw-code">ECE 354</span>
+                <span class="cw-name">Machine Organization and Programming</span>
+                <span class="cw-cred">3 cr</span>
+              </div>
+            </div>
           </div>
         </div>
-        <div class="cw-row">
-          <div class="cw-row-top">
-            <span class="cw-code">ECE 252</span>
-            <span class="cw-name">Intro to Computer Engineering</span>
+        <div class="cw-flow-link" aria-hidden="true">
+          <span class="cw-flow-line"></span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          <span class="cw-flow-line"></span>
+        </div>
+        <div class="cw-term" aria-label="Fall 2026">
+          <div class="cw-term-label">Fall 2026</div>
+          <div class="cw-nodes">
+            <div class="cw-node">
+              <div class="cw-row-top">
+                <span class="cw-code">ECE 552</span>
+                <span class="cw-name">Computer Architecture</span>
+                <span class="cw-cred">3 cr</span>
+              </div>
+            </div>
+            <div class="cw-node">
+              <div class="cw-row-top">
+                <span class="cw-code">ECE 222</span>
+                <span class="cw-name">Electrodynamics</span>
+                <span class="cw-cred">4 cr</span>
+              </div>
+            </div>
+            <div class="cw-node">
+              <div class="cw-row-top">
+                <span class="cw-code">ECE 340</span>
+                <span class="cw-name">Electronic Circuits I</span>
+                <span class="cw-cred">3 cr</span>
+              </div>
+            </div>
+            <div class="cw-node">
+              <div class="cw-row-top">
+                <span class="cw-code">ECE 270</span>
+                <span class="cw-name">Circuits Laboratory I</span>
+                <span class="cw-cred">1 cr</span>
+              </div>
+            </div>
+            <div class="cw-node">
+              <div class="cw-row-top">
+                <span class="cw-code">ECE 271</span>
+                <span class="cw-name">Circuits Laboratory II</span>
+                <span class="cw-cred">1 cr</span>
+              </div>
+            </div>
           </div>
         </div>
-        <div class="cw-row">
-          <div class="cw-row-top">
-            <span class="cw-code">ECE 352</span>
-            <span class="cw-name">Digital Systems</span>
-          </div>
+        <div class="cw-flow-link" aria-hidden="true">
+          <span class="cw-flow-line"></span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          <span class="cw-flow-line"></span>
         </div>
-        <div class="cw-row">
-          <div class="cw-row-top">
-            <span class="cw-code">ECE 230</span>
-            <span class="cw-name">Circuit Analysis</span>
-          </div>
-        </div>
-        <div class="cw-row">
-          <div class="cw-row-top">
-            <span class="cw-code">CS 300</span>
-            <span class="cw-name">Programming II</span>
-          </div>
-        </div>
-        <div class="cw-row">
-          <div class="cw-row-top">
-            <span class="cw-code">ECE 552</span>
-            <span class="cw-name">Computer Architecture</span>
-          </div>
-        </div>
-        <div class="cw-row">
-          <div class="cw-row-top">
-            <span class="cw-code">ECE 340</span>
-            <span class="cw-name">Electronic Circuits I</span>
-          </div>
-        </div>
-        <div class="cw-row">
-          <div class="cw-row-top">
-            <span class="cw-code">ECE 222</span>
-            <span class="cw-name">Electrodynamics</span>
-          </div>
-        </div>
-        <div class="cw-row">
-          <div class="cw-row-top">
-            <span class="cw-code">MATH 340</span>
-            <span class="cw-name">Matrix &amp; Linear Algebra</span>
-          </div>
-        </div>
-        <div class="cw-row">
-          <div class="cw-row-top">
-            <span class="cw-code">ECE 551</span>
-            <span class="cw-name">Digital System Design and Synthesis</span>
-            <span class="cw-badge">Planned</span>
-          </div>
-        </div>
-        <div class="cw-row">
-          <div class="cw-row-top">
-            <span class="cw-code">CS 557</span>
-            <span class="cw-name">Parallel &amp; Throughput-Optimized Programming</span>
-            <span class="cw-badge">Planned</span>
-          </div>
-        </div>
-        <div class="cw-row">
-          <div class="cw-row-top">
-            <span class="cw-code">MATH 431</span>
-            <span class="cw-name">Introduction to the Theory of Probability</span>
-            <span class="cw-badge">Planned</span>
+        <div class="cw-term cw-term--next" aria-label="Spring 2027">
+          <div class="cw-term-label">Spring 2027</div>
+          <div class="cw-nodes">
+            <div class="cw-node">
+              <div class="cw-row-top">
+                <span class="cw-code">ECE 330</span>
+                <span class="cw-name">Signals and Systems</span>
+                <span class="cw-cred">3 cr</span>
+                <span class="cw-badge">Planned</span>
+              </div>
+            </div>
+            <div class="cw-node">
+              <div class="cw-row-top">
+                <span class="cw-code">ECE 370</span>
+                <span class="cw-name">Advanced Laboratory</span>
+                <span class="cw-cred">2 cr</span>
+                <span class="cw-badge">Planned</span>
+              </div>
+            </div>
+            <div class="cw-node">
+              <div class="cw-row-top">
+                <span class="cw-code">ECE 532</span>
+                <span class="cw-name">Matrix Methods in Machine Learning</span>
+                <span class="cw-cred">3 cr</span>
+                <span class="cw-badge">Planned</span>
+              </div>
+            </div>
+            <div class="cw-node">
+              <div class="cw-row-top">
+                <span class="cw-code">ECE 556</span>
+                <span class="cw-name">Design Automation of Digital Systems</span>
+                <span class="cw-cred">3 cr</span>
+                <span class="cw-badge">Planned</span>
+              </div>
+            </div>
+            <div class="cw-node">
+              <div class="cw-row-top">
+                <span class="cw-code">ECE 551</span>
+                <span class="cw-name">Digital System Design and Synthesis</span>
+                <span class="cw-cred">3 cr</span>
+                <span class="cw-badge">Planned</span>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -1076,7 +1153,7 @@
       const repR = Math.min(W, H) * 0.5;
       let x, y;
       do { x = Math.random() * W; y = Math.random() * H; }
-      while (Math.sqrt((x - W/2) ** 2 + (y - H/2) ** 2) < repR);
+      while (Math.sqrt((x - W / 2) ** 2 + (y - H / 2) ** 2) < repR);
       return { x, y, vx: (Math.random() - 0.5) * 0.15, vy: (Math.random() - 0.5) * 0.15, r: Math.random() * 2 + 1, o: 0 };
     }
 
@@ -1091,14 +1168,14 @@
         a.x += a.vx; a.y += a.vy;
         if (a.x < 0) a.x = W; if (a.x > W) a.x = 0;
         if (a.y < 0) a.y = H; if (a.y > H) a.y = 0;
-        const dx = a.x - cx, dy = a.y - cy, dc = Math.sqrt(dx*dx + dy*dy);
-        if (dc < repR && dc > 0) { const f = (repR - dc) / repR * 0.04; a.vx += (dx/dc)*f; a.vy += (dy/dc)*f; }
-        const spd = Math.sqrt(a.vx*a.vx + a.vy*a.vy);
-        if (spd > 0.18) { a.vx = (a.vx/spd)*0.18; a.vy = (a.vy/spd)*0.18; }
+        const dx = a.x - cx, dy = a.y - cy, dc = Math.sqrt(dx * dx + dy * dy);
+        if (dc < repR && dc > 0) { const f = (repR - dc) / repR * 0.04; a.vx += (dx / dc) * f; a.vy += (dy / dc) * f; }
+        const spd = Math.sqrt(a.vx * a.vx + a.vy * a.vy);
+        if (spd > 0.18) { a.vx = (a.vx / spd) * 0.18; a.vy = (a.vy / spd) * 0.18; }
         for (let j = i + 1; j < pts.length; j++) {
           const b = pts[j];
-          const dx = a.x - b.x, dy = a.y - b.y;
-          const d = Math.sqrt(dx * dx + dy * dy);
+          const ddx = a.x - b.x, ddy = a.y - b.y;
+          const d = Math.sqrt(ddx * ddx + ddy * ddy);
           if (d < MAX_DIST) {
             ctx.strokeStyle = `rgba(201,168,216,${(1 - d / MAX_DIST) * 0.55 * Math.min(a.o, b.o)})`;
             ctx.lineWidth = 0.6;
@@ -1118,5 +1195,6 @@
     init(); grow(); frame();
   })();
 </script>
+
 </body>
 </html>
