@@ -562,7 +562,7 @@ line_editor.c  ->  command.c  ->  bus.h  ->  bus_pico.c
     summary: 'In progress. An FPGA compute-in-memory project: the weights stay next to the multiply-accumulate instead of being fetched from external memory.',
     tools: ['SystemVerilog', 'Cyclone V', 'Quartus Prime', 'Block RAM', 'STM32', 'AXI4-Lite'],
     status: 'In progress',
-    github: null,
+    github: 'https://github.com/rohannuthi7/Synapse',
     docs: [],
     overview: [],
     sections: [],

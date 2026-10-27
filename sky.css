@@ -1,0 +1,478 @@
+/* Sky parked at the top of the page, grass and mountains at the end. */
+
+@property --sky-top { syntax: "<color>"; inherits: true; initial-value: #4ea6e6; }
+@property --sky-mid { syntax: "<color>"; inherits: true; initial-value: #8ecff2; }
+@property --sky-bottom { syntax: "<color>"; inherits: true; initial-value: #d4eef8; }
+@property --cloud { syntax: "<color>"; inherits: true; initial-value: #ffffff; }
+@property --grass { syntax: "<color>"; inherits: true; initial-value: #62c84a; }
+@property --grass-deep { syntax: "<color>"; inherits: true; initial-value: #3da832; }
+@property --ridge { syntax: "<color>"; inherits: true; initial-value: #7eafd0; }
+@property --ridge-far { syntax: "<color>"; inherits: true; initial-value: #b9d7ea; }
+@property --ridge-near { syntax: "<color>"; inherits: true; initial-value: #5d86a6; }
+@property --snow { syntax: "<color>"; inherits: true; initial-value: #f7fbff; }
+@property --sun-opacity { syntax: "<number>"; inherits: true; initial-value: 1; }
+@property --moon-opacity { syntax: "<number>"; inherits: true; initial-value: 0; }
+@property --star-opacity { syntax: "<number>"; inherits: true; initial-value: 0; }
+@property --rain-opacity { syntax: "<number>"; inherits: true; initial-value: 0; }
+
+html {
+  --sky-top: #4ea6e6;
+  --sky-mid: #8ecff2;
+  --sky-bottom: #d4eef8;
+  --cloud: rgba(255, 255, 255, 0.92);
+  --sun-opacity: 1;
+  --rain-opacity: 0;
+  --grass: #62c84a;
+  --grass-deep: #3da832;
+  --ridge: #7eafd0;
+  --ridge-far: #b9d7ea;
+  --ridge-near: #5d86a6;
+  --snow: #f7fbff;
+  --moon-opacity: 0;
+  --star-opacity: 0;
+  transition:
+    --sky-top 0.9s ease,
+    --sky-mid 0.9s ease,
+    --sky-bottom 0.9s ease,
+    --cloud 0.9s ease,
+    --grass 0.9s ease,
+    --grass-deep 0.9s ease,
+    --ridge 0.9s ease,
+    --ridge-far 0.9s ease,
+    --ridge-near 0.9s ease,
+    --snow 0.9s ease,
+    --text 0.9s ease,
+    --text-2 0.9s ease,
+    --text-3 0.9s ease,
+    --sun-opacity 0.7s ease,
+    --moon-opacity 0.7s ease,
+    --star-opacity 0.7s ease,
+    --rain-opacity 0.7s ease;
+}
+
+html[data-weather="cloudy"] {
+  --sky-top: #6f9dbe;
+  --sky-mid: #a7c6d8;
+  --sky-bottom: #d7e6ee;
+  --cloud: rgba(255, 255, 255, 0.97);
+  --sun-opacity: 0;
+  --grass: #5cbf48;
+  --grass-deep: #3a9e32;
+  --ridge: #8aafc6;
+  --ridge-far: #c5dbe8;
+  --ridge-near: #6d93ad;
+  --snow: #f4f8fb;
+}
+
+html[data-weather="rain"] {
+  --sky-top: #4f738c;
+  --sky-mid: #7f9eb3;
+  --sky-bottom: #c5d5e0;
+  --cloud: rgba(236, 243, 247, 0.95);
+  --sun-opacity: 0;
+  --rain-opacity: 1;
+  --grass: #4ea83c;
+  --grass-deep: #2f8a28;
+  --ridge: #64869c;
+  --ridge-far: #8eacbf;
+  --ridge-near: #4d6e86;
+  --snow: #e4edf3;
+}
+
+html[data-time="night"] {
+  --sky-top: #0c1730;
+  --sky-mid: #163056;
+  --sky-bottom: #24456e;
+  --cloud: rgba(214, 224, 240, 0.34);
+  --sun-opacity: 0;
+  --moon-opacity: 1;
+  --star-opacity: 1;
+  --text: #f3f6fb;
+  --text-2: #d7e0ec;
+  --text-3: #b7c5d6;
+  --border: rgba(243, 246, 251, 0.16);
+  --border-2: rgba(243, 246, 251, 0.28);
+  --grass: #1c6434;
+  --grass-deep: #134826;
+  --ridge: #2a3f5c;
+  --ridge-far: #3f5d80;
+  --ridge-near: #1a2b42;
+  --snow: #dce6f2;
+}
+
+body {
+  position: relative;
+  background: linear-gradient(180deg, var(--sky-top) 0%, var(--sky-mid) 56%, var(--sky-bottom) 100%);
+  background-attachment: fixed;
+}
+
+.sky {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 10.5rem;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.sun-mark {
+  position: absolute;
+  top: 1.35rem;
+  left: calc(var(--sb-w, 220px) + 42%);
+  width: 2.7rem;
+  height: 2.7rem;
+  border-radius: 50%;
+  background: #ffe56a;
+  box-shadow: 0 0 0 9px rgba(255, 229, 106, 0.28);
+  opacity: var(--sun-opacity);
+  transform: scale(1);
+  transition: opacity 0.7s ease, transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+html:not([data-weather="sunny"]) .sun-mark {
+  transform: scale(0.55);
+}
+
+.moon-mark {
+  position: absolute;
+  top: 1.35rem;
+  left: calc(var(--sb-w, 220px) + 42%);
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  background: #f4f1e4;
+  box-shadow: 0 0 0 8px rgba(244, 241, 228, 0.16);
+  opacity: var(--moon-opacity);
+  transform: scale(0.7);
+  transition: opacity 0.7s ease, transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+html[data-time="night"] .moon-mark { transform: scale(1); }
+
+.stars {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: var(--star-opacity);
+  background-image:
+    radial-gradient(1.4px 1.4px at 8% 18%, #fff 60%, transparent 62%),
+    radial-gradient(1.2px 1.2px at 18% 42%, #fff 60%, transparent 62%),
+    radial-gradient(1.6px 1.6px at 28% 12%, #fff 60%, transparent 62%),
+    radial-gradient(1px 1px at 42% 28%, #fff 60%, transparent 62%),
+    radial-gradient(1.5px 1.5px at 63% 16%, #fff 60%, transparent 62%),
+    radial-gradient(1.1px 1.1px at 74% 34%, #fff 60%, transparent 62%),
+    radial-gradient(1.4px 1.4px at 86% 14%, #fff 60%, transparent 62%),
+    radial-gradient(1px 1px at 92% 40%, #fff 60%, transparent 62%),
+    radial-gradient(1.3px 1.3px at 52% 8%, #fff 60%, transparent 62%);
+}
+
+.cloud-track {
+  display: flex;
+  width: 200%;
+  height: 100%;
+  animation: cloud-drift 72s linear infinite;
+}
+
+.clouds {
+  width: 50%;
+  height: 9.2rem;
+  flex: none;
+}
+
+.clouds ellipse { fill: var(--cloud); }
+
+.clouds-more { opacity: 0.2; transition: opacity 0.9s ease; }
+html[data-weather="cloudy"] .clouds-more,
+html[data-weather="rain"] .clouds-more { opacity: 1; }
+
+.bird {
+  position: absolute;
+  top: 2.4rem;
+  left: 0;
+  width: 1.7rem;
+  height: 0.7rem;
+  animation: bird-glide 32s linear infinite;
+}
+
+.bird path {
+  fill: none;
+  stroke: #1c3348;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: 0.55;
+}
+
+html[data-time="night"] .bird path { stroke: #d7e0ec; }
+
+@keyframes cloud-drift {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(-50%, 0, 0); }
+}
+
+@keyframes bird-glide {
+  0% { transform: translate3d(-3rem, 0, 0); }
+  100% { transform: translate3d(105vw, -0.6rem, 0); }
+}
+
+.rain {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+  opacity: var(--rain-opacity);
+}
+
+.drop {
+  position: absolute;
+  top: -12vh;
+  width: 1.5px;
+  border-radius: 2px;
+  background: linear-gradient(180deg, transparent, rgba(255, 255, 255, 0.85));
+  animation-name: rain-fall;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+html:not([data-weather="rain"]) .drop { animation-play-state: paused; }
+
+@keyframes rain-fall {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(-18px, 120vh, 0); }
+}
+
+.field {
+  position: relative;
+  z-index: 1;
+  height: 22rem;
+  pointer-events: none;
+}
+
+.mountains {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 5.4rem;
+  width: 100%;
+  height: 16rem;
+  z-index: 0;
+}
+
+.ridge-far { fill: var(--ridge-far); }
+.ridge { fill: var(--ridge); }
+.ridge-near { fill: var(--ridge-near); }
+.snow { fill: var(--snow); }
+
+.field-hill {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+  height: 7rem;
+  background: var(--grass-deep);
+  border-radius: 50% 50% 0 0 / 52px 52px 0 0;
+}
+
+.field-hill::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 3.2rem;
+  background: var(--grass);
+}
+
+.p-mobile-bar { background: var(--sky-mid); }
+
+.sky-controls {
+  position: fixed;
+  top: 0.9rem;
+  right: 1.15rem;
+  z-index: 160;
+  display: flex;
+  align-items: stretch;
+  gap: 0.45rem;
+}
+
+.daynight {
+  display: grid;
+  place-items: center;
+  flex: none;
+  align-self: center;
+  width: 2.15rem;
+  height: 2.15rem;
+  margin: 0;
+  padding: 0;
+  border: 1px solid rgba(20, 32, 51, 0.2);
+  border-radius: 999px;
+  background: rgba(255, 254, 248, 0.78);
+  color: #142033;
+  backdrop-filter: blur(8px);
+  cursor: pointer;
+}
+
+.daynight-icon {
+  position: relative;
+  width: 1.15rem;
+  height: 1.15rem;
+}
+
+.daynight-icon svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  transition: opacity 0.45s ease, transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.icon-moon {
+  opacity: 0;
+  transform: rotate(-28deg) scale(0.55);
+}
+
+html[data-time="night"] .icon-sun {
+  opacity: 0;
+  transform: rotate(36deg) scale(0.55);
+}
+
+html[data-time="night"] .icon-moon {
+  opacity: 1;
+  transform: none;
+}
+
+html[data-time="night"] .daynight {
+  background: rgba(12, 23, 48, 0.62);
+  border-color: rgba(243, 246, 251, 0.28);
+  color: #f4f1e4;
+}
+
+.weather {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(3, 4.05rem);
+  padding: 0.22rem;
+  background: rgba(255, 254, 248, 0.78);
+  border: 1px solid rgba(20, 32, 51, 0.2);
+  border-radius: 999px;
+  backdrop-filter: blur(8px);
+}
+
+.weather-thumb {
+  position: absolute;
+  top: 0.22rem;
+  bottom: 0.22rem;
+  left: 0.22rem;
+  width: 4.05rem;
+  border-radius: 999px;
+  background: #142033;
+  transform: translateX(0);
+  transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+  z-index: 0;
+}
+
+html[data-weather="cloudy"] .weather-thumb { transform: translateX(4.05rem); }
+html[data-weather="rain"] .weather-thumb { transform: translateX(8.1rem); }
+
+.weather-btn {
+  position: relative;
+  z-index: 1;
+  border: 0;
+  background: transparent;
+  color: var(--text-2, #1c3348);
+  font-family: "Nunito", sans-serif;
+  font-weight: 700;
+  font-size: 0.76rem;
+  line-height: 1;
+  width: 100%;
+  padding: 0.42rem 0;
+  text-align: center;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: color 0.35s ease;
+}
+
+.weather-btn[aria-pressed="true"] { color: #f7fbfe; }
+.weather-btn:hover { color: var(--text, #142033); }
+.weather-btn[aria-pressed="true"]:hover { color: #f7fbfe; }
+
+html[data-time="night"] .weather {
+  background: rgba(12, 23, 48, 0.62);
+  border-color: rgba(243, 246, 251, 0.28);
+}
+html[data-time="night"] .weather-thumb { background: #f4f1e4; }
+html[data-time="night"] .weather-btn[aria-pressed="true"],
+html[data-time="night"] .weather-btn[aria-pressed="true"]:hover { color: #142033; }
+html[data-time="night"] .social-btn {
+  background: rgba(12, 23, 48, 0.35);
+  border-color: rgba(243, 246, 251, 0.4);
+}
+html[data-time="night"] ::selection { background: #35557a; color: #f4f7fb; }
+
+.plane {
+  position: absolute;
+  z-index: 5;
+  top: 1.35rem;
+  left: calc(var(--sb-w, 220px) + 2rem);
+  width: 2.7rem;
+  height: 1.75rem;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: grab;
+  pointer-events: auto;
+  touch-action: none;
+}
+.plane svg { width: 100%; height: 100%; display: block; overflow: visible; }
+.plane.is-held { cursor: grabbing; }
+.plane.is-flying { pointer-events: none; z-index: 180; }
+.plane.is-landed { position: absolute; z-index: 4; cursor: grab; }
+
+.flag {
+  position: absolute;
+  left: 64%;
+  bottom: 6.6rem;
+  width: 1.15rem;
+  height: 2rem;
+  z-index: 2;
+}
+.flag-pole { stroke: #142033; stroke-width: 1.6; }
+.flag-fly { fill: #f2c14e; stroke: #142033; stroke-width: 1.2; stroke-linejoin: round; }
+html[data-time="night"] .flag-pole { stroke: #f3f6fb; }
+html[data-time="night"] .flag-fly { stroke: #f3f6fb; fill: #e7d48a; }
+
+.plane-note {
+  position: absolute;
+  left: 50%;
+  bottom: 10.5rem;
+  transform: translateX(-50%);
+  z-index: 3;
+  margin: 0;
+  font-family: "Nunito", sans-serif;
+  font-weight: 800;
+  font-size: 0.95rem;
+  color: var(--text, #142033);
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+@media (max-width: 800px) {
+  .sun-mark, .moon-mark { left: 1.1rem; top: 1.05rem; width: 2.1rem; height: 2.1rem; }
+  .plane { top: 0.72rem; left: 3.6rem; width: 2.3rem; height: 1.5rem; }
+  #about { padding-top: 6.2rem; }
+  .p-container { padding-top: 6.2rem; }
+  .sky-controls { top: 0.65rem; right: 0.55rem; gap: 0.35rem; }
+  .weather-btn { font-size: 0.72rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { transition: none; }
+  .cloud-track, .bird, .drop { animation: none; }
+  .bird { opacity: 0; }
+  .sun-mark, .clouds-more, .weather-thumb, .weather-btn, .daynight-icon svg { transition: none; }
+}
