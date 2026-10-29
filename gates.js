@@ -36,7 +36,7 @@
     return out;
   }
 
-  function src(v) { return { t: "src", v: v, dir: E, rot: 0, goal: 0 }; }
+  function src(v, v2) { return { t: "src", v: v, v2: v2 == null ? v : v2, dir: E, rot: 0, goal: 0 }; }
   function dst() { return { t: "dst", dir: W, rot: 0, goal: 0 }; }
   function wall() { return { t: "wall" }; }
   function empty() { return { t: "empty" }; }
@@ -44,40 +44,41 @@
   function corner(rot, goal) { return { t: "wire", mask: N | E, rot: rot, goal: goal == null ? rot : goal }; }
   function inv(rot, goal) { return { t: "not", dir: E, rot: rot, goal: goal == null ? rot : goal }; }
   function andGate() { return { t: "and", dir: E, rot: 0, goal: 0, lock: true }; }
+  function mem() { return { t: "mem", inn: W, out: E, rot: 0, goal: 0, lock: true }; }
 
   var LEVELS = [
     {
-      prompt: "Turn the wires so the 1 reaches the plane.",
-      win: "Straight through.",
+      prompt: "The 1 vanishes on the second pass. Park it in the latch.",
+      win: "The latch kept the 1 after the source died.",
       rows: [[
-        src(1), wire(1, 0), wire(0), wire(1, 0), dst()
+        src(1, 0), wire(1, 0), mem(), wire(0), dst()
       ]]
     },
     {
-      prompt: "The straight shot is walled off. Go around.",
-      win: "Around the wall.",
+      prompt: "A 0 can leak into the latch. Shut it out, and save the 1.",
+      win: "The 0 stayed out, so the latch held a clean 1.",
       rows: [
-        [src(1), wire(0), corner(1, 2), wall(), empty()],
-        [wall(), wall(), wire(0, 1), wall(), wall()],
-        [empty(), empty(), corner(1, 0), wire(1, 0), dst()]
+        [src(1, 0), wire(1, 0), corner(0, 2), empty(), empty(), empty()],
+        [empty(), empty(), corner(3, 0), mem(), wire(1, 0), dst()],
+        [src(0), wire(0), corner(0, 1), empty(), empty(), empty()]
       ]
     },
     {
-      prompt: "The AND only launches when both inputs are 1.",
-      win: "Both inputs made it. That's an AND.",
+      prompt: "Save A's 1. The plane waits until B shows up.",
+      win: "The latch waited, then B arrived. That's an AND.",
       rows: [
-        [src(1), wire(1, 0), corner(0, 2), empty(), empty()],
-        [empty(), empty(), andGate(), wire(1, 0), dst()],
-        [src(1), wire(0), corner(0, 3), empty(), empty()]
-      ]
-    },
-    {
-      prompt: "One source is a 0. Turn the NOT so it flips before the AND.",
-      win: "The NOT turned that 0 into a 1.",
-      rows: [
-        [src(0), wire(0), inv(3, 0), corner(1, 2), empty(), empty()],
+        [src(1, 0), wire(1, 0), mem(), corner(1, 2), empty(), empty()],
         [empty(), empty(), empty(), andGate(), wire(1, 0), dst()],
-        [src(1), wire(1, 0), wire(0), corner(0, 3), empty(), empty()]
+        [src(0, 1), wire(1, 0), wire(0), corner(0, 3), empty(), empty()]
+      ]
+    },
+    {
+      prompt: "A starts at 0, then flips to 1. Catch the inverted 1 before it disappears.",
+      win: "The NOT flipped it in time, and the latch held on.",
+      rows: [
+        [src(0, 1), wire(0), inv(3, 0), mem(), corner(1, 2), empty()],
+        [empty(), empty(), empty(), empty(), andGate(), dst()],
+        [src(0, 1), wire(1, 0), wire(0), wire(0), corner(0, 3), empty()]
       ]
     }
   ];
@@ -109,6 +110,9 @@
       var ni = opposite(no);
       return { open: no | ni, kind: "not", out: no, inn: ni };
     }
+    if (cell.t === "mem") {
+      return { open: cell.inn | cell.out, kind: "mem", inn: cell.inn, out: cell.out };
+    }
     var ao = rotDir(cell.dir, cell.rot);
     var aIn = [rotDir(ao, 1), rotDir(ao, 3)];
     return { open: ao | aIn[0] | aIn[1], kind: "and", out: ao, inputs: aIn };
@@ -120,7 +124,14 @@
 
   function port(r, c, dir) { return r + "," + c + "," + dir; }
 
-  function simulate(grid) {
+  function srcVal(cell, phase) {
+    if (phase === 2 && cell.v2 != null) return cell.v2;
+    return cell.v;
+  }
+
+  function simulate(grid, phase, memory) {
+    phase = phase || 1;
+    memory = memory || {};
     var parent = {};
     function find(a) {
       if (parent[a] == null) parent[a] = a;
@@ -184,7 +195,16 @@
       for (r = 0; r < grid.length; r++) {
         for (c = 0; c < grid[r].length; c++) {
           f = faces[r][c];
-          if (f.kind === "src") put(port(r, c, f.out), f.v);
+          if (f.kind === "src") put(port(r, c, f.out), srcVal(grid[r][c], phase));
+          if (f.kind === "mem") {
+            var mv;
+            if (phase === 2) mv = memory[r + "," + c] == null ? "z" : memory[r + "," + c];
+            else {
+              var min = values[find(port(r, c, f.inn))];
+              mv = min == null ? "z" : min;
+            }
+            put(port(r, c, f.out), mv);
+          }
           if (f.kind === "not") {
             var iv = values[find(port(r, c, f.inn))];
             put(port(r, c, f.out), gateOut("not", [iv == null ? "z" : iv]));
@@ -215,11 +235,11 @@
       for (c = 0; c < grid[r].length; c++) {
         f = faces[r][c];
         var key = r + "," + c;
-        if (f.kind === "src") heat[key] = f.v;
+        if (f.kind === "src") heat[key] = srcVal(grid[r][c], phase);
         else if (f.kind === "wire") {
           var wd = dirsOf(f.open)[0];
           heat[key] = wd == null ? "z" : (values[find(port(r, c, wd))] == null ? "z" : values[find(port(r, c, wd))]);
-        } else if (f.kind === "not" || f.kind === "and") {
+        } else if (f.kind === "not" || f.kind === "and" || f.kind === "mem") {
           var ov = values[find(port(r, c, f.out))];
           heat[key] = ov == null ? "z" : ov;
         } else if (f.kind === "dst") {
@@ -230,10 +250,21 @@
       }
     }
 
-    return { value: dstCell ? dstCell.value : "z", heat: heat, path: trace(grid, faces) };
+    var stored = {};
+    for (r = 0; r < grid.length; r++) {
+      for (c = 0; c < grid[r].length; c++) {
+        if (faces[r][c].kind !== "mem") continue;
+        var mk = r + "," + c;
+        stored[mk] = phase === 2 ? (memory[mk] == null ? "z" : memory[mk]) : heat[mk];
+      }
+    }
+
+    return { value: dstCell ? dstCell.value : "z", heat: heat, path: trace(grid, faces, phase, stored), stored: stored };
   }
 
-  function trace(grid, faces) {
+  function trace(grid, faces, phase, memory) {
+    phase = phase || 1;
+    memory = memory || {};
     var q = [];
     var seen = {};
     var prev = {};
@@ -247,7 +278,19 @@
 
     for (var r = 0; r < grid.length; r++) {
       for (var c = 0; c < grid[r].length; c++) {
+        var seed = faces[r][c];
+        if (phase === 2 && seed.kind === "mem" && memory[r + "," + c] === 1) {
+          var mb = step(r, c, seed.out);
+          if (inGrid(grid, mb.r, mb.c) && (faces[mb.r][mb.c].open & mb.back)) {
+            push(mb.r, mb.c, mb.back, "mem:" + r + "," + c);
+          }
+        }
+      }
+    }
+    for (r = 0; r < grid.length; r++) {
+      for (c = 0; c < grid[r].length; c++) {
         if (faces[r][c].kind !== "src") continue;
+        if (phase === 2 && srcVal(grid[r][c], 2) !== 1) continue;
         var d = faces[r][c].out;
         var nb = step(r, c, d);
         if (!inGrid(grid, nb.r, nb.c)) continue;
@@ -265,6 +308,7 @@
       if (f.kind === "wire") {
         dirsOf(f.open).forEach(function (d) { if (d !== cur.enter) leaves.push(d); });
       } else if (f.kind === "not" && cur.enter === f.inn) leaves.push(f.out);
+      else if (f.kind === "mem" && cur.enter === f.inn && phase !== 2) leaves.push(f.out);
       else if (f.kind === "and" && (cur.enter === f.inputs[0] || cur.enter === f.inputs[1])) leaves.push(f.out);
       leaves.forEach(function (d) {
         var nb = step(cur.r, cur.c, d);
@@ -276,12 +320,12 @@
     if (!found) return [];
     var path = [];
     var walk = found.id;
-    while (walk && walk.indexOf("src:") !== 0) {
+    while (walk && walk.indexOf("src:") !== 0 && walk.indexOf("mem:") !== 0) {
       var bits = walk.split(",");
       path.push({ r: Number(bits[0]), c: Number(bits[1]) });
       walk = prev[walk];
     }
-    if (walk && walk.indexOf("src:") === 0) {
+    if (walk && (walk.indexOf("src:") === 0 || walk.indexOf("mem:") === 0)) {
       var sc = walk.slice(4).split(",");
       path.push({ r: Number(sc[0]), c: Number(sc[1]) });
     }
@@ -289,25 +333,32 @@
     return path;
   }
 
+  function play(grid) {
+    var first = simulate(grid, 1, {});
+    var second = simulate(grid, 2, first.stored);
+    return { first: first, second: second };
+  }
+
   function checkLevels() {
     return LEVELS.map(function (level, i) {
-      var initial = simulate(cloneLevel(level)).value;
+      var initial = play(cloneLevel(level));
       var solvedGrid = cloneLevel(level);
       solvedGrid.forEach(function (row) {
         row.forEach(function (cell) { if (cell.goal != null) cell.rot = cell.goal; });
       });
-      var solved = simulate(solvedGrid);
+      var solved = play(solvedGrid);
       return {
         level: i + 1,
-        initial: initial,
-        solved: solved.value,
-        path: solved.path.map(function (p) { return p.r + "," + p.c; }).join(" ")
+        initial: initial.second.value,
+        stored: solved.first.stored,
+        solved: solved.second.value,
+        path: solved.second.path.map(function (p) { return p.r + "," + p.c; }).join(" ")
       };
     });
   }
 
   if (typeof module !== "undefined" && module.exports) {
-    module.exports = { checkLevels: checkLevels, simulate: simulate, LEVELS: LEVELS, cloneLevel: cloneLevel };
+    module.exports = { checkLevels: checkLevels, simulate: simulate, play: play, LEVELS: LEVELS, cloneLevel: cloneLevel };
   }
 
   if (typeof document === "undefined") return;
@@ -326,7 +377,13 @@
     if (cell.t === "empty") return "";
     if (cell.t === "wall") return '<svg viewBox="0 0 64 64" aria-hidden="true"><rect class="wall-body" x="10" y="10" width="44" height="44" rx="6"/></svg>';
     if (cell.t === "src") {
-      return '<svg viewBox="0 0 64 64" aria-hidden="true"><circle class="' + (cell.v ? "src-on" : "src-off") + '" cx="26" cy="32" r="16"/><text class="src-num" x="26" y="39" text-anchor="middle">' + cell.v + '</text><path d="M42 32 H63"/></svg>';
+      var next = cell.v2 !== cell.v ? '<text class="src-next" x="46" y="16" text-anchor="middle">\u2192' + cell.v2 + "</text>" : "";
+      return '<svg viewBox="0 0 64 64" aria-hidden="true"><circle class="' + (cell.v ? "src-on" : "src-off") + '" cx="22" cy="36" r="14"/><text class="src-num" x="22" y="42" text-anchor="middle">' + cell.v + "</text>" + next + '<path d="M36 36 H63"/></svg>';
+    }
+    if (cell.t === "mem") {
+      return '<svg viewBox="0 0 64 64" aria-hidden="true">' + stub(f.open) +
+        '<rect class="mem-body" x="18" y="18" width="28" height="28" rx="6"/>' +
+        '<circle class="mem-dot" cx="32" cy="32" r="5"/></svg>';
     }
     if (cell.t === "dst") {
       return '<svg viewBox="0 0 64 64" aria-hidden="true">' +
@@ -378,7 +435,8 @@
   }
 
   function labelFor(cell) {
-    if (cell.t === "src") return "Source outputting " + cell.v;
+    if (cell.t === "src") return cell.v2 !== cell.v ? "Source " + cell.v + ", then " + cell.v2 + " on the second pass." : "Source outputting " + cell.v;
+    if (cell.t === "mem") return "Latch. It remembers the first pass.";
     if (cell.t === "dst") return "Plane. It launches on a 1.";
     if (cell.t === "not") return spins(cell) ? "NOT gate. Press to turn." : "NOT gate.";
     if (cell.t === "and") return "AND gate.";
@@ -401,12 +459,13 @@
         var turn = spins(cell);
         var tag = turn ? "button" : "div";
         var type = turn ? ' type="button"' : "";
-        tiles += "<" + tag + type + ' class="tile t-' + cell.t + (turn ? " can-turn" : "") + '" data-rc="' + r + "," + c + '" aria-label="' + labelFor(cell) + '">' + icon(cell) + "</" + tag + ">";
+        var v2 = cell.t === "src" ? ' data-v2="' + cell.v2 + '"' : "";
+        tiles += "<" + tag + type + ' class="tile t-' + cell.t + (turn ? " can-turn" : "") + '" data-rc="' + r + "," + c + '"' + v2 + ' aria-label="' + labelFor(cell) + '">' + icon(cell) + "</" + tag + ">";
       }
     }
     root.innerHTML =
       '<div class="gate-board">' +
-        '<p class="gate-count">' + (state.level + 1) + " of " + LEVELS.length + "</p>" +
+        '<p class="gate-count">' + (state.level + 1) + " of " + LEVELS.length + '<span class="beats" aria-hidden="true"><i></i><i></i></span></p>' +
         '<h3 class="gate-prompt" tabindex="-1">' + level.prompt + "</h3>" +
         '<div class="bit-stage" style="--cols:' + cols + '">' +
           '<div class="bit-grid">' + tiles + "</div>" +
@@ -465,12 +524,38 @@
     }
   }
 
-  function finish(result) {
+  function held(stored) {
+    return Object.keys(stored || {}).some(function (k) { return stored[k] === 1; });
+  }
+
+  function markBeat(n) {
+    var dots = root.querySelectorAll(".beats i");
+    for (var i = 0; i < dots.length; i++) dots[i].classList.toggle("is-on", i < n);
+  }
+
+  function showPass(phase) {
+    root.querySelectorAll(".t-src").forEach(function (el) {
+      var v2 = el.getAttribute("data-v2");
+      var num = el.querySelector(".src-num");
+      var circle = el.querySelector("circle");
+      if (!num || v2 == null) return;
+      if (!num.getAttribute("data-v0")) num.setAttribute("data-v0", num.textContent);
+      var v = phase === 2 ? v2 : num.getAttribute("data-v0");
+      if (v == null) return;
+      num.textContent = v;
+      if (circle) {
+        circle.setAttribute("class", v === "1" ? "src-on" : "src-off");
+      }
+    });
+  }
+
+  function finish(result, stored) {
     var level = LEVELS[state.level];
     var status = root.querySelector(".gate-status");
     var next = root.querySelector(".gate-next");
     var dot = root.querySelector(".bit-dot");
     paintHeat(result.heat);
+    markBeat(2);
     state.won = result.value === 1;
     if (result.value === 1) {
       status.textContent = level.win;
@@ -479,19 +564,45 @@
       if (dot) dot.classList.add("is-hot");
       var plane = root.querySelector(".mini-plane");
       if (plane) plane.classList.add("is-go");
+    } else if (Object.keys(stored || {}).some(function (k) { return stored[k] === "x"; })) {
+      status.textContent = "A 0 crashed into the 1. The latch needs a clean 1.";
+      next.hidden = true;
+    } else if (!held(stored)) {
+      status.textContent = "The latch never caught a 1.";
+      next.hidden = true;
     } else if (result.value === 0) {
-      status.textContent = "A 0 got through. The plane needs a 1.";
+      status.textContent = "A 0 got through on the second pass.";
       if (dot) dot.classList.add("is-zero");
       next.hidden = true;
     } else if (result.value === "x") {
       status.textContent = "No clean 1. A gate is missing an input, or two signals hit one wire.";
       next.hidden = true;
     } else {
-      status.textContent = "The bit never reaches the plane.";
+      status.textContent = "The bit dies before the plane.";
       next.hidden = true;
     }
     root.querySelector(".gate-board").classList.toggle("is-solved", state.won);
     state.running = false;
+  }
+
+  function hopAlong(dot, path, done) {
+    if (!path.length) {
+      dot.hidden = true;
+      done();
+      return;
+    }
+    var i = 0;
+    placeDot(dot, path[0], true);
+    function hop() {
+      i += 1;
+      if (i >= path.length) {
+        done();
+        return;
+      }
+      placeDot(dot, path[i], false);
+      state.timer = setTimeout(hop, 150);
+    }
+    state.timer = setTimeout(hop, path.length > 1 ? 150 : 0);
   }
 
   function run() {
@@ -502,28 +613,37 @@
     root.querySelector(".gate-next").hidden = true;
     root.querySelector(".gate-board").classList.remove("is-solved");
     clearHeat();
-    var result = simulate(state.grid);
+    showPass(1);
+    markBeat(1);
+    var first = simulate(state.grid, 1, {});
+    var second = simulate(state.grid, 2, first.stored);
     var dot = root.querySelector(".bit-dot");
     dot.classList.remove("is-hot", "is-zero");
+    root.querySelector(".gate-status").textContent = "First pass.";
     var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (!result.path.length || reduce) {
-      if (result.path.length) placeDot(dot, result.path[result.path.length - 1], true);
-      else dot.hidden = true;
-      finish(result);
-      return;
-    }
-    var i = 0;
-    placeDot(dot, result.path[0], true);
-    function hop() {
-      i += 1;
-      if (i >= result.path.length) {
-        finish(result);
+    function secondPass() {
+      if (!state.running) return;
+      showPass(2);
+      markBeat(2);
+      paintHeat(first.heat);
+      root.querySelector(".gate-status").textContent = "Second pass. The sources just changed.";
+      if (reduce) {
+        if (second.path.length) placeDot(dot, second.path[second.path.length - 1], true);
+        finish(second, first.stored);
         return;
       }
-      placeDot(dot, result.path[i], false);
-      state.timer = setTimeout(hop, 150);
+      hopAlong(dot, second.path, function () { finish(second, first.stored); });
     }
-    state.timer = setTimeout(hop, 150);
+    if (reduce) {
+      showPass(2);
+      if (second.path.length) placeDot(dot, second.path[second.path.length - 1], true);
+      finish(second, first.stored);
+      return;
+    }
+    hopAlong(dot, first.path, function () {
+      paintHeat(first.heat);
+      state.timer = setTimeout(secondPass, 520);
+    });
   }
 
   function startLevel() {
@@ -532,7 +652,7 @@
     state.won = false;
     render();
     var status = root.querySelector(".gate-status");
-    status.textContent = "Tap a dashed piece to turn it.";
+    status.textContent = "Dashed pieces turn. The arrow on a source is pass two.";
   }
 
   root.addEventListener("click", function (event) {
@@ -543,7 +663,7 @@
       cell.rot = ((cell.rot || 0) + 1) % 4;
       state.won = false;
       render();
-      root.querySelector(".gate-status").textContent = "Tap a dashed piece to turn it.";
+      root.querySelector(".gate-status").textContent = "Dashed pieces turn. The arrow on a source is pass two.";
       var again = root.querySelector('[data-rc="' + rc[0] + "," + rc[1] + '"]');
       if (again && again.focus) again.focus();
       return;

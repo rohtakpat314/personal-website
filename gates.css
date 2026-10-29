@@ -115,13 +115,38 @@ html[data-time="night"] .gate-board {
 
 .tile svg circle.src-on { fill: #d7f5c8; stroke-width: 2.6; }
 .tile svg circle.src-off { fill: #fffef8; stroke-width: 2.6; }
-.tile svg text.src-num {
+.tile svg text.src-num,
+.tile svg text.src-next {
   fill: #142033;
   stroke: none;
   font-family: "Nunito", sans-serif;
-  font-size: 20px;
   font-weight: 800;
 }
+
+.tile svg text.src-num { font-size: 20px; }
+.tile svg text.src-next { font-size: 11px; fill: #2c4a66; }
+
+.tile svg rect.mem-body { fill: #fffef8; stroke-width: 3.5; }
+.tile svg circle.mem-dot { fill: #fffef8; stroke-width: 3; }
+.tile.is-hot svg circle.mem-dot { fill: #7dce63; }
+.tile.is-cold svg circle.mem-dot { fill: #d5dee8; }
+
+.beats {
+  display: inline-flex;
+  gap: 0.28rem;
+  margin-left: 0.45rem;
+  vertical-align: middle;
+}
+
+.beats i {
+  width: 0.42rem;
+  height: 0.42rem;
+  border-radius: 50%;
+  border: 2px solid #142033;
+  display: block;
+}
+
+.beats i.is-on { background: #2f8a28; border-color: #1e6b1a; }
 
 .tile svg .gate-body path,
 .tile svg .gate-body circle { fill: #fffef8; stroke-width: 3.5; }
