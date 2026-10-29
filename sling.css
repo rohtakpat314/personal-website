@@ -1,0 +1,168 @@
+#play .container { text-align: center; }
+
+#play .sec-heading,
+#play .sec-label { text-align: center; }
+
+.gate-lead {
+  max-width: 32rem;
+  margin: -0.35rem auto 1.15rem;
+  color: var(--text-2);
+  text-align: center;
+}
+
+#sling-game {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.sling-card {
+  width: min(100%, 48rem);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: rgba(255, 254, 248, 0.94);
+  border: 2px solid #142033;
+  border-radius: 20px;
+  box-shadow: 4px 4px 0 #142033;
+  padding: 0.95rem 1rem 0.85rem;
+  color: #142033;
+}
+
+html[data-time="night"] .sling-card {
+  box-shadow: 4px 4px 0 rgba(244, 241, 228, 0.45);
+}
+
+.sling-meta {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin: 0 0 0.55rem;
+  font-family: "Nunito", sans-serif;
+  font-weight: 800;
+  font-size: 0.95rem;
+  letter-spacing: 0.01em;
+}
+
+.sling-count {
+  font-weight: 700;
+  color: #2c4a66;
+}
+
+.sling-stage {
+  position: relative;
+  width: 100%;
+}
+
+.sling-stage.is-flying .slot {
+  pointer-events: none;
+  opacity: 0.45;
+}
+
+.sling-stage canvas {
+  display: block;
+  background: #fffef8;
+  border: 3px solid #142033;
+  border-radius: 16px;
+  box-shadow: 4px 4px 0 #142033;
+  max-width: 100%;
+}
+
+html[data-time="night"] .sling-stage canvas {
+  box-shadow: 4px 4px 0 rgba(244, 241, 228, 0.45);
+}
+
+.slot {
+  position: absolute;
+  width: 44px;
+  height: 44px;
+  margin: 0;
+  padding: 0;
+  border-radius: 50%;
+  border: 2px dashed #142033;
+  background: #fffef8;
+  color: #142033;
+  font-family: "Nunito", sans-serif;
+  font-weight: 800;
+  font-size: 1.45rem;
+  line-height: 1;
+  transform: translate(-50%, -50%);
+  cursor: pointer;
+  z-index: 2;
+}
+
+.slot.is-plus {
+  background: #f2c14e;
+  border-style: solid;
+}
+
+.slot.is-minus {
+  background: #142033;
+  color: #fffef8;
+  border-style: solid;
+}
+
+.slot:focus-visible,
+.sling-tools button:focus-visible {
+  outline: 2px solid #1e6b1a;
+  outline-offset: 2px;
+}
+
+.sling-status {
+  font-family: "Source Serif 4", Georgia, serif;
+  font-size: 1.05rem;
+  line-height: 1.45;
+  margin: 0.8rem 0 0.55rem;
+  min-height: 1.4em;
+  color: #142033;
+}
+
+.sling-status.is-win { color: #1e6b1a; }
+.sling-status.is-bad { color: #a15c12; }
+
+.sling-tools {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.95rem;
+}
+
+.sling-tools button {
+  font-family: "Nunito", sans-serif;
+  font-weight: 800;
+  font-size: 0.95rem;
+  background: none;
+  border: none;
+  color: #142033;
+  cursor: pointer;
+  padding: 0.3rem 0.1rem;
+}
+
+.sling-tools button:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.sling-tools .sling-go {
+  background: #142033;
+  color: #fffef8;
+  border: 2px solid #142033;
+  border-radius: 999px;
+  padding: 0.42rem 1.2rem;
+  box-shadow: 3px 3px 0 #1e6b1a;
+}
+
+.sling-tools .sling-go:hover:not(:disabled) {
+  transform: translate(-1px, -1px);
+  box-shadow: 4px 4px 0 #1e6b1a;
+}
+
+@media (max-width: 640px) {
+  .slot { width: 40px; height: 40px; font-size: 1.3rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sling-tools .sling-go:hover:not(:disabled) { transform: none; }
+}
