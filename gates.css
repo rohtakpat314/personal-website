@@ -1,0 +1,222 @@
+.gate-lead {
+  max-width: 36rem;
+  margin: -0.35rem 0 1.15rem;
+  color: var(--text-2);
+}
+
+.gate-board {
+  width: max-content;
+  max-width: 100%;
+  background: rgba(255, 254, 248, 0.94);
+  border: 2px solid #142033;
+  border-radius: 20px;
+  box-shadow: 4px 4px 0 #142033;
+  padding: 1.15rem 1.25rem 1.1rem;
+  color: #142033;
+}
+
+html[data-time="night"] .gate-board {
+  box-shadow: 4px 4px 0 rgba(244, 241, 228, 0.45);
+}
+
+.gate-count {
+  font-family: "Nunito", sans-serif;
+  font-weight: 800;
+  font-size: 0.82rem;
+  color: #2f8a28;
+  margin-bottom: 0.25rem;
+}
+
+.gate-prompt {
+  font-family: "Source Serif 4", Georgia, serif;
+  font-size: 1.08rem;
+  font-weight: 500;
+  line-height: 1.45;
+  margin: 0 0 1rem;
+  max-width: 26rem;
+  outline: none;
+}
+
+.bit-stage {
+  position: relative;
+  width: calc(var(--cols) * 4.6rem);
+  max-width: 100%;
+}
+
+.bit-grid {
+  display: grid;
+  grid-template-columns: repeat(var(--cols), minmax(0, 1fr));
+  gap: 0;
+}
+
+.tile {
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #142033;
+  position: relative;
+}
+
+.tile svg { width: 100%; height: 100%; display: block; overflow: visible; }
+
+.tile svg path,
+.tile svg circle,
+.tile svg line,
+.tile svg rect {
+  fill: none;
+  stroke: #142033;
+  stroke-width: 5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.tile.can-turn {
+  cursor: pointer;
+  border-radius: 10px;
+}
+
+.tile.can-turn svg path,
+.tile.can-turn svg circle {
+  stroke-dasharray: 7 5;
+}
+
+.tile.can-turn.is-hot svg path,
+.tile.can-turn.is-hot svg circle,
+.tile.can-turn.is-cold svg path,
+.tile.can-turn.is-bad svg path {
+  stroke-dasharray: none;
+}
+
+.tile.can-turn:hover { background: rgba(47, 138, 40, 0.08); }
+
+.tile.can-turn:focus-visible,
+.gate-run:focus-visible,
+.gate-next:focus-visible,
+.gate-reset:focus-visible {
+  outline: 2px solid #2f8a28;
+  outline-offset: 2px;
+}
+
+.tile.is-hot svg path,
+.tile.is-hot svg circle,
+.tile.is-hot svg line { stroke: #1e6b1a; }
+
+.tile.is-cold svg path,
+.tile.is-cold svg circle,
+.tile.is-cold svg line { stroke: #8aa0b4; }
+
+.tile.is-bad svg path,
+.tile.is-bad svg circle { stroke: #a15c12; }
+
+.tile svg rect.wall-body { fill: rgba(20, 32, 51, 0.14); stroke-width: 3; }
+
+.tile svg circle.src-on { fill: #d7f5c8; stroke-width: 2.6; }
+.tile svg circle.src-off { fill: #fffef8; stroke-width: 2.6; }
+.tile svg text.src-num {
+  fill: #142033;
+  stroke: none;
+  font-family: "Nunito", sans-serif;
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.tile svg .gate-body path,
+.tile svg .gate-body circle { fill: #fffef8; stroke-width: 3.5; }
+
+.tile svg .mini-plane path { fill: #fffef8; stroke-width: 2.2; }
+.tile svg .mini-plane path.fold { fill: none; }
+
+.mini-plane.is-go { animation: bit-hop 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
+
+@keyframes bit-hop {
+  0% { transform: translate(0, 0) rotate(0deg); }
+  40% { transform: translate(8px, -14px) rotate(-18deg); }
+  100% { transform: translate(16px, -4px) rotate(10deg); }
+}
+
+.bit-dot {
+  position: absolute;
+  width: 0.95rem;
+  height: 0.95rem;
+  margin-left: -0.475rem;
+  margin-top: -0.475rem;
+  border-radius: 50%;
+  background: #142033;
+  border: 2px solid #142033;
+  box-shadow: 2px 2px 0 #2f8a28;
+  z-index: 3;
+  pointer-events: none;
+  transition: left 0.14s linear, top 0.14s linear;
+}
+
+.bit-dot.is-hot { background: #7dce63; border-color: #1e6b1a; box-shadow: 2px 2px 0 #142033; }
+.bit-dot.is-zero { background: #fffef8; box-shadow: 2px 2px 0 #8aa0b4; }
+
+.gate-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.8rem;
+  margin-top: 0.95rem;
+}
+
+.gate-status {
+  margin: 0;
+  min-height: 1.45rem;
+  max-width: 22rem;
+  font-size: 0.98rem;
+  color: #1c3348;
+}
+
+.gate-board.is-solved .gate-status { color: #1e6b1a; }
+
+.gate-actions { display: flex; align-items: center; gap: 0.45rem; flex: none; }
+
+.gate-run,
+.gate-next,
+.gate-reset {
+  font-family: "Nunito", sans-serif;
+  font-weight: 800;
+  font-size: 0.95rem;
+  border-radius: 999px;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.gate-run,
+.gate-next {
+  background: #142033;
+  color: #fffef8;
+  border: 2px solid #142033;
+  padding: 0.42rem 0.95rem;
+  box-shadow: 2px 3px 0 #2f8a28;
+}
+
+.gate-reset {
+  background: transparent;
+  color: #142033;
+  border: 2px solid transparent;
+  padding: 0.42rem 0.55rem;
+}
+
+.gate-run:hover,
+.gate-next:hover { transform: translate(-1px, -1px); box-shadow: 3px 4px 0 #2f8a28; }
+.gate-reset:hover { color: #1e6b1a; }
+
+.gate-next[hidden] { display: none; }
+
+@media (max-width: 640px) {
+  .gate-board { padding: 1rem 0.8rem 0.95rem; }
+  .gate-foot { flex-direction: column; align-items: flex-start; }
+  .bit-stage { width: calc(var(--cols) * 3.15rem); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bit-dot,
+  .gate-run,
+  .gate-next { transition: none; }
+  .mini-plane.is-go { animation: none; transform: translate(8px, -3px) rotate(6deg); }
+}

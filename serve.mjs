@@ -34,12 +34,18 @@ const server = createServer(async (req, res) => {
 
   try {
     const data = await readFile(filePath);
-    res.writeHead(200, { 'Content-Type': mime[ext] || 'text/plain' });
+    res.writeHead(200, {
+      'Content-Type': mime[ext] || 'text/plain',
+      'Cache-Control': 'no-cache'
+    });
     res.end(data);
   } catch {
     try {
       const data = await readFile(join(__dirname, 'index.html'));
-      res.writeHead(200, { 'Content-Type': 'text/html' });
+      res.writeHead(200, {
+        'Content-Type': 'text/html',
+        'Cache-Control': 'no-cache'
+      });
       res.end(data);
     } catch {
       res.writeHead(404);
