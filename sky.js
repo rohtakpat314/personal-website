@@ -12,12 +12,7 @@
   }
 
   function readTime() {
-    try {
-      var saved = localStorage.getItem(TIME_KEY);
-      if (saved === "night" || saved === "day") return saved;
-      if (localStorage.getItem(KEY) === "night") return "night";
-    } catch (e) {}
-    return "day";
+    return "night";
   }
 
   function applyWeather(mode) {
@@ -30,16 +25,9 @@
     try { localStorage.setItem(KEY, mode); } catch (e) {}
   }
 
-  function applyTime(time) {
-    if (time !== "night") time = "day";
-    document.documentElement.setAttribute("data-time", time);
-    var toggle = document.querySelector(".daynight");
-    if (toggle) {
-      var night = time === "night";
-      toggle.setAttribute("aria-pressed", night ? "true" : "false");
-      toggle.setAttribute("aria-label", night ? "Switch to day" : "Switch to night");
-    }
-    try { localStorage.setItem(TIME_KEY, time); } catch (e) {}
+  function applyTime() {
+    document.documentElement.setAttribute("data-time", "night");
+    try { localStorage.setItem(TIME_KEY, "night"); } catch (e) {}
   }
 
   var cloudSvg =
@@ -136,25 +124,6 @@
     var wrap = document.createElement("div");
     wrap.className = "sky-controls";
 
-    var daynight = document.createElement("button");
-    daynight.type = "button";
-    daynight.className = "daynight";
-    daynight.innerHTML =
-      '<span class="daynight-icon" aria-hidden="true">' +
-        '<svg class="icon-sun" viewBox="0 0 24 24">' +
-          '<circle cx="12" cy="12" r="3.6" fill="currentColor"/>' +
-          '<g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">' +
-            '<path d="M12 2.4v2.4M12 19.2v2.4M2.4 12h2.4M19.2 12h2.4M5.4 5.4l1.7 1.7M16.9 16.9l1.7 1.7M18.6 5.4l-1.7 1.7M7.1 16.9l-1.7 1.7"/>' +
-          '</g>' +
-        '</svg>' +
-        '<svg class="icon-moon" viewBox="0 0 24 24">' +
-          '<path fill="currentColor" d="M16.2 3.1a8.6 8.6 0 1 0 4.6 14.8A7.6 7.6 0 1 1 16.2 3.1z"/>' +
-        '</svg>' +
-      '</span>';
-    daynight.addEventListener("click", function () {
-      applyTime(document.documentElement.getAttribute("data-time") === "night" ? "day" : "night");
-    });
-
     var control = document.createElement("div");
     control.className = "weather";
     control.setAttribute("role", "group");
@@ -170,7 +139,6 @@
       applyWeather(btn.getAttribute("data-weather"));
     });
 
-    wrap.appendChild(daynight);
     wrap.appendChild(control);
     document.body.appendChild(wrap);
     applyWeather(document.documentElement.getAttribute("data-weather") || "sunny");

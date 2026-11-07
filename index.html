@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-time="night">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -38,105 +38,122 @@
     --text-2:      #1c3348;
     --text-3:      #2c4a66;
     --green:       #2f8a28;
-    --sb-w:        220px;
+    --sb-w:        0px;
+    --ink:         #142033;
+    --paper:       #fffef8;
+    --rule:        rgba(20, 32, 51, 0.42);
   }
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  html { scroll-behavior: smooth; }
+  html, body { min-height: 100%; }
   body {
     background: linear-gradient(180deg, var(--sky-top) 0%, var(--sky-mid) 56%, var(--sky-bottom) 100%);
     background-attachment: fixed;
     color: var(--text);
     font-family: 'Source Serif 4', Georgia, serif; font-size: 17.5px;
-    line-height: 1.6; -webkit-font-smoothing: antialiased; overflow-x: hidden;
+    line-height: 1.6; -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
     padding-bottom: 0;
   }
   ::selection { background: #d7f5c8; color: var(--text); }
   #about { background: transparent; }
-  #education { padding: 4rem 0; }
   ::-webkit-scrollbar { width: 3px; }
   ::-webkit-scrollbar-track { background: var(--bg); }
   ::-webkit-scrollbar-thumb { background: var(--border-2); border-radius: 2px; }
 
-  /* ── Sidebar ─────────────────────────────── */
-  .sidebar {
-    position: fixed; top: 0; left: 0; bottom: 0;
-    width: var(--sb-w); background: var(--sb-bg);
-    border-right: 1px solid var(--border);
-    display: flex; flex-direction: column;
-    padding: 2.4rem 1.4rem; z-index: 100;
+  /* ── Sheet ──────────────────────────────── */
+  .sheet {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    width: calc(100% - 1.15rem);
+    min-height: calc(100vh - 3.6rem);
+    min-height: calc(100dvh - 3.6rem);
+    margin: 3.6rem auto 0;
+    background: var(--paper);
+    border: 2px solid var(--ink);
+    border-radius: 4px;
+    box-shadow: 4px 4px 0 var(--ink);
   }
-
-  .sb-logo { margin-bottom: 2.2rem; }
-  .sb-name { font-size: 1rem; font-weight: 600; color: var(--text); letter-spacing: -0.01em; }
-  .sb-sub  { font-size: 0.88rem; color: var(--text-3); margin-top: 0.15rem; }
-
-  .nav-track { position: relative; display: flex; flex-direction: column; gap: 0.02rem; flex: 1; }
-
-  .nav-indicator {
-    position: absolute; left: 0; top: 0;
-    width: 1px; height: 32px;
-    background: var(--accent);
-    transition: transform 0.25s ease, height 0.2s ease;
+  .sheet-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.35rem 1.1rem;
+    padding: 0.7rem 1.15rem 0.62rem;
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    background: var(--paper);
+    border-bottom: 2px dashed var(--rule);
   }
-
-  .s-link {
-    display: flex; align-items: center; gap: 0.6rem;
-    padding: 0.52rem 0.7rem 0.52rem 0.9rem;
-    font-size: 0.95rem; font-weight: 400;
-    color: var(--text-2); text-decoration: none;
-    border-radius: 0 5px 5px 0; cursor: pointer;
-    border: none; background: none; font-family: inherit;
-    transition: color 0.18s ease, background 0.18s ease;
-    position: relative; z-index: 1;
+  .sheet-name {
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: 1.05rem;
+    color: var(--text);
+    text-decoration: none;
+    letter-spacing: -0.02em;
   }
-
-  .s-icon { display: none; }
-  .s-link:hover { color: var(--text); }
-  .s-link.active { color: var(--text); font-weight: 600; }
-
-  .sb-bottom {
-    margin-top: auto; padding-top: 1.4rem;
-    border-top: 1px solid var(--border);
-    display: flex; flex-direction: column; gap: 0.9rem;
+  .sheet-name:hover { color: var(--accent); }
+  .sheet-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.15rem 0.85rem;
+    flex: 1;
   }
-  .sb-status { display: flex; align-items: center; gap: 0.4rem; font-size: 0.69rem; color: var(--green); }
-  .sb-dot {
-    width: 5px; height: 5px; border-radius: 50%; background: var(--green); flex-shrink: 0;
+  .tab {
+    border: none;
+    background: none;
+    padding: 0.12rem 0;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--text-2);
+    cursor: pointer;
   }
-  .sb-socials { display: flex; gap: 0.65rem; }
+  .tab:hover { color: var(--text); }
+  .tab.active {
+    color: var(--text);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+  .tab:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+  .sheet-socials { display: flex; gap: 0.7rem; margin-left: auto; }
   .sb-social {
     display: flex; align-items: center; justify-content: center;
     color: var(--text-3); text-decoration: none;
   }
   .sb-social:hover { color: var(--text); }
-
-  .sb-resume {
-    display: inline-flex; align-items: center; gap: 0.35rem;
-    font-size: 0.92rem; font-family: inherit;
-    color: var(--text); text-decoration: underline; text-underline-offset: 3px;
+  .sheet-rule { display: none; }
+  .sheet-body { flex: 1; }
+  .about-status {
+    display: flex; align-items: center; gap: 0.45rem;
+    margin-top: 1.1rem;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.82rem; font-weight: 700;
+    color: var(--green);
   }
-  .sb-resume:hover { color: var(--accent); }
+  .sb-dot {
+    width: 6px; height: 6px; border-radius: 50%; background: var(--green); flex-shrink: 0;
+  }
 
   /* ── Main ────────────────────────────────── */
-  .main {
-    margin-left: var(--sb-w);
-    min-height: 100vh;
-    position: relative;
-    z-index: 1;
-  }
+  .main { position: relative; z-index: 1; }
   h1, h2, h3, .sec-heading, .hero-name, .sb-name, .proj-name,
   .cw-term-label, .skills-cat-label, .contact-platform {
     font-family: 'Nunito', sans-serif;
     font-weight: 800;
   }
 
-  .container { width: 100%; max-width: 72rem; margin: 0 auto; padding: 0 3.5rem; position: relative; z-index: 1; }
+  .container { width: 100%; max-width: 54rem; margin: 0 auto; padding: 0 1.75rem; position: relative; z-index: 1; }
 
   /* ── Sections ────────────────────────────── */
-  section { padding: 4.25rem 0; border-bottom: 1px solid var(--border); }
-  section:last-of-type { border-bottom: none; }
+  section[data-section] { display: none; padding: 1.45rem 0 1.8rem; border-bottom: none; }
+  section[data-section].is-on { display: block; }
 
   .sec-label {
     font-size: 0.95rem; font-weight: 600;
@@ -155,16 +172,36 @@
   .reveal { opacity: 1; }
 
   /* ── ABOUT ───────────────────────────────── */
-  #about { padding: 4.5rem 0 3.25rem; display: block; position: relative; }
+  #about { padding: 1.55rem 0 1.4rem; position: relative; }
   #about .container { text-align: left; position: relative; }
 
+  .about-head {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    margin-bottom: 0.95rem;
+  }
+  .about-frame {
+    flex: none;
+    padding: 0.42rem;
+    background: linear-gradient(160deg, #7a5638 0%, #4a3120 42%, #2c1c12 100%);
+    border: 3px solid #1a100b;
+    box-shadow:
+      inset 0 0 0 1px rgba(232, 206, 158, 0.55),
+      3px 4px 0 #140e0a;
+  }
+  .about-photo {
+    display: block;
+    width: 8.4rem;
+    height: auto;
+  }
   .hero-kicker {
-    font-size: 0.95rem; color: var(--text-3); margin-bottom: 0.7rem;
+    font-size: 0.95rem; color: var(--text-3); margin-bottom: 0.35rem;
   }
   .hero-name {
     font-size: clamp(2.3rem, 4.4vw, 3.05rem);
     font-weight: 800; letter-spacing: -0.03em; line-height: 1.05;
-    color: var(--text); margin-bottom: 0.85rem;
+    color: var(--text); margin-bottom: 0;
   }
   .hero-bio {
     font-size: 1.05rem; color: var(--text-2); line-height: 1.7; margin: 0 0 1.8rem;
@@ -216,7 +253,7 @@
     flex-direction: column;
     gap: 1.35rem;
     margin: 0.4rem auto 0;
-    max-width: 42rem;
+    max-width: none;
   }
   #projects .sec-label,
   #projects .sec-heading,
@@ -316,7 +353,7 @@
 
   /* ── EXPERIENCE ──────────────────────────── */
   .timeline { display: flex; flex-direction: column; }
-  .tl-card { padding: 1.35rem 0; background: transparent; border-bottom: 1px solid var(--border); display: flex; gap: 1.1rem; align-items: flex-start; }
+  .tl-card { padding: 1.15rem 0; background: transparent; border-bottom: 1px dashed var(--rule); display: flex; gap: 1.1rem; align-items: flex-start; }
   .tl-card:last-child { border-bottom: none; }
   .tl-logo-wrap {
     width: 48px; height: 48px; flex-shrink: 0; margin-top: 0.15rem;
@@ -405,7 +442,7 @@
   .contact-card {
     display: flex; align-items: center; gap: 1rem;
     background: transparent; padding: 0.85rem 0;
-    border-bottom: 1px solid var(--border);
+    border-bottom: 1px dashed var(--rule);
     text-decoration: none; color: var(--text);
   }
   .contact-card:hover { color: var(--accent); }
@@ -415,7 +452,12 @@
   .contact-arrow { display: none; }
 
   /* ── FOOTER ──────────────────────────────── */
-  .site-footer { padding: 1.5rem 3rem; text-align: center; font-size: 0.7rem; color: var(--text-3); border-top: 1px solid var(--border); }
+  .site-footer {
+    display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap;
+    margin: 0 1rem; padding: 0.65rem 0.15rem 0.75rem;
+    font-size: 0.78rem; color: var(--text-3);
+    border-top: 2px dashed var(--rule);
+  }
 
   /* ── LIGHTBOX ────────────────────────────── */
   #lightbox {
@@ -444,146 +486,75 @@
   .lb-dot.active { background: var(--text-2); }
 
   /* ── Keyframes ───────────────────────────── */
-  #scroll-progress {
-    position: fixed; top: 0; left: var(--sb-w); right: 0;
-    height: 1px; z-index: 999; pointer-events: none;
-    background: transparent;
-  }
-  #scroll-fill {
-    height: 100%; width: 0%;
-    background: var(--accent);
-    transition: width 0.08s linear;
-  }
-  @media (max-width: 800px) { #scroll-progress { left: 0; } }
-
   @keyframes fadeIn  { from { opacity: 0; } to { opacity: 1; } }
 
-  @media (max-width: 800px) {
-    :root { --sb-w: 0px; }
-    .sidebar { display: none; }
-    body { padding-bottom: 0; }
-    .container { padding: 0 1.35rem; }
-    .site-footer { padding: 1.5rem 1.35rem; }
+  html[data-time="night"] .sheet {
+    --paper: rgba(14, 26, 52, 0.96);
+    --ink: rgba(244, 241, 228, 0.72);
+    --rule: rgba(243, 246, 251, 0.35);
+    background: var(--paper);
   }
+  html[data-time="night"] .sheet-bar { background: #0e1a34; }
+  html[data-time="night"] .sb-social { color: var(--text-2); }
 
-  /* ── Mobile Nav ──────────────────────────── */
-  .mobile-nav {
-    display: none;
-    position: fixed; bottom: 0; left: 0; right: 0; z-index: 200;
-    background: transparent; border-top: none;
-    padding: 0.4rem 0.5rem env(safe-area-inset-bottom, 0);
-    justify-content: space-around; align-items: center;
+  @media (max-width: 800px) {
+    .sheet {
+      width: calc(100% - 0.7rem);
+      margin-top: 4.15rem;
+      min-height: calc(100vh - 4.15rem);
+      min-height: calc(100dvh - 4.15rem);
+    }
+    .container { padding: 0 1rem; }
+    .sheet-name { flex-basis: auto; }
+    .sheet-tabs { flex-basis: 100%; gap: 0.2rem 0.7rem; }
+    .about-photo { width: 5.6rem; }
   }
-  @media (max-width: 800px) { .mobile-nav { display: flex; } }
-  .mn-btn {
-    display: flex; flex-direction: column; align-items: center; gap: 0.2rem;
-    background: none; border: none; color: var(--text-3); cursor: pointer;
-    font-family: inherit; font-size: 0.58rem; font-weight: 500;
-    padding: 0.4rem 0.6rem; border-radius: 6px;
-    transition: color 0.15s ease, background 0.15s ease;
-    letter-spacing: 0.04em;
-  }
-  .mn-btn svg { width: 18px; height: 18px; }
-  .mn-btn:hover, .mn-btn.active { color: var(--text); }
   </style>
 </head>
 <body>
-<div id="scroll-progress"><div id="scroll-fill"></div></div>
-
-<!-- ═══ SIDEBAR ═══ -->
-<aside class="sidebar">
-  <div class="sb-logo">
-    <div class="sb-name">Rohtak Patwardhan</div>
-    <div class="sb-sub">EE &amp; CS · UW–Madison</div>
-  </div>
-
-  <div class="nav-track" id="nav-track">
-    <div class="nav-indicator" id="nav-indicator"></div>
-
-    <button class="s-link active" data-section="about" onclick="scrollToSection('about')">
-      <svg class="s-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M5.2 20a7 7 0 0 1 13.6 0"/></svg>
-      About
-    </button>
-    <button class="s-link" data-section="projects" onclick="scrollToSection('projects')">
-      <svg class="s-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-      Projects
-    </button>
-    <button class="s-link" data-section="experience" onclick="scrollToSection('experience')">
-      <svg class="s-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
-      Experience
-    </button>
-    <button class="s-link" data-section="education" onclick="scrollToSection('education')">
-      <svg class="s-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/></svg>
-      Coursework
-    </button>
-    <button class="s-link" data-section="skills" onclick="scrollToSection('skills')">
-      <svg class="s-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
-      Skills
-    </button>
-    <button class="s-link" data-section="play" onclick="scrollToSection('play')">
-      <svg class="s-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 6h6a6 6 0 0 1 0 12H5z"/><path d="M4 12H2M17 12h5"/></svg>
-      Play
-    </button>
-    <button class="s-link" data-section="contact" onclick="scrollToSection('contact')">
-      <svg class="s-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
-      Contact
-    </button>
-  </div>
-
-  <div class="sb-bottom">
-    <div class="sb-status"><div class="sb-dot"></div>Open to opportunities</div>
-    <div class="sb-socials">
+<div class="sheet">
+  <header class="sheet-bar">
+    <a class="sheet-name" href="#about">Rohtak Patwardhan</a>
+    <nav class="sheet-tabs" role="tablist" aria-label="Sections">
+      <button class="tab active" role="tab" id="tab-about" data-section="about" aria-selected="true" aria-controls="about">About</button>
+      <button class="tab" role="tab" id="tab-projects" data-section="projects" aria-selected="false" aria-controls="projects">Projects</button>
+      <button class="tab" role="tab" id="tab-experience" data-section="experience" aria-selected="false" aria-controls="experience">Experience</button>
+      <button class="tab" role="tab" id="tab-education" data-section="education" aria-selected="false" aria-controls="education">Coursework</button>
+      <button class="tab" role="tab" id="tab-skills" data-section="skills" aria-selected="false" aria-controls="skills">Skills</button>
+      <button class="tab" role="tab" id="tab-play" data-section="play" aria-selected="false" aria-controls="play">Play</button>
+      <button class="tab" role="tab" id="tab-contact" data-section="contact" aria-selected="false" aria-controls="contact">Contact</button>
+    </nav>
+    <div class="sheet-socials">
       <a href="https://github.com/rohtakpat314" target="_blank" rel="noopener" class="sb-social" title="GitHub">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.5-1.4-1.3-1.8-1.3-1.8-1-.7.1-.7.1-.7 1.1.1 1.7 1.1 1.7 1.1 1 1.7 2.6 1.2 3.2.9.1-.7.4-1.2.7-1.5-2.6-.3-5.4-1.3-5.4-5.8 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17.3 4.7 18.3 5 18.3 5c.7 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.5-2.8 5.5-5.4 5.8.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3"/></svg>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.5-1.4-1.3-1.8-1.3-1.8-1-.7.1-.7.1-.7 1.1.1 1.7 1.1 1.7 1.1 1 1.7 2.6 1.2 3.2.9.1-.7.4-1.2.7-1.5-2.6-.3-5.4-1.3-5.4-5.8 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17.3 4.7 18.3 5 18.3 5c.7 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.5-2.8 5.5-5.4 5.8.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3"/></svg>
       </a>
       <a href="https://www.linkedin.com/in/rohtak-patwardhan" target="_blank" rel="noopener" class="sb-social" title="LinkedIn">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M20.5 2h-17A1.5 1.5 0 0 0 2 3.5v17A1.5 1.5 0 0 0 3.5 22h17a1.5 1.5 0 0 0 1.5-1.5v-17A1.5 1.5 0 0 0 20.5 2zM8 19H5v-9h3zM6.5 8.25A1.75 1.75 0 1 1 8.3 6.5a1.78 1.78 0 0 1-1.8 1.75zM19 19h-3v-4.74c0-1.42-.6-1.93-1.38-1.93A1.74 1.74 0 0 0 13 14.19a.66.66 0 0 0 0 .14V19h-3v-9h2.9v1.3a3.11 3.11 0 0 1 2.7-1.4c1.55 0 3.36.86 3.36 3.66z"/></svg>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.5 2h-17A1.5 1.5 0 0 0 2 3.5v17A1.5 1.5 0 0 0 3.5 22h17a1.5 1.5 0 0 0 1.5-1.5v-17A1.5 1.5 0 0 0 20.5 2zM8 19H5v-9h3zM6.5 8.25A1.75 1.75 0 1 1 8.3 6.5a1.78 1.78 0 0 1-1.8 1.75zM19 19h-3v-4.74c0-1.42-.6-1.93-1.38-1.93A1.74 1.74 0 0 0 13 14.19a.66.66 0 0 0 0 .14V19h-3v-9h2.9v1.3a3.11 3.11 0 0 1 2.7-1.4c1.55 0 3.36.86 3.36 3.66z"/></svg>
       </a>
       <a href="mailto:rohtak.pat314@gmail.com" class="sb-social" title="Email">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
       </a>
     </div>
-  </div>
-</aside>
-
-<!-- ═══ MOBILE NAV ═══ -->
-<nav class="mobile-nav" id="mobile-nav">
-  <button class="mn-btn active" data-section="about" onclick="scrollToSection('about')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M5.2 20a7 7 0 0 1 13.6 0"/></svg>
-    About
-  </button>
-  <button class="mn-btn" data-section="projects" onclick="scrollToSection('projects')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-    Projects
-  </button>
-  <button class="mn-btn" data-section="experience" onclick="scrollToSection('experience')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
-    Experience
-  </button>
-  <button class="mn-btn" data-section="education" onclick="scrollToSection('education')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/></svg>
-    Coursework
-  </button>
-  <button class="mn-btn" data-section="skills" onclick="scrollToSection('skills')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
-    Skills
-  </button>
-  <button class="mn-btn" data-section="contact" onclick="scrollToSection('contact')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
-    Contact
-  </button>
-</nav>
-
-<!-- ═══ MAIN ═══ -->
+  </header>
+  <div class="sheet-rule" aria-hidden="true"></div>
+  <div class="sheet-body" id="sheet-body">
 <main class="main" id="main">
 
   <!-- ABOUT -->
-  <section id="about" data-section="about">
+  <section id="about" data-section="about" class="is-on" role="tabpanel" aria-labelledby="tab-about">
     <div class="container">
-      <p class="hero-kicker">EE &amp; CS @ UW–Madison · 2028</p>
-      <h1 class="hero-name">Rohtak Patwardhan</h1>
+      <div class="about-head">
+        <div class="about-frame">
+          <img class="about-photo" src="brand_assets/portrait.png" alt="Portrait of Rohtak Patwardhan" />
+        </div>
+        <div>
+          <p class="hero-kicker">EE &amp; CS @ UW–Madison · 2028</p>
+          <h1 class="hero-name">Rohtak Patwardhan</h1>
+        </div>
+      </div>
       <div class="hero-bio">
-        <p>I'm a sophomore Electrical Engineering student at UW-Madison, interested in FPGA, RTL, and embedded systems.</p>
+        <p>I'm an EE student at UW-Madison. I like things that work. Oftentimes, that's not the case.</p>
+        <p>Most of my time is spent understanding how things work, fine-tuning values, and evaluating tradeoffs in overall systems based on resource availability. I believe abstraction is a beautiful tool, so I try to use it wisely.</p>
       </div>
       <div class="hero-socials">
         <a class="social-btn" href="https://github.com/rohtakpat314" target="_blank" rel="noopener">
@@ -594,11 +565,12 @@
           <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.5 2h-17A1.5 1.5 0 0 0 2 3.5v17A1.5 1.5 0 0 0 3.5 22h17a1.5 1.5 0 0 0 1.5-1.5v-17A1.5 1.5 0 0 0 20.5 2zM8 19H5v-9h3zM6.5 8.25A1.75 1.75 0 1 1 8.3 6.5a1.78 1.78 0 0 1-1.8 1.75zM19 19h-3v-4.74c0-1.42-.6-1.93-1.38-1.93A1.74 1.74 0 0 0 13 14.19a.66.66 0 0 0 0 .14V19h-3v-9h2.9v1.3a3.11 3.11 0 0 1 2.7-1.4c1.55 0 3.36.86 3.36 3.66z"/></svg>
           LinkedIn
         </a>
-        <button class="social-btn" type="button" onclick="scrollToSection('contact')">
+        <button class="social-btn" type="button" onclick="showSection('contact')">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
           Contact
         </button>
       </div>
+      <p class="about-status"><span class="sb-dot" aria-hidden="true"></span>Open to opportunities</p>
     </div>
   </section>
 
@@ -986,70 +958,54 @@
     </div>
   </section>
 
-  <footer class="site-footer">Rohtak Patwardhan · EE &amp; CS · UW–Madison</footer>
 </main>
+  </div>
+  <footer class="site-footer">
+    <span>© 2026 Rohtak Patwardhan</span>
+    <span>EE &amp; CS · UW–Madison</span>
+  </footer>
+</div>
 
 <script src="sky.js"></script>
 <script src="sling.js"></script>
 <script>
-  // ── Scroll to section ─────────────────────────
-  function scrollToSection(id) {
-    document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
-  }
+  var SECTIONS = ["about", "projects", "experience", "education", "skills", "play", "contact"];
 
-  // ── Sidebar nav indicator ─────────────────────
-  function moveIndicator(link) {
-    const track    = document.getElementById('nav-track');
-    const indicator = document.getElementById('nav-indicator');
-    const lRect    = link.getBoundingClientRect();
-    const tRect    = track.getBoundingClientRect();
-    const offset   = lRect.top - tRect.top + (lRect.height - 28) / 2;
-    indicator.style.transform = `translateY(${offset}px)`;
-    indicator.style.height    = `${lRect.height - 10}px`;
-  }
-
-  function setActiveLink(sectionId) {
-    const links = document.querySelectorAll('.s-link');
-    links.forEach(l => l.classList.remove('active'));
-    const active = document.querySelector(`.s-link[data-section="${sectionId}"]`);
-    if (active) { active.classList.add('active'); moveIndicator(active); }
-
-    const mLinks = document.querySelectorAll('.mn-btn');
-    mLinks.forEach(l => l.classList.remove('active'));
-    const mActive = document.querySelector(`.mn-btn[data-section="${sectionId}"]`);
-    if (mActive) mActive.classList.add('active');
-  }
-
-  // ── Scroll spy ────────────────────────────────
-  const sections = document.querySelectorAll('section[data-section]');
-  const spyObs = new IntersectionObserver((entries) => {
-    entries.forEach(e => { if (e.isIntersecting) setActiveLink(e.target.dataset.section); });
-  }, { threshold: 0.25, rootMargin: '-10% 0px -55% 0px' });
-  sections.forEach(s => spyObs.observe(s));
-
-  // ── Reveal on scroll ──────────────────────────
-  const revealObs = new IntersectionObserver((entries) => {
-    entries.forEach((entry, i) => {
-      if (entry.isIntersecting) {
-        setTimeout(() => entry.target.classList.add('shown'), i * 70);
-        revealObs.unobserve(entry.target);
-      }
+  function showSection(id, fromHistory) {
+    if (SECTIONS.indexOf(id) === -1) id = "about";
+    document.querySelectorAll("section[data-section]").forEach(function (section) {
+      var on = section.id === id;
+      section.classList.toggle("is-on", on);
+      section.setAttribute("role", "tabpanel");
     });
-  }, { threshold: 0.07, rootMargin: '0px 0px -30px 0px' });
-  document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
+    document.querySelectorAll(".tab").forEach(function (tab) {
+      var on = tab.getAttribute("data-section") === id;
+      tab.classList.toggle("active", on);
+      tab.setAttribute("aria-selected", on ? "true" : "false");
+    });
+    var body = document.getElementById("sheet-body");
+    if (body) body.scrollTop = 0;
+    window.scrollTo(0, 0);
+    var next = "#" + id;
+    if (location.hash !== next) {
+      if (fromHistory) history.replaceState(null, "", next);
+      else history.pushState(null, "", next);
+    }
+    if (id === "play") window.dispatchEvent(new Event("resize"));
+  }
 
-  // ── Init indicator position ───────────────────
-  window.addEventListener('load', () => {
-    const firstActive = document.querySelector('.s-link.active');
-    if (firstActive) moveIndicator(firstActive);
+  document.querySelectorAll(".tab").forEach(function (tab) {
+    tab.addEventListener("click", function () { showSection(tab.getAttribute("data-section")); });
   });
 
-  // ── Scroll progress ───────────────────────────
-  const scrollFill = document.getElementById('scroll-fill');
-  window.addEventListener('scroll', () => {
-    const pct = window.scrollY / (document.documentElement.scrollHeight - window.innerHeight) * 100;
-    scrollFill.style.width = Math.min(pct, 100) + '%';
-  }, { passive: true });
+  window.addEventListener("hashchange", function () {
+    showSection(location.hash.replace("#", ""), true);
+  });
+  window.addEventListener("popstate", function () {
+    showSection((location.hash || "#about").replace("#", ""), true);
+  });
+
+  showSection((location.hash || "#about").replace("#", ""), true);
 </script>
 
 </body>
