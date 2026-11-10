@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-time="night">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -39,121 +39,106 @@
     --text-3:      #2c4a66;
     --green:       #2f8a28;
     --sb-w:        0px;
-    --ink:         #142033;
-    --paper:       #fffef8;
-    --rule:        rgba(20, 32, 51, 0.42);
+    --bar-h:       4.6rem;
   }
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  html, body { min-height: 100%; }
+  html { scroll-behavior: smooth; }
   body {
     background: linear-gradient(180deg, var(--sky-top) 0%, var(--sky-mid) 56%, var(--sky-bottom) 100%);
     background-attachment: fixed;
     color: var(--text);
     font-family: 'Source Serif 4', Georgia, serif; font-size: 17.5px;
-    line-height: 1.6; -webkit-font-smoothing: antialiased;
-    overflow-x: hidden;
+    line-height: 1.6; -webkit-font-smoothing: antialiased; overflow-x: hidden;
     padding-bottom: 0;
   }
   ::selection { background: #d7f5c8; color: var(--text); }
   #about { background: transparent; }
+  #education { padding: 4rem 0; }
   ::-webkit-scrollbar { width: 3px; }
   ::-webkit-scrollbar-track { background: var(--bg); }
   ::-webkit-scrollbar-thumb { background: var(--border-2); border-radius: 2px; }
 
-  /* ── Sheet ──────────────────────────────── */
-  .sheet {
+  /* ── Top bar ─────────────────────────────── */
+  .topbar {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 140;
+    display: flex; flex-wrap: wrap; align-items: center; gap: 0.35rem 0.85rem;
+    padding: 0.45rem 1rem;
+    background: rgba(126, 196, 239, 0.92);
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(10px);
+  }
+  html[data-time="night"] .topbar { background: rgba(12, 23, 48, 0.92); }
+
+  .sb-name {
+    font-family: 'Nunito', sans-serif;
+    font-size: 1rem; font-weight: 800; color: var(--text);
+    letter-spacing: -0.02em; text-decoration: none; white-space: nowrap;
+  }
+  .sb-name:hover { color: var(--accent); }
+
+  .nav-track {
     position: relative;
-    z-index: 2;
-    display: flex;
-    flex-direction: column;
-    width: calc(100% - 1.15rem);
-    min-height: calc(100vh - 3.6rem);
-    min-height: calc(100dvh - 3.6rem);
-    margin: 3.6rem auto 0;
-    background: var(--paper);
-    border: 2px solid var(--ink);
-    border-radius: 4px;
-    box-shadow: 4px 4px 0 var(--ink);
+    display: flex; flex-wrap: wrap; align-items: center;
+    gap: 0.05rem 0.15rem;
   }
-  .sheet-bar {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 0.35rem 1.1rem;
-    padding: 0.7rem 1.15rem 0.62rem;
-    position: sticky;
-    top: 0;
-    z-index: 5;
-    background: var(--paper);
-    border-bottom: 2px dashed var(--rule);
+
+  .nav-indicator {
+    position: absolute; left: 0; top: 0;
+    height: 2px; width: 0;
+    background: var(--accent);
+    transition: transform 0.25s ease, width 0.2s ease;
+    pointer-events: none;
   }
-  .sheet-name {
+
+  .s-link {
+    display: inline-flex; align-items: center;
+    padding: 0.32rem 0.48rem;
     font-family: 'Nunito', sans-serif;
-    font-weight: 800;
-    font-size: 1.05rem;
-    color: var(--text);
-    text-decoration: none;
-    letter-spacing: -0.02em;
+    font-size: 0.92rem; font-weight: 700;
+    color: var(--text-2); text-decoration: none;
+    cursor: pointer; border: none; background: none;
+    position: relative; z-index: 1;
   }
-  .sheet-name:hover { color: var(--accent); }
-  .sheet-tabs {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 0.15rem 0.85rem;
-    flex: 1;
-  }
-  .tab {
-    border: none;
-    background: none;
-    padding: 0.12rem 0;
-    font-family: 'Nunito', sans-serif;
-    font-size: 0.95rem;
-    font-weight: 700;
-    color: var(--text-2);
-    cursor: pointer;
-  }
-  .tab:hover { color: var(--text); }
-  .tab.active {
-    color: var(--text);
-    text-decoration: underline;
-    text-underline-offset: 4px;
-  }
-  .tab:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
-  .sheet-socials { display: flex; gap: 0.7rem; margin-left: auto; }
+  .s-icon { display: none; }
+  .s-link:hover { color: var(--text); }
+  .s-link.active { color: var(--text); }
+
+  .sb-socials { display: flex; gap: 0.65rem; align-items: center; }
   .sb-social {
     display: flex; align-items: center; justify-content: center;
     color: var(--text-3); text-decoration: none;
   }
   .sb-social:hover { color: var(--text); }
-  .sheet-rule { display: none; }
-  .sheet-body { flex: 1; }
-  .about-status {
-    display: flex; align-items: center; gap: 0.45rem;
-    margin-top: 1.1rem;
-    font-family: 'Nunito', sans-serif;
-    font-size: 0.82rem; font-weight: 700;
-    color: var(--green);
+  .topbar .sky-controls { position: static; margin-left: auto; z-index: auto; }
+
+  .sb-resume {
+    display: inline-flex; align-items: center; gap: 0.35rem;
+    font-size: 0.92rem; font-family: inherit;
+    color: var(--text); text-decoration: underline; text-underline-offset: 3px;
   }
-  .sb-dot {
-    width: 6px; height: 6px; border-radius: 50%; background: var(--green); flex-shrink: 0;
-  }
+  .sb-resume:hover { color: var(--accent); }
 
   /* ── Main ────────────────────────────────── */
-  .main { position: relative; z-index: 1; }
+  .main {
+    margin-left: 0;
+    padding-top: var(--bar-h);
+    min-height: 100vh;
+    position: relative;
+    z-index: 1;
+  }
   h1, h2, h3, .sec-heading, .hero-name, .sb-name, .proj-name,
   .cw-term-label, .skills-cat-label, .contact-platform {
     font-family: 'Nunito', sans-serif;
     font-weight: 800;
   }
 
-  .container { width: 100%; max-width: 54rem; margin: 0 auto; padding: 0 1.75rem; position: relative; z-index: 1; }
+  .container { width: 100%; max-width: 72rem; margin: 0 auto; padding: 0 3.5rem; position: relative; z-index: 1; }
 
   /* ── Sections ────────────────────────────── */
-  section[data-section] { display: none; padding: 1.45rem 0 1.8rem; border-bottom: none; }
-  section[data-section].is-on { display: block; }
+  section { padding: 4.25rem 0; border-bottom: 1px solid var(--border); scroll-margin-top: calc(var(--bar-h) + 0.4rem); }
+  section:last-of-type { border-bottom: none; }
 
   .sec-label {
     font-size: 0.95rem; font-weight: 600;
@@ -172,28 +157,38 @@
   .reveal { opacity: 1; }
 
   /* ── ABOUT ───────────────────────────────── */
-  #about { padding: 1.55rem 0 1.4rem; position: relative; }
+  #about { padding: 4.5rem 0 3.25rem; display: block; position: relative; }
   #about .container { text-align: left; position: relative; }
 
   .about-head {
     display: flex;
     align-items: center;
-    gap: 1.25rem;
-    margin-bottom: 0.95rem;
+    gap: 1.2rem;
+    margin-bottom: 1.15rem;
   }
+  .about-copy { min-width: 0; }
   .about-frame {
     flex: none;
-    padding: 0.42rem;
-    background: linear-gradient(160deg, #7a5638 0%, #4a3120 42%, #2c1c12 100%);
-    border: 3px solid #1a100b;
-    box-shadow:
-      inset 0 0 0 1px rgba(232, 206, 158, 0.55),
-      3px 4px 0 #140e0a;
+    box-sizing: border-box;
+    width: 120px;
+    height: 120px;
+    padding: 6px;
+    border: 1px solid #c6a15a;
+    border-radius: 50%;
+    background: #121212;
+    box-shadow: 0 8px 18px rgba(20, 40, 70, 0.2);
+  }
+  html[data-time="night"] .about-frame {
+    box-shadow: 0 12px 26px rgba(0, 0, 0, 0.48);
   }
   .about-photo {
     display: block;
-    width: 8.4rem;
-    height: auto;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    object-position: center 30%;
+    box-shadow: inset 0 0 0 1px #c6a15a;
   }
   .hero-kicker {
     font-size: 0.95rem; color: var(--text-3); margin-bottom: 0.35rem;
@@ -253,7 +248,7 @@
     flex-direction: column;
     gap: 1.35rem;
     margin: 0.4rem auto 0;
-    max-width: none;
+    max-width: 42rem;
   }
   #projects .sec-label,
   #projects .sec-heading,
@@ -353,7 +348,7 @@
 
   /* ── EXPERIENCE ──────────────────────────── */
   .timeline { display: flex; flex-direction: column; }
-  .tl-card { padding: 1.15rem 0; background: transparent; border-bottom: 1px dashed var(--rule); display: flex; gap: 1.1rem; align-items: flex-start; }
+  .tl-card { padding: 1.35rem 0; background: transparent; border-bottom: 1px solid var(--border); display: flex; gap: 1.1rem; align-items: flex-start; }
   .tl-card:last-child { border-bottom: none; }
   .tl-logo-wrap {
     width: 48px; height: 48px; flex-shrink: 0; margin-top: 0.15rem;
@@ -442,7 +437,7 @@
   .contact-card {
     display: flex; align-items: center; gap: 1rem;
     background: transparent; padding: 0.85rem 0;
-    border-bottom: 1px dashed var(--rule);
+    border-bottom: 1px solid var(--border);
     text-decoration: none; color: var(--text);
   }
   .contact-card:hover { color: var(--accent); }
@@ -452,12 +447,7 @@
   .contact-arrow { display: none; }
 
   /* ── FOOTER ──────────────────────────────── */
-  .site-footer {
-    display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap;
-    margin: 0 1rem; padding: 0.65rem 0.15rem 0.75rem;
-    font-size: 0.78rem; color: var(--text-3);
-    border-top: 2px dashed var(--rule);
-  }
+  .site-footer { padding: 1.5rem 3rem; text-align: center; font-size: 0.7rem; color: var(--text-3); border-top: 1px solid var(--border); }
 
   /* ── LIGHTBOX ────────────────────────────── */
   #lightbox {
@@ -486,68 +476,70 @@
   .lb-dot.active { background: var(--text-2); }
 
   /* ── Keyframes ───────────────────────────── */
+  #scroll-progress {
+    position: fixed; top: 0; left: 0; right: 0;
+    height: 2px; z-index: 200; pointer-events: none;
+    background: transparent;
+  }
+  #scroll-fill {
+    height: 100%; width: 0%;
+    background: var(--accent);
+    transition: width 0.08s linear;
+  }
   @keyframes fadeIn  { from { opacity: 0; } to { opacity: 1; } }
 
-  html[data-time="night"] .sheet {
-    --paper: rgba(14, 26, 52, 0.96);
-    --ink: rgba(244, 241, 228, 0.72);
-    --rule: rgba(243, 246, 251, 0.35);
-    background: var(--paper);
-  }
-  html[data-time="night"] .sheet-bar { background: #0e1a34; }
-  html[data-time="night"] .sb-social { color: var(--text-2); }
-
   @media (max-width: 800px) {
-    .sheet {
-      width: calc(100% - 0.7rem);
-      margin-top: 4.15rem;
-      min-height: calc(100vh - 4.15rem);
-      min-height: calc(100dvh - 4.15rem);
-    }
-    .container { padding: 0 1rem; }
-    .sheet-name { flex-basis: auto; }
-    .sheet-tabs { flex-basis: 100%; gap: 0.2rem 0.7rem; }
-    .about-photo { width: 5.6rem; }
+    :root { --bar-h: 7.4rem; }
+    .container { padding: 0 1.35rem; }
+    .site-footer { padding: 1.5rem 1.35rem; }
+    .about-frame { width: 104px; height: 104px; padding: 5px; }
+    .about-head { gap: 0.95rem; }
+    .topbar .weather { grid-template-columns: repeat(3, 3.15rem); }
+    .topbar .weather-thumb { width: 3.15rem; }
+    html[data-weather="cloudy"] .topbar .weather-thumb { transform: translateX(3.15rem); }
+    html[data-weather="rain"] .topbar .weather-thumb { transform: translateX(6.3rem); }
   }
   </style>
 </head>
 <body>
-<div class="sheet">
-  <header class="sheet-bar">
-    <a class="sheet-name" href="#about">Rohtak Patwardhan</a>
-    <nav class="sheet-tabs" role="tablist" aria-label="Sections">
-      <button class="tab active" role="tab" id="tab-about" data-section="about" aria-selected="true" aria-controls="about">About</button>
-      <button class="tab" role="tab" id="tab-projects" data-section="projects" aria-selected="false" aria-controls="projects">Projects</button>
-      <button class="tab" role="tab" id="tab-experience" data-section="experience" aria-selected="false" aria-controls="experience">Experience</button>
-      <button class="tab" role="tab" id="tab-education" data-section="education" aria-selected="false" aria-controls="education">Coursework</button>
-      <button class="tab" role="tab" id="tab-skills" data-section="skills" aria-selected="false" aria-controls="skills">Skills</button>
-      <button class="tab" role="tab" id="tab-play" data-section="play" aria-selected="false" aria-controls="play">Play</button>
-      <button class="tab" role="tab" id="tab-contact" data-section="contact" aria-selected="false" aria-controls="contact">Contact</button>
-    </nav>
-    <div class="sheet-socials">
-      <a href="https://github.com/rohtakpat314" target="_blank" rel="noopener" class="sb-social" title="GitHub">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.5-1.4-1.3-1.8-1.3-1.8-1-.7.1-.7.1-.7 1.1.1 1.7 1.1 1.7 1.1 1 1.7 2.6 1.2 3.2.9.1-.7.4-1.2.7-1.5-2.6-.3-5.4-1.3-5.4-5.8 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17.3 4.7 18.3 5 18.3 5c.7 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.5-2.8 5.5-5.4 5.8.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3"/></svg>
-      </a>
-      <a href="https://www.linkedin.com/in/rohtak-patwardhan" target="_blank" rel="noopener" class="sb-social" title="LinkedIn">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.5 2h-17A1.5 1.5 0 0 0 2 3.5v17A1.5 1.5 0 0 0 3.5 22h17a1.5 1.5 0 0 0 1.5-1.5v-17A1.5 1.5 0 0 0 20.5 2zM8 19H5v-9h3zM6.5 8.25A1.75 1.75 0 1 1 8.3 6.5a1.78 1.78 0 0 1-1.8 1.75zM19 19h-3v-4.74c0-1.42-.6-1.93-1.38-1.93A1.74 1.74 0 0 0 13 14.19a.66.66 0 0 0 0 .14V19h-3v-9h2.9v1.3a3.11 3.11 0 0 1 2.7-1.4c1.55 0 3.36.86 3.36 3.66z"/></svg>
-      </a>
-      <a href="mailto:rohtak.pat314@gmail.com" class="sb-social" title="Email">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
-      </a>
-    </div>
-  </header>
-  <div class="sheet-rule" aria-hidden="true"></div>
-  <div class="sheet-body" id="sheet-body">
+<div id="scroll-progress"><div id="scroll-fill"></div></div>
+
+<header class="topbar">
+  <a class="sb-name" href="#about" onclick="scrollToSection('about'); return false;">Rohtak Patwardhan</a>
+  <nav class="nav-track" id="nav-track" aria-label="Sections">
+    <div class="nav-indicator" id="nav-indicator"></div>
+    <button class="s-link active" data-section="about" onclick="scrollToSection('about')">About</button>
+    <button class="s-link" data-section="projects" onclick="scrollToSection('projects')">Projects</button>
+    <button class="s-link" data-section="experience" onclick="scrollToSection('experience')">Experience</button>
+    <button class="s-link" data-section="education" onclick="scrollToSection('education')">Coursework</button>
+    <button class="s-link" data-section="skills" onclick="scrollToSection('skills')">Skills</button>
+    <button class="s-link" data-section="play" onclick="scrollToSection('play')">Play</button>
+    <button class="s-link" data-section="contact" onclick="scrollToSection('contact')">Contact</button>
+  </nav>
+  <div class="sb-socials">
+    <a href="https://github.com/rohtakpat314" target="_blank" rel="noopener" class="sb-social" title="GitHub">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.5-1.4-1.3-1.8-1.3-1.8-1-.7.1-.7.1-.7 1.1.1 1.7 1.1 1.7 1.1 1 1.7 2.6 1.2 3.2.9.1-.7.4-1.2.7-1.5-2.6-.3-5.4-1.3-5.4-5.8 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17.3 4.7 18.3 5 18.3 5c.7 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.5-2.8 5.5-5.4 5.8.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3"/></svg>
+    </a>
+    <a href="https://www.linkedin.com/in/rohtak-patwardhan" target="_blank" rel="noopener" class="sb-social" title="LinkedIn">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M20.5 2h-17A1.5 1.5 0 0 0 2 3.5v17A1.5 1.5 0 0 0 3.5 22h17a1.5 1.5 0 0 0 1.5-1.5v-17A1.5 1.5 0 0 0 20.5 2zM8 19H5v-9h3zM6.5 8.25A1.75 1.75 0 1 1 8.3 6.5a1.78 1.78 0 0 1-1.8 1.75zM19 19h-3v-4.74c0-1.42-.6-1.93-1.38-1.93A1.74 1.74 0 0 0 13 14.19a.66.66 0 0 0 0 .14V19h-3v-9h2.9v1.3a3.11 3.11 0 0 1 2.7-1.4c1.55 0 3.36.86 3.36 3.66z"/></svg>
+    </a>
+    <a href="mailto:rohtak.pat314@gmail.com" class="sb-social" title="Email">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+    </a>
+  </div>
+</header>
+
+<!-- ═══ MAIN ═══ -->
 <main class="main" id="main">
 
   <!-- ABOUT -->
-  <section id="about" data-section="about" class="is-on" role="tabpanel" aria-labelledby="tab-about">
+  <section id="about" data-section="about">
     <div class="container">
       <div class="about-head">
         <div class="about-frame">
           <img class="about-photo" src="brand_assets/portrait.png" alt="Portrait of Rohtak Patwardhan" />
         </div>
-        <div>
+        <div class="about-copy">
           <p class="hero-kicker">EE &amp; CS @ UW–Madison · 2028</p>
           <h1 class="hero-name">Rohtak Patwardhan</h1>
         </div>
@@ -565,12 +557,11 @@
           <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.5 2h-17A1.5 1.5 0 0 0 2 3.5v17A1.5 1.5 0 0 0 3.5 22h17a1.5 1.5 0 0 0 1.5-1.5v-17A1.5 1.5 0 0 0 20.5 2zM8 19H5v-9h3zM6.5 8.25A1.75 1.75 0 1 1 8.3 6.5a1.78 1.78 0 0 1-1.8 1.75zM19 19h-3v-4.74c0-1.42-.6-1.93-1.38-1.93A1.74 1.74 0 0 0 13 14.19a.66.66 0 0 0 0 .14V19h-3v-9h2.9v1.3a3.11 3.11 0 0 1 2.7-1.4c1.55 0 3.36.86 3.36 3.66z"/></svg>
           LinkedIn
         </a>
-        <button class="social-btn" type="button" onclick="showSection('contact')">
+        <button class="social-btn" type="button" onclick="scrollToSection('contact')">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
           Contact
         </button>
       </div>
-      <p class="about-status"><span class="sb-dot" aria-hidden="true"></span>Open to opportunities</p>
     </div>
   </section>
 
@@ -958,54 +949,72 @@
     </div>
   </section>
 
+  <footer class="site-footer">Rohtak Patwardhan · EE &amp; CS · UW–Madison</footer>
 </main>
-  </div>
-  <footer class="site-footer">
-    <span>© 2026 Rohtak Patwardhan</span>
-    <span>EE &amp; CS · UW–Madison</span>
-  </footer>
-</div>
 
 <script src="sky.js"></script>
 <script src="sling.js"></script>
 <script>
-  var SECTIONS = ["about", "projects", "experience", "education", "skills", "play", "contact"];
-
-  function showSection(id, fromHistory) {
-    if (SECTIONS.indexOf(id) === -1) id = "about";
-    document.querySelectorAll("section[data-section]").forEach(function (section) {
-      var on = section.id === id;
-      section.classList.toggle("is-on", on);
-      section.setAttribute("role", "tabpanel");
-    });
-    document.querySelectorAll(".tab").forEach(function (tab) {
-      var on = tab.getAttribute("data-section") === id;
-      tab.classList.toggle("active", on);
-      tab.setAttribute("aria-selected", on ? "true" : "false");
-    });
-    var body = document.getElementById("sheet-body");
-    if (body) body.scrollTop = 0;
-    window.scrollTo(0, 0);
-    var next = "#" + id;
-    if (location.hash !== next) {
-      if (fromHistory) history.replaceState(null, "", next);
-      else history.pushState(null, "", next);
-    }
-    if (id === "play") window.dispatchEvent(new Event("resize"));
+  // ── Scroll to section ─────────────────────────
+  function scrollToSection(id) {
+    document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+    setActiveLink(id);
   }
 
-  document.querySelectorAll(".tab").forEach(function (tab) {
-    tab.addEventListener("click", function () { showSection(tab.getAttribute("data-section")); });
-  });
+  // ── Sidebar nav indicator ─────────────────────
+  function moveIndicator(link) {
+    const track = document.getElementById('nav-track');
+    const indicator = document.getElementById('nav-indicator');
+    const lRect = link.getBoundingClientRect();
+    const tRect = track.getBoundingClientRect();
+    indicator.style.transform = `translate(${lRect.left - tRect.left}px, ${lRect.bottom - tRect.top - 2}px)`;
+    indicator.style.width = `${lRect.width}px`;
+  }
 
-  window.addEventListener("hashchange", function () {
-    showSection(location.hash.replace("#", ""), true);
-  });
-  window.addEventListener("popstate", function () {
-    showSection((location.hash || "#about").replace("#", ""), true);
-  });
+  function setActiveLink(sectionId) {
+    const links = document.querySelectorAll('.s-link');
+    links.forEach(l => l.classList.remove('active'));
+    const active = document.querySelector(`.s-link[data-section="${sectionId}"]`);
+    if (active) { active.classList.add('active'); moveIndicator(active); }
+  }
 
-  showSection((location.hash || "#about").replace("#", ""), true);
+  function fitBar() {
+    const bar = document.querySelector('.topbar');
+    if (!bar) return;
+    document.documentElement.style.setProperty('--bar-h', bar.offsetHeight + 'px');
+    const active = document.querySelector('.s-link.active');
+    if (active) moveIndicator(active);
+  }
+
+  // ── Scroll spy ────────────────────────────────
+  const sections = document.querySelectorAll('section[data-section]');
+  const spyObs = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) setActiveLink(e.target.dataset.section); });
+  }, { threshold: 0.25, rootMargin: '-10% 0px -55% 0px' });
+  sections.forEach(s => spyObs.observe(s));
+
+  // ── Reveal on scroll ──────────────────────────
+  const revealObs = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => entry.target.classList.add('shown'), i * 70);
+        revealObs.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.07, rootMargin: '0px 0px -30px 0px' });
+  document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
+
+  // ── Init indicator position ───────────────────
+  window.addEventListener('load', fitBar);
+  window.addEventListener('resize', fitBar);
+  fitBar();
+
+  // ── Scroll progress ───────────────────────────
+  const scrollFill = document.getElementById('scroll-fill');
+  window.addEventListener('scroll', () => {
+    const pct = window.scrollY / (document.documentElement.scrollHeight - window.innerHeight) * 100;
+    scrollFill.style.width = Math.min(pct, 100) + '%';
+  }, { passive: true });
 </script>
 
 </body>
